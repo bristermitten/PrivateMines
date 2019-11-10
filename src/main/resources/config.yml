@@ -1,0 +1,13 @@
+#The name of the mines
+World-Name: mines
+#How many blocks each mine should be apart from the other. This must be at least the radius of the mine schematic (distance from the center to the edge) or the mines will overlap
+Mine-Distance: 150
+#the schematic name for the mine. this file must exist or bad things will happen!
+Schematic-Name: mine.schematic
+
+#This maps different block types to different locations in the schematic
+Blocks:
+  #Defines where the players will initially spawn. This can be changed by players
+  Spawnpoint: BEACON
+  #Defines a corner of the mining area. Place this above the mining area on both corners. They will be replaced with air and the mining area will go down to y=0
+  Mine-Corner: BARRIER

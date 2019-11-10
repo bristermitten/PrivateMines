@@ -1,0 +1,9 @@
+name: PrivateMines
+version: @version@
+main: me.bristermitten.privatemines.PrivateMines
+authors: [BristerMitten]
+website: github.com/knightzmc
+depend:
+  - WorldEdit
+  - FastAsyncWorldEdit
+  - Vault
