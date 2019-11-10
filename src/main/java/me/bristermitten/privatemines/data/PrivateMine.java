@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public class PrivateMine implements ConfigurationSerializable {
     private UUID owner;
     private boolean open;
@@ -29,7 +33,7 @@ public class PrivateMine implements ConfigurationSerializable {
         BlockVector corner1 = (BlockVector) map.get("Corner1");
         BlockVector corner2 = (BlockVector) map.get("Corner2");
         MineLocations locations = (MineLocations) map.get("Locations");
-        return new PrivateMine(owner, open, new CuboidRegion(corner1, corner2), locations);
+        return new PrivateMine(owner, open, (Region) new CuboidRegion(corner1, corner2), locations);
     }
 
     @Override
