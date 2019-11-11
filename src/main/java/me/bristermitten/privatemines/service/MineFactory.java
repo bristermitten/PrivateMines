@@ -47,12 +47,13 @@ public class MineFactory {
     public PrivateMine create(Player owner) {
         try {
             Location location = manager.nextFreeLocation();
-            Vector vector = BukkitUtil.toVector(location);
             World world = FaweAPI.getWorld(location.getWorld().getName());
             ClipboardFormat format = ClipboardFormat.SCHEMATIC;
             EditSession e = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited().build();
             Schematic schematic = format.load(new FileInputStream(file));
-            vector.setY(schematic.getClipboard().getOrigin().getBlockY());
+            location.setY(schematic.getClipboard().getOrigin().getBlockY());
+            Vector vector = BukkitUtil.toVector(location);
+
             schematic.paste(e, vector, false, true, null);
             Region r = Objects.requireNonNull(schematic.getClipboard()).getRegion();
             r.setWorld(world);
@@ -62,9 +63,13 @@ public class MineFactory {
             Vector[] corners = new Vector[2];
             Material spawnMaterial = blocks.get(BlockType.SPAWNPOINT);
             Material cornerMaterial = blocks.get(BlockType.CORNER);
+
             for (Vector pt : new FastIterator(r, e)) {
-                Material type = Material.values()[world.getBlock(pt).getType()];
+                Material type = Material.values()[world.getLazyBlock(pt).getType()];
                 if (type == AIR) continue;
+                if (type.name().contains("SIGN")) {
+                    System.out.println(type);
+                }
                 if (spawnLoc == null && type == spawnMaterial) {
                     spawnLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ());
                     world.setBlock(pt, new BaseBlock(0));
@@ -84,8 +89,10 @@ public class MineFactory {
                     plugin.getLogger().warning("Mine schematic contains >2 corner blocks!");
                 }
             }
+
             if (spawnLoc == null) spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
             if (corners[0] == null || corners[1] == null) {
+                e.undo(e);
                 throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
             }
             CuboidRegion region = new CuboidRegion(corners[0], corners[1]);

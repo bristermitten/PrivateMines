@@ -10,4 +10,4 @@ Blocks:
   #Defines where the players will initially spawn. This can be changed by players
   Spawnpoint: BEACON
   #Defines a corner of the mining area. Place this above the mining area on both corners. They will be replaced with air and the mining area will go down to y=0
-  Mine-Corner: BARRIER
+  Mine-Corner: SIGN

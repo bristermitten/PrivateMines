@@ -18,8 +18,9 @@ public class MineWorldManager {
     public MineWorldManager(PMConfig config) {
         this.minesWorld = Bukkit.createWorld(
                 new WorldCreator(config.getWorldName())
-                .generator(new EmptyWorldGenerator()));
+                        .generator(new EmptyWorldGenerator()));
         this.borderDistance = config.getMinesDistance();
+        this.direction = NORTH;
     }
 
 //    public MineWorldManager(Gangs gangs) {
@@ -49,6 +50,7 @@ public class MineWorldManager {
             distance++;
             return defaultLoc;
         }
+        if (direction == null) direction = NORTH;
         Location loc = direction.add(defaultLoc, distance * borderDistance);
         direction = direction.next();
         if (direction == NORTH) distance++;
