@@ -1,11 +1,12 @@
-package me.bristermitten.privatemines.service;
+package me.bristermitten.privatemines.world;
 
 import me.bristermitten.privatemines.config.PMConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 
-import static me.bristermitten.privatemines.service.MineWorldManager.Direction.NORTH;
+import static me.bristermitten.privatemines.world.MineWorldManager.Direction.NORTH;
 
 public class MineWorldManager {
 
@@ -15,7 +16,9 @@ public class MineWorldManager {
     private Direction direction;
 
     public MineWorldManager(PMConfig config) {
-        this.minesWorld = Bukkit.getWorld(config.getWorldName());
+        this.minesWorld = Bukkit.createWorld(
+                new WorldCreator(config.getWorldName())
+                .generator(new EmptyWorldGenerator()));
         this.borderDistance = config.getMinesDistance();
     }
 

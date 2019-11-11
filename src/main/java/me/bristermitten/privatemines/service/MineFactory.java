@@ -18,6 +18,7 @@ import me.bristermitten.privatemines.config.BlockType;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineLocations;
 import me.bristermitten.privatemines.data.PrivateMine;
+import me.bristermitten.privatemines.world.MineWorldManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,15 +32,13 @@ import java.util.Objects;
 import static org.bukkit.Material.AIR;
 
 public class MineFactory {
-    private final MineStorage storage;
     private final MineWorldManager manager;
     private final File file;
     private final Map<BlockType, Material> blocks;
     private final PrivateMines plugin;
 
-    public MineFactory(PrivateMines plugin, MineStorage storage, MineWorldManager manager, PMConfig config) {
+    public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config) {
         this.plugin = plugin;
-        this.storage = storage;
         this.manager = manager;
         this.file = new File(plugin.getDataFolder(), config.getSchematicName());
         this.blocks = config.getBlockTypes();
@@ -53,7 +52,7 @@ public class MineFactory {
             ClipboardFormat format = ClipboardFormat.SCHEMATIC;
             EditSession e = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited().build();
             Schematic schematic = format.load(new FileInputStream(file));
-
+            vector.setY(schematic.getClipboard().getOrigin().getBlockY());
             schematic.paste(e, vector, false, true, null);
             Region r = Objects.requireNonNull(schematic.getClipboard()).getRegion();
             r.setWorld(world);
@@ -94,9 +93,7 @@ public class MineFactory {
             Vector max = region.getMaximumPoint().subtract(0, 1, 0);
 
             MineLocations locations = new MineLocations(spawnLoc, min, max);
-            PrivateMine mine = new PrivateMine(owner.getUniqueId(), true, r, locations);
-            storage.put(owner, mine);
-            return mine;
+            return new PrivateMine(owner.getUniqueId(), true, r, locations);
         } catch (IOException | WorldEditException e) {
             e.printStackTrace();
         }

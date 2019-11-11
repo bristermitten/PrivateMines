@@ -3,6 +3,7 @@ package me.bristermitten.privatemines.data;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 
@@ -45,5 +46,11 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void teleport(Player p) {
         p.teleport(locations.getSpawnPoint());
+    }
+
+    public void teleport() {
+        Player player = Bukkit.getPlayer(owner);
+        if (player != null)
+            teleport(player);
     }
 }
