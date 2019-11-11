@@ -22,8 +22,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly 'com.boydti:fawe-api:latest'
-    compileOnly('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
+    implementation 'com.boydti:fawe-api:latest'
+    implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
         exclude group: 'org.bukkit', module: 'bukkit'
     }
     compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"

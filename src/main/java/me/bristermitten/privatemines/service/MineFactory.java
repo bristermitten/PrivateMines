@@ -10,7 +10,6 @@ import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import me.bristermitten.privatemines.PrivateMines;
@@ -26,6 +25,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,7 +57,7 @@ public class MineFactory {
             schematic.paste(e, vector, false, true, null);
             Region r = Objects.requireNonNull(schematic.getClipboard()).getRegion();
             r.setWorld(world);
-            r.shift(vector.subtract(r.getCenter()));
+            r.shift(vector.subtract(schematic.getClipboard().getOrigin()));
 
             Location spawnLoc = null;
             Vector[] corners = new Vector[2];
@@ -67,21 +67,21 @@ public class MineFactory {
             for (Vector pt : new FastIterator(r, e)) {
                 Material type = Material.values()[world.getLazyBlock(pt).getType()];
                 if (type == AIR) continue;
-                if (type.name().contains("SIGN")) {
-                    System.out.println(type);
-                }
+
                 if (spawnLoc == null && type == spawnMaterial) {
                     spawnLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ());
                     world.setBlock(pt, new BaseBlock(0));
                     continue;
                 }
+
                 if (type == cornerMaterial) {
+                    System.out.println(type);
+                    System.out.println(pt);
                     if (corners[0] == null) {
                         corners[0] = pt;
                         world.setBlock(pt, new BaseBlock(0));
                         continue;
-                    }
-                    if (corners[1] == null) {
+                    } else if (corners[1] == null) {
                         corners[1] = pt;
                         world.setBlock(pt, new BaseBlock(0));
                         continue;
@@ -90,20 +90,19 @@ public class MineFactory {
                 }
             }
 
+            //TODO corners are given the same value, needs fixing
+            System.out.println(Arrays.toString(corners));
             if (spawnLoc == null) spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
             if (corners[0] == null || corners[1] == null) {
                 e.undo(e);
                 throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
             }
-            CuboidRegion region = new CuboidRegion(corners[0], corners[1]);
-            Vector min = region.getMinimumPoint().setY(0);
-            Vector max = region.getMaximumPoint().subtract(0, 1, 0);
 
-            MineLocations locations = new MineLocations(spawnLoc, min, max);
+            MineLocations locations = new MineLocations(spawnLoc, corners[0], corners[1]);
             return new PrivateMine(owner.getUniqueId(), true, r, locations);
         } catch (IOException | WorldEditException e) {
             e.printStackTrace();
+            return null;
         }
-        return null;
     }
 }

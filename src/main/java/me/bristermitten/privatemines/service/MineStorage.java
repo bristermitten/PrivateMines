@@ -27,10 +27,10 @@ public class MineStorage {
     public PrivateMine getOrCreate(Player p) {
         PrivateMine mine = mines.get(p);
 
-        if (mine == null) {
+//        if (mine == null) {
             mine = factory.create(p);
             mines.put(p, mine);
-        }
+//        }
 
         return mine;
     }

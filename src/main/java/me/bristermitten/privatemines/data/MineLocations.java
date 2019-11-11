@@ -36,6 +36,7 @@ public class MineLocations implements ConfigurationSerializable {
         return map;
     }
 
+
     public Location getSpawnPoint() {
         return spawnPoint;
     }
