@@ -12,7 +12,7 @@ public class PrivateMinesCommand implements CommandExecutor {
 
         Player p = (Player) sender;
 
-        String permission = "privatemines.owner.";
+        String permission = "privatemines.owner";
 
         if (cmd.getName().equalsIgnoreCase("privatemines")) {
             if (!p.hasPermission(permission)) {
