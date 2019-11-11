@@ -1,4 +1,4 @@
-# PrivateMines
+# Private Mines
 
 Needed files:
 
