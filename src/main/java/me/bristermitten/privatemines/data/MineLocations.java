@@ -3,7 +3,6 @@ package me.bristermitten.privatemines.data;
 import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Region;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -13,7 +12,7 @@ import java.util.Map;
 public class MineLocations implements ConfigurationSerializable {
     private Location spawnPoint;
 
-    private Region region;
+    private CuboidRegion region;
 
     public MineLocations(Location spawnPoint, Vector mineAreaMin, Vector mineAreaMax) {
         this.spawnPoint = spawnPoint;
@@ -45,7 +44,7 @@ public class MineLocations implements ConfigurationSerializable {
         this.spawnPoint = spawnPoint;
     }
 
-    public Region getRegion() {
+    public CuboidRegion getRegion() {
         return region;
     }
 }
