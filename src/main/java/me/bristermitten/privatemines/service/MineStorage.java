@@ -1,14 +1,18 @@
 package me.bristermitten.privatemines.service;
 
 import me.bristermitten.privatemines.data.PrivateMine;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+
+import static java.util.stream.Collectors.toList;
 
 public class MineStorage {
 
-    private final Map<Player, PrivateMine> mines = new HashMap<>();
+    private final Map<UUID, PrivateMine> mines = new HashMap<>();
 
     private final MineFactory factory;
 
@@ -16,21 +20,32 @@ public class MineStorage {
         this.factory = factory;
     }
 
-    public void save() {
+    public void save(YamlConfiguration configuration) {
+        configuration.set("Mines", mines.values().stream().map(PrivateMine::serialize).collect(toList()));
+    }
 
+    public void load(YamlConfiguration configuration) {
+        for (Map<?, ?> key : configuration.getMapList("Mines")) {
+            //noinspection unchecked
+            load(PrivateMine.deserialize((Map<String, Object>) key));
+        }
+    }
+
+    private void load(PrivateMine mine) {
+        mines.put(mine.getOwner(), mine);
     }
 
     public void put(Player p, PrivateMine mine) {
-        mines.put(p, mine);
+        mines.put(p.getUniqueId(), mine);
     }
 
     public PrivateMine getOrCreate(Player p) {
-        PrivateMine mine = mines.get(p);
+        PrivateMine mine = mines.get(p.getUniqueId());
 
-//        if (mine == null) {
+        if (mine == null) {
             mine = factory.create(p);
-            mines.put(p, mine);
-//        }
+            mines.put(p.getUniqueId(), mine);
+        }
 
         return mine;
     }

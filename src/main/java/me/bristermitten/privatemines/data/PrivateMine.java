@@ -6,10 +6,12 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import me.bristermitten.privatemines.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,8 +43,8 @@ public class PrivateMine implements ConfigurationSerializable {
     public static PrivateMine deserialize(Map<String, Object> map) {
         UUID owner = UUID.fromString((String) map.get("Owner"));
         boolean open = (boolean) map.get("Open");
-        BlockVector corner1 = (BlockVector) map.get("Corner1");
-        BlockVector corner2 = (BlockVector) map.get("Corner2");
+        com.sk89q.worldedit.Vector corner1 = Util.toVector((Vector) map.get("Corner1"));
+        com.sk89q.worldedit.Vector corner2 = Util.toVector((Vector) map.get("Corner2"));
         MineLocations locations = (MineLocations) map.get("Locations");
         return new PrivateMine(owner, open, new CuboidRegion(corner1, corner2), locations);
     }
@@ -52,8 +54,8 @@ public class PrivateMine implements ConfigurationSerializable {
         Map<String, Object> map = new HashMap<>();
         map.put("Owner", owner.toString());
         map.put("Open", open);
-        map.put("Corner1", region.getMinimumPoint().toBlockPoint());
-        map.put("Corner2", region.getMaximumPoint().toBlockPoint());
+        map.put("Corner1", Util.toVector(region.getMinimumPoint()));
+        map.put("Corner2", Util.toVector(region.getMaximumPoint().toBlockPoint()));
         map.put("Locations", locations);
         return map;
     }
@@ -66,6 +68,10 @@ public class PrivateMine implements ConfigurationSerializable {
         Player player = Bukkit.getPlayer(owner);
         if (player != null)
             teleport(player);
+    }
+
+    public UUID getOwner() {
+        return owner;
     }
 
     public void fill(Material m) {

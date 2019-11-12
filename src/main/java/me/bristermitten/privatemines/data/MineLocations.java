@@ -1,9 +1,9 @@
 package me.bristermitten.privatemines.data;
 
-import com.sk89q.worldedit.BlockVector;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
+import me.bristermitten.privatemines.Util;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -22,17 +22,18 @@ public class MineLocations implements ConfigurationSerializable {
 
     public static MineLocations deserialize(Map<String, Object> map) {
         Location spawnPoint = (Location) map.get("SpawnPoint");
-        BlockVector min = (BlockVector) map.get("Min");
-        BlockVector max = (BlockVector) map.get("Max");
+        Vector min = Util.toVector((org.bukkit.util.Vector) map.get("Min"));
+        Vector max = Util.toVector((org.bukkit.util.Vector) map.get("Max"));
         return new MineLocations(spawnPoint, min, max);
     }
 
+    //TODO cleaner serialization
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("SpawnPoint", spawnPoint);
-        map.put("Min", region.getMinimumPoint());
-        map.put("Max", region.getMaximumPoint());
+        map.put("Min", Util.toVector(region.getMinimumPoint()));
+        map.put("Max", Util.toVector(region.getMaximumPoint()));
         return map;
     }
 
