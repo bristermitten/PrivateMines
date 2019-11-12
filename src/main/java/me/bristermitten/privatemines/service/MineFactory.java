@@ -25,7 +25,6 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
@@ -60,7 +59,8 @@ public class MineFactory {
             r.shift(vector.subtract(schematic.getClipboard().getOrigin()));
 
             Location spawnLoc = null;
-            Vector[] corners = new Vector[2];
+            Vector min = null;
+            Vector max = null;
             Material spawnMaterial = blocks.get(BlockType.SPAWNPOINT);
             Material cornerMaterial = blocks.get(BlockType.CORNER);
 
@@ -75,30 +75,22 @@ public class MineFactory {
                 }
 
                 if (type == cornerMaterial) {
-                    System.out.println(type);
-                    System.out.println(pt);
-                    if (corners[0] == null) {
-                        corners[0] = pt;
-                        world.setBlock(pt, new BaseBlock(0));
-                        continue;
-                    } else if (corners[1] == null) {
-                        corners[1] = pt;
-                        world.setBlock(pt, new BaseBlock(0));
-                        continue;
-                    }
-                    plugin.getLogger().warning("Mine schematic contains >2 corner blocks!");
+                    if (min == null) {
+                        min = new Vector(pt);
+                    } else if (max == null) {
+                        max = new Vector(pt);
+                    } else
+                        plugin.getLogger().warning("Mine schematic contains >2 corner blocks!");
                 }
             }
 
-            //TODO corners are given the same value, needs fixing
-            System.out.println(Arrays.toString(corners));
             if (spawnLoc == null) spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
-            if (corners[0] == null || corners[1] == null) {
+            if (min == null || max == null || min.equals(max)) {
                 e.undo(e);
                 throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
             }
 
-            MineLocations locations = new MineLocations(spawnLoc, corners[0], corners[1]);
+            MineLocations locations = new MineLocations(spawnLoc, min, max);
             return new PrivateMine(owner.getUniqueId(), true, r, locations);
         } catch (IOException | WorldEditException e) {
             e.printStackTrace();
