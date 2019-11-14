@@ -1,0 +1,9 @@
+Menus:
+  Mines:
+    Name: "&6&lMines"
+    Size: 54
+    Items:
+      '1':
+        type: STONE
+        meta:
+

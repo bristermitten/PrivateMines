@@ -12,6 +12,7 @@ public class PMConfig {
     private int minesDistance = 150;
     private String schematicName = "mine.schematic";
     private Map<BlockType, Material> blockTypes = new HashMap<>();
+    private Material defaultBlock = Material.STONE;
 
     public PMConfig(FileConfiguration configuration) {
         load(configuration);
@@ -26,6 +27,7 @@ public class PMConfig {
         for (String block : config.getConfigurationSection("Blocks").getKeys(false)) {
             blockTypes.put(BlockType.fromName(block), Material.getMaterial(config.getString("Blocks." + block)));
         }
+        this.defaultBlock = Material.matchMaterial(config.getString("Default-Block"));
     }
 
     public Map<BlockType, Material> getBlockTypes() {
@@ -42,5 +44,9 @@ public class PMConfig {
 
     public String getSchematicName() {
         return schematicName;
+    }
+
+    public Material getDefaultBlock() {
+        return defaultBlock;
     }
 }

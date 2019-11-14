@@ -34,7 +34,7 @@ public class Pmine implements CommandExecutor {
         				ItemStack blocktype = new ItemStack(Material.STONE);
         				ItemMeta typeB = blocktype.getItemMeta();
         				
-        				List<String> lore = new ArrayList<String>();
+        				List<String> lore = new ArrayList<>();
 
         				lore.add(ChatColor.AQUA + "Click me to choose");
 						lore.add(ChatColor.AQUA + "Your mine block type");

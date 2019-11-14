@@ -5,8 +5,7 @@ plugins {
 group = pluginGroup
 version = pluginVersion
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
@@ -21,9 +20,10 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+//    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    implementation 'com.boydti:fawe-api:latest'
-    implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
+    compileOnly 'com.boydti:fawe-api:latest'
+    compileOnly('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
         exclude group: 'org.bukkit', module: 'bukkit'
     }
     compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"

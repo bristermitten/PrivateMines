@@ -35,12 +35,14 @@ public class MineFactory {
     private final File file;
     private final Map<BlockType, Material> blocks;
     private final PrivateMines plugin;
+    private final Material defaultBlock;
 
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config) {
         this.plugin = plugin;
         this.manager = manager;
         this.file = new File(plugin.getDataFolder(), config.getSchematicName());
         this.blocks = config.getBlockTypes();
+        this.defaultBlock = config.getDefaultBlock();
     }
 
     public PrivateMine create(Player owner) {
@@ -91,7 +93,7 @@ public class MineFactory {
             }
 
             MineLocations locations = new MineLocations(spawnLoc, min, max);
-            return new PrivateMine(owner.getUniqueId(), true, r, locations);
+            return new PrivateMine(owner.getUniqueId(), true, defaultBlock, r, locations);
         } catch (IOException | WorldEditException e) {
             e.printStackTrace();
             return null;

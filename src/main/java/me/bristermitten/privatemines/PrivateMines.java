@@ -47,7 +47,7 @@ public final class PrivateMines extends JavaPlugin {
     private void loadFiles() throws IOException, InvalidConfigurationException {
         saveResource("mines.yml", false);
         minesConfig = new YamlConfiguration();
-        minesConfig.load(new InputStreamReader(getResource("mines.yml")));
+        minesConfig.load(new File(getDataFolder(), "mines.yml"));
         storage.load(minesConfig);
         getLogger().info("Loaded mines.yml");
     }

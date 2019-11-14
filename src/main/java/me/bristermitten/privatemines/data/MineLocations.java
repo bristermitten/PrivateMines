@@ -21,9 +21,9 @@ public class MineLocations implements ConfigurationSerializable {
     }
 
     public static MineLocations deserialize(Map<String, Object> map) {
-        Location spawnPoint = (Location) map.get("SpawnPoint");
-        Vector min = Util.toVector((org.bukkit.util.Vector) map.get("Min"));
-        Vector max = Util.toVector((org.bukkit.util.Vector) map.get("Max"));
+        Location spawnPoint = Location.deserialize((Map<String, Object>) map.get("SpawnPoint"));
+        Vector min = Util.toVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Min")));
+        Vector max = Util.toVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Max")));
         return new MineLocations(spawnPoint, min, max);
     }
 
@@ -31,9 +31,9 @@ public class MineLocations implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("SpawnPoint", spawnPoint);
-        map.put("Min", Util.toVector(region.getMinimumPoint()));
-        map.put("Max", Util.toVector(region.getMaximumPoint()));
+        map.put("SpawnPoint", spawnPoint.serialize());
+        map.put("Min", Util.toVector(region.getMinimumPoint()).serialize());
+        map.put("Max", Util.toVector(region.getMaximumPoint()).serialize());
         return map;
     }
 

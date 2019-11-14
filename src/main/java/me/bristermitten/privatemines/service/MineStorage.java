@@ -26,13 +26,13 @@ public class MineStorage {
 
     public void load(YamlConfiguration configuration) {
         for (Map<?, ?> key : configuration.getMapList("Mines")) {
-            //noinspection unchecked
             load(PrivateMine.deserialize((Map<String, Object>) key));
         }
     }
 
     private void load(PrivateMine mine) {
         mines.put(mine.getOwner(), mine);
+        System.out.println("Loaded mine for " + mine.getOwner());
     }
 
     public void put(Player p, PrivateMine mine) {
