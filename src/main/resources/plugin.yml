@@ -7,3 +7,4 @@ depend:
   - WorldEdit
   - FastAsyncWorldEdit
   - Vault
+  - WorldGuard

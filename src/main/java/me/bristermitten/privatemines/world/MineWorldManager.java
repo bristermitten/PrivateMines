@@ -6,6 +6,9 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static me.bristermitten.privatemines.world.MineWorldManager.Direction.NORTH;
 
 public class MineWorldManager {
@@ -23,25 +26,16 @@ public class MineWorldManager {
         this.direction = NORTH;
     }
 
-//    public MineWorldManager(Gangs gangs) {
-//        this(gangs.cellCache);
-//    }
-//
-//    public MineWorldManager(CellCache cellCache) {
-//        this(cellCache, NORTH);
-//    }
-//
-//    public MineWorldManager(CellCache cellCache, Direction direction) {
-//        this.direction = direction;
-//        this.cellCache = cellCache;
-//    }
-
-    public int getDirection() {
-        return direction.ordinal();
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("Direction", direction.ordinal());
+        map.put("Distance", distance);
+        return map;
     }
 
-    public void setDirection(int direction) {
-        this.direction = Direction.values()[direction];
+    public void load(Map<String, Object> map) {
+        this.direction = Direction.values()[(int) map.get("Direction")];
+        this.distance = (int) map.get("Distance");
     }
 
     public synchronized Location nextFreeLocation() {
@@ -61,14 +55,6 @@ public class MineWorldManager {
     public void reset() {
         direction = NORTH;
         distance = 0;
-    }
-
-    public int getDistance() {
-        return distance;
-    }
-
-    public void setDistance(int distance) {
-        this.distance = distance;
     }
 
     public enum Direction {

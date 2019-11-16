@@ -1,29 +1,32 @@
 package me.bristermitten.privatemines.view;
 
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.service.MineStorage;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class PrivateMineMenu {
 
-    private final Player p;
+    private static MenuSpec original;
 
-    private final MineStorage storage;
+    public PrivateMineMenu(Player p, PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig) {
 
-    public PrivateMineMenu(Player p, PrivateMines plugin, MenuConfig config, MineStorage storage) {
-        this.p = p;
-        this.storage = storage;
-
+        if (original == null) {
+            original = new MenuSpec();
+            original.putAction("go-to-mine", e -> storage.getOrCreate((Player) e.getWhoClicked()).teleport());
+            original.putAction("view-mines", e -> new MinesMenu((Player) e.getWhoClicked(), config, plugin, storage));
+            original.putAction("change-block", e -> new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
+                    config, storage));
+        }
+        original.load(config.forName("Main"), "%BLOCK%", (storage.has(p) ? storage.get(p).getBlock().name() :
+                Material.STONE.name()));
 
         MenuSpec menuSpec = new MenuSpec();
-        menuSpec.load(config.forName("Mines"));
-        menuSpec.putAction("go-to-mine", e -> {
-            storage.getOrCreate((Player) e.getWhoClicked()).teleport();
-        });
-        menuSpec.genMenu();
+        menuSpec.load(original);
         menuSpec.register(plugin);
-        p.openInventory(menuSpec.getMenu());
+        p.openInventory(menuSpec.genMenu());
     }
 }

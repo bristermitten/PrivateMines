@@ -18,15 +18,17 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
 //    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly 'com.boydti:fawe-api:latest'
-    compileOnly('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
+    implementation 'com.boydti:fawe-api:latest'
+    implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
         exclude group: 'org.bukkit', module: 'bukkit'
     }
+    implementation 'com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT'
     compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 compileJava {
@@ -36,6 +38,11 @@ compileJava {
 }
 shadowJar {
     relocate 'co.aikar.commands', 'me.bristermitten.acf'
+    minimize()
+    dependencies {
+        include(dependency('co.aikar:.*'))
+        include(dependency('.*:expiringmap'))
+    }
 }
 
 build.dependsOn shadowJar

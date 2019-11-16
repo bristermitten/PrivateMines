@@ -3,8 +3,11 @@ package me.bristermitten.privatemines.config;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PMConfig {
 
@@ -13,6 +16,8 @@ public class PMConfig {
     private String schematicName = "mine.schematic";
     private Map<BlockType, Material> blockTypes = new HashMap<>();
     private Material defaultBlock = Material.STONE;
+
+    private List<Material> blockOptions = new ArrayList<>();
 
     public PMConfig(FileConfiguration configuration) {
         load(configuration);
@@ -28,6 +33,8 @@ public class PMConfig {
             blockTypes.put(BlockType.fromName(block), Material.getMaterial(config.getString("Blocks." + block)));
         }
         this.defaultBlock = Material.matchMaterial(config.getString("Default-Block"));
+        this.blockOptions =
+                config.getStringList("Block-Options").stream().map(Material::matchMaterial).collect(Collectors.toList());
     }
 
     public Map<BlockType, Material> getBlockTypes() {
@@ -48,5 +55,9 @@ public class PMConfig {
 
     public Material getDefaultBlock() {
         return defaultBlock;
+    }
+
+    public List<Material> getBlockOptions() {
+        return blockOptions;
     }
 }

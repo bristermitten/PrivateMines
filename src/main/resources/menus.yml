@@ -1,9 +1,45 @@
 Menus:
-  Mines:
-    Name: "&6&lMines"
-    Size: 54
+  Main:
+    Title: "&6&lMine Menu"
+    Size: 9
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
     Items:
-      '1':
-        type: STONE
-        meta:
-
+      '2':
+        Action: "change-block"
+        Type: "%BLOCK%"
+        Name: "&6&lChange Mine Block"
+      '4':
+        Action: "go-to-mine"
+        Type: ENDER_PEARL
+        Name: "&6&lGo to your Mine"
+      '6':
+        Action: 'view-mines'
+        Type: GLASS
+        Name: "&6&lView other Mines"
+  Mines:
+    Title: "&6&lMines"
+    Size: 54
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
+    Items:
+      Every:
+        Type: ENDER_PEARL
+        Name: "&6%player%'s mine"
+  Blocks:
+    Title: "&6&lChange Block"
+    Size: 9
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
+    Items:
+      Every:
+        Type: STONE
+        Name: "&6%block%"
+        Lore:
+          - "&7Click to change your mine block to &6%block%"

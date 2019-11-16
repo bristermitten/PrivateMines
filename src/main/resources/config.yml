@@ -14,3 +14,9 @@ Blocks:
 
 #The default block for mines
 Default-Block: REDSTONE_BLOCK
+
+Block-Options:
+  - REDSTONE_BLOCK
+  - EMERALD_BLOCK
+  - DIAMOND_BLOCK
+  - GOLD_BLOCK

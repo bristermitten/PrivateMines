@@ -12,6 +12,14 @@ import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.domains.DefaultDomain;
+import com.sk89q.worldguard.domains.PlayerDomain;
+import com.sk89q.worldguard.protection.flags.DefaultFlag;
+import com.sk89q.worldguard.protection.flags.Flags;
+import com.sk89q.worldguard.protection.flags.StateFlag;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.BlockType;
 import me.bristermitten.privatemines.config.PMConfig;
@@ -28,6 +36,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.sk89q.worldguard.protection.flags.DefaultFlag.BLOCK_BREAK;
+import static com.sk89q.worldguard.protection.flags.DefaultFlag.BLOCK_PLACE;
+import static com.sk89q.worldguard.protection.flags.StateFlag.State.DENY;
 import static org.bukkit.Material.AIR;
 
 public class MineFactory {
@@ -92,11 +103,27 @@ public class MineFactory {
                 throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
             }
 
+            ProtectedRegion region = new ProtectedCuboidRegion(owner.getUniqueId().toString(),
+                    r.getMinimumPoint().toBlockPoint(), r.getMaximumPoint().toBlockPoint());
+
+            region.setFlag(BLOCK_BREAK, DENY);
+            region.setFlag(BLOCK_PLACE, DENY);
+            DefaultDomain domain = new DefaultDomain();
+            domain.addPlayer(owner.getUniqueId());
+            region.setOwners(domain);
+            WorldGuardPlugin.inst().getRegionManager(location
+                    .getWorld()).addRegion(region);
+
+
             MineLocations locations = new MineLocations(spawnLoc, min, max);
-            return new PrivateMine(owner.getUniqueId(), true, defaultBlock, r, locations);
+            return new PrivateMine(owner.getUniqueId(), true, defaultBlock, r, locations, region);
         } catch (IOException | WorldEditException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public MineWorldManager getManager() {
+        return manager;
     }
 }

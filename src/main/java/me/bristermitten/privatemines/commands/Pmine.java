@@ -18,63 +18,64 @@ public class Pmine implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		
-        if (sender instanceof Player) {
 
-        	Player p = (Player) sender;
-        	//Player target = Bukkit.getPlayer(args[0]);
-        	
-        	if (cmd.getName().equalsIgnoreCase("pmine")) {
-        		
-        		if (args.length == 0) {
-        			if (p.hasPermission("privatemines.owner")) {
-        				
-        				Inventory inv = Bukkit.createInventory(null, 18, "Private Mines Owner Menu");
-        				
-        				ItemStack blocktype = new ItemStack(Material.STONE);
-        				ItemMeta typeB = blocktype.getItemMeta();
-        				
-        				List<String> lore = new ArrayList<>();
+		if (!(sender instanceof Player)) {
+			return true;
+		}
 
-        				lore.add(ChatColor.AQUA + "Click me to choose");
-						lore.add(ChatColor.AQUA + "Your mine block type");
-						lore.add(ChatColor.AQUA + "Current: " + ChatColor.YELLOW + "GOLD");
-        				
-        				typeB.setDisplayName(ChatColor.RED + "Block Type");
-        				typeB.setLore(lore);
-        				
-        				blocktype.setItemMeta(typeB);
-        				
-        				inv.setItem(13, blocktype);
-        				
-        				p.openInventory(inv);
-        			} else {
-        				if (!p.hasPermission("privatemines.owner")) {
-            				Inventory inv2 = Bukkit.createInventory(null, 9 * 3, "You don't own a Private Mine!");
-            				
-            				ItemStack no = new ItemStack(Material.REDSTONE_BLOCK);
-            				ItemMeta nope = no.getItemMeta();
-            				
-            				List<String> lore = new ArrayList<String>();
+		Player p = (Player) sender;
+		//Player target = Bukkit.getPlayer(args[0]);
 
-            				lore.add(" ");
-            				lore.add(ChatColor.AQUA + "You currently don't own a Private Mine!");
-            				lore.add(ChatColor.AQUA + "If you'd like to mine by yourself feel free");
-            				lore.add(ChatColor.AQUA + "to purchase one over at store.examplestore.com");
-            				
-            				nope.setDisplayName(ChatColor.RED + "You don't own a Private Mine!");
-            				nope.setLore(lore);
-            				
-            				no.setItemMeta(nope);
-            				
-            				inv2.setItem(13, no);
-            				
-            				p.openInventory(inv2);
-        				}
-        			}
-        		}
-        	}
-	}
+		if (cmd.getName().equalsIgnoreCase("pmine")) {
+
+			if (args.length == 0) {
+				if (p.hasPermission("privatemines.owner")) {
+
+					Inventory inv = Bukkit.createInventory(null, 18, "Private Mines Owner Menu");
+
+					ItemStack blocktype = new ItemStack(Material.STONE);
+					ItemMeta typeB = blocktype.getItemMeta();
+
+					List<String> lore = new ArrayList<>();
+
+					lore.add(ChatColor.AQUA + "Click me to choose");
+					lore.add(ChatColor.AQUA + "Your mine block type");
+					lore.add(ChatColor.AQUA + "Current: " + ChatColor.YELLOW + "GOLD");
+
+					typeB.setDisplayName(ChatColor.RED + "Block Type");
+					typeB.setLore(lore);
+
+					blocktype.setItemMeta(typeB);
+
+					inv.setItem(13, blocktype);
+
+					p.openInventory(inv);
+				} else {
+					if (!p.hasPermission("privatemines.owner")) {
+						Inventory inv2 = Bukkit.createInventory(null, 9 * 3, "You don't own a Private Mine!");
+
+						ItemStack no = new ItemStack(Material.REDSTONE_BLOCK);
+						ItemMeta nope = no.getItemMeta();
+
+						List<String> lore = new ArrayList<>();
+
+						lore.add(" ");
+						lore.add(ChatColor.AQUA + "You currently don't own a Private Mine!");
+						lore.add(ChatColor.AQUA + "If you'd like to mine by yourself feel free");
+						lore.add(ChatColor.AQUA + "to purchase one over at store.examplestore.com");
+
+						nope.setDisplayName(ChatColor.RED + "You don't own a Private Mine!");
+						nope.setLore(lore);
+
+						no.setItemMeta(nope);
+
+						inv2.setItem(13, no);
+
+						p.openInventory(inv2);
+					}
+				}
+			}
+		}
 		return false;
 	}
 }
