@@ -36,6 +36,7 @@ public class Util {
         return map;
     }
 
+    @SuppressWarnings("unchecked")
     public static ItemStack deserializeStack(Map<String, Object> map, String... placeholders) {
         Map<String, String> mappings = arrayToMap(placeholders);
         ItemStack s = new ItemStack(Material.AIR);
@@ -73,6 +74,10 @@ public class Util {
             mapping.put(key, value);
         }
         return mapping;
+    }
+
+    public static com.sk89q.worldedit.Vector deserializeWeVector(Map<String, Object> map) {
+        return toVector(Vector.deserialize(map));
     }
 
     public static String prettify(String s) {

@@ -1,9 +1,14 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package me.bristermitten.privatemines.config;
 
 public enum BlockType {
     SPAWNPOINT("Spawnpoint"),
-    CORNER("Mine-Corner");
-
+    CORNER("Mine-Corner"),
+    NPC("Sell-NPC");
 
     private final String name;
 
@@ -17,10 +22,11 @@ public enum BlockType {
                 return value;
             }
         }
+
         return null;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 }

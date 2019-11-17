@@ -33,11 +33,12 @@ public class ChangeBlockMenu {
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%block%", Util.prettify(block.name()));
                     itemMeta.setDisplayName(name);
-                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%block%", Util.prettify(block.name()))).collect(Collectors.toList());
+                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%block%",
+                            Util.prettify(block.name()))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
                     return i;
                 },
-                block -> e -> storage.get(p).setBlock(block), blocks));
+                block -> e -> storage.getOrCreate(p).setBlock(block), blocks));
     }
 }

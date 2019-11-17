@@ -1,23 +1,33 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package me.bristermitten.privatemines.data;
 
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
+import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.Util;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.util.Vector;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -30,102 +40,142 @@ public class PrivateMine implements ConfigurationSerializable {
     private EditSession editSession;
     private BukkitTask task;
     private ProtectedRegion wgRegion;
+    private UUID npcId;
+    private double taxPercentage;
 
     public PrivateMine(UUID owner, boolean open, Material block, Region region, MineLocations locations,
-                       ProtectedRegion wgRegion) {
+                       ProtectedRegion wgRegion, UUID npc, double taxPercentage) {
         this.owner = owner;
         this.open = open;
         this.region = region;
         this.locations = locations;
         this.editSession =
-                new EditSessionBuilder(region.getWorld()).allowedRegions(new Region[]{region, locations.getRegion()})
-                        .build();
+                new EditSessionBuilder(Objects.requireNonNull(region.getWorld()))
+                        .allowedRegions(new Region[]{region}).build();
         this.block = block;
         this.wgRegion = wgRegion;
-        fill(block);
-
+        this.npcId = npc;
+        this.taxPercentage = taxPercentage;
+        this.fill(block);
     }
 
+    @SuppressWarnings("unchecked")
     public static PrivateMine deserialize(Map<String, Object> map) {
         UUID owner = UUID.fromString((String) map.get("Owner"));
-        boolean open = (boolean) map.get("Open");
+        boolean open = (Boolean) map.get("Open");
         Material block = Material.matchMaterial((String) map.get("Block"));
-        com.sk89q.worldedit.Vector corner1 =
-                Util.toVector(Vector.deserialize((Map<String, Object>) map.get("Corner1")));
-        com.sk89q.worldedit.Vector corner2 =
-                Util.toVector(Vector.deserialize((Map<String, Object>) map.get("Corner2")));
+        Vector corner1 = Util.deserializeWeVector((Map<String, Object>) map.get("Corner1"));
+        Vector corner2 = Util.deserializeWeVector(((Map<String, Object>) map.get("Corner2")));
         MineLocations locations = MineLocations.deserialize((Map<String, Object>) map.get("Locations"));
         CuboidRegion region = new CuboidRegion(corner1, corner2);
         region.setWorld(new BukkitWorld(locations.getSpawnPoint().getWorld()));
-
         ProtectedRegion wgRegion =
                 WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld()).getRegion(owner.toString());
-        return new PrivateMine(owner, open, block, region, locations, wgRegion);
+
+        UUID npcId = UUID.fromString((String) map.get("NPC"));
+        double taxPercentage = (Double) map.get("Tax");
+
+        return new PrivateMine(owner, open, block, region, locations, wgRegion, npcId, taxPercentage);
+    }
+
+    public double getTaxPercentage() {
+        return this.taxPercentage;
+    }
+
+    public void setTaxPercentage(double amount) {
+        this.taxPercentage = amount;
+    }
+
+    public boolean contains(Player p) {
+        return this.region.contains(Util.toVector(p.getLocation().toVector()));
     }
 
     public Material getBlock() {
-        return block;
+        return this.block;
     }
 
     public void setBlock(Material block) {
-        if (!block.isBlock()) return;
-        this.block = block;
-        fill(block);
+        if (block.isBlock()) {
+            this.block = block;
+            this.fill(block);
+        }
     }
 
-    public void getBlock(Material block) {
-        this.block = block;
-    }
-
-    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
-        map.put("Owner", owner.toString());
-        map.put("Open", open);
-        map.put("Block", block.name());
-        map.put("Locations", locations.serialize());
-        map.put("Corner1", Util.toVector(region.getMinimumPoint()).serialize());
-        map.put("Corner2", Util.toVector(region.getMaximumPoint()).serialize());
+        map.put("Owner", this.owner.toString());
+        map.put("Open", this.open);
+        map.put("Block", this.block.name());
+        map.put("Locations", this.locations.serialize());
+        map.put("Corner1", Util.toVector(this.region.getMinimumPoint()).serialize());
+        map.put("Corner2", Util.toVector(this.region.getMaximumPoint()).serialize());
+        map.put("NPC", this.npcId.toString());
+        map.put("Tax", this.taxPercentage);
         return map;
     }
 
     public void teleport(Player p) {
-        p.teleport(locations.getSpawnPoint());
-    }
-
-    public void teleport() {
-        Player player = Bukkit.getPlayer(owner);
-        if (player != null)
-            teleport(player);
+        p.teleport(this.locations.getSpawnPoint());
     }
 
     public UUID getOwner() {
         return owner;
     }
 
-    public void fill(Material m) {
-        editSession.setBlocks(locations.getRegion(), new BaseBlock(m.getId()));
-        editSession.flushQueue();
+    public void teleport() {
+        Player player = Bukkit.getPlayer(this.owner);
+        if (player != null) {
+            this.teleport(player);
+        }
 
-        if (task != null)
-            task.cancel();
-        task = Bukkit.getScheduler().runTaskLater(PrivateMines.getPlugin(PrivateMines.class), () -> fill(block),
-                60 * 20);
     }
 
     public boolean isOpen() {
         return open;
     }
 
-    public void delete() {
-        if (task != null)
-            task.cancel();
+    public void fill(Material m) {
+        //free any players
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (wgRegion.contains(Util.toVector(player.getLocation().toVector()))) {
+            if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
+                Location location = player.getLocation();
+                location.setY(locations.getRegion().getMaximumPoint().getY());
+                player.teleport(location);
+            }
+        }
+
+        //noinspection deprecation
+        editSession.setBlocks(locations.getRegion(), new BaseBlock(m.getId()));
+        editSession.flushQueue();
+        if (task != null) {
+            task.cancel();
+        }
+
+        task = Bukkit.getScheduler().runTaskLater(PrivateMines.getPlugin(PrivateMines.class),
+                () -> fill(block), 1200L);
+    }
+
+    public void delete() {
+        if (task != null) {
+            task.cancel();
+        }
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (contains(player)) {
                 player.performCommand("spawn");
             }
         }
+
+        //noinspection deprecation
         editSession.setBlocks(region, new BaseBlock(0));
         editSession.flushQueue();
+        RegionManager regionManager =
+                WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld());
+        regionManager.removeRegion(wgRegion.getId());
+        regionManager.removeRegion(locations.getWgRegion().getId());
+
+        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
+        if (npc != null)
+            npc.destroy();
     }
 }

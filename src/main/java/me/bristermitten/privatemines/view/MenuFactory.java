@@ -23,4 +23,8 @@ public class MenuFactory {
     public PrivateMineMenu createMenu(Player p) {
         return new PrivateMineMenu(p, plugin, config, storage, pmConfig);
     }
+
+    public MinesMenu createMinesMenu(Player p) {
+        return new MinesMenu(p, config, plugin, storage);
+    }
 }

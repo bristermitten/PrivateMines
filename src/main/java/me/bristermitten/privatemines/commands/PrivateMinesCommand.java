@@ -1,25 +1,27 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
+
 package me.bristermitten.privatemines.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import me.bristermitten.privatemines.Util;
+import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
-import static me.bristermitten.privatemines.Util.color;
-import static me.bristermitten.privatemines.Util.prettify;
-
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
-
     private final MenuFactory factory;
     private final MineStorage storage;
 
@@ -29,63 +31,95 @@ public class PrivateMinesCommand extends BaseCommand {
     }
 
     @Default
-    @CommandPermission("privatemines.main")
-    public void mainCommand(Player p) {
-        factory.createMenu(p);
+    @Description("Manage your Private Mine or go to others")
+    public void main(Player p) {
+        if (p.hasPermission("privatemines.owner")) {
+            factory.createMenu(p);
+        } else {
+            factory.createMinesMenu(p);
+        }
+    }
+
+
+    @SuppressWarnings("deprecation")
+    @HelpCommand
+    public void help(CommandIssuer issuer) {
+        getCommandHelp().showHelp(issuer);
+    }
+
+    @Subcommand("tax")
+    @CommandPermission("privatemines.owner")
+    @Description("Set your mine's tax percentage")
+    public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage) {
+        PrivateMine mine = storage.getOrCreate(p);
+        if (taxPercentage == null) {
+            getCurrentCommandIssuer()
+                    .sendInfo(LangKeys.TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
+            return;
+        }
+        mine.setTaxPercentage(taxPercentage);
+        getCurrentCommandIssuer()
+                .sendInfo(LangKeys.TAX_SET, "{tax}", String.valueOf(mine.getTaxPercentage()));
     }
 
     @Subcommand("give")
     @CommandPermission("privatemines.give")
-    public void give(Player p, OnlinePlayer t) {
-        Player target = t.getPlayer();
-        if (storage.has(target)) {
-            p.sendMessage(color("&cThis player already has a Private Mine."));
+    @CommandCompletion("@players")
+    @Description("Give a Player a PrivateMine")
+    public void give(OnlinePlayer target) {
+        Player t = target.getPlayer();
+        if (storage.has(t)) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
             return;
         }
-
-        storage.getOrCreate(target);
-        target.sendMessage(color("&aYou've been given a Private Mine! Type /pm to go to it!"));
-        p.sendMessage(color("&aPrivate Mine given."));
+        storage.getOrCreate(t).teleport();
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
     }
 
     @Subcommand("delete")
     @CommandPermission("privatemines.delete")
-    public void delete(Player p, OnlinePlayer t) {
-        Player target = t.getPlayer();
-        if (!storage.has(target)) {
-            p.sendMessage(color("&cThis player doesn't have a Private Mine."));
+    @CommandCompletion("@players")
+    @Description("Delete a Player's PrivateMine")
+    public void delete(OnlinePlayer target) {
+        Player t = target.getPlayer();
+        if (!storage.has(t)) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-
-        PrivateMine mine = storage.get(target);
+        PrivateMine mine = storage.get(t);
         mine.delete();
-        storage.remove(target);
+        storage.remove(t);
     }
 
     @Subcommand("status")
     @CommandPermission("privatemines.status")
-    public void status(Player p, OnlinePlayer t) {
-        Player target = t.getPlayer();
-        if (!storage.has(target)) {
-            p.sendMessage(color("&cThis player doesn't have a Private Mine."));
+    @CommandCompletion("@players")
+    @Description("View info about a Player's Private Mine")
+    public void status(Player p, OnlinePlayer target) {
+        Player t = target.getPlayer();
+        if (!storage.has(t)) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(target);
-        p.sendMessage(color("&7Block Type:        &6" + prettify(mine.getBlock().name())));
+        PrivateMine mine = storage.get(t);
+        p.sendMessage(Util.color("&7Block Type: &6" + Util.prettify(mine.getBlock().name())));
         p.spigot().sendMessage(new ComponentBuilder("").color(ChatColor.GOLD).
-                append("Click to teleport").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                "pm teleport " + target.getName())).create());
+                append("Click to teleport").
+                event(new ClickEvent(Action.RUN_COMMAND, "/pm teleport " + t.getName()))
+                .create());
     }
 
     @Subcommand("teleport")
     @CommandPermission("privatemines.teleport")
-    public void teleport(Player p, OnlinePlayer t) {
-        Player target = t.getPlayer();
-        if (!storage.has(target)) {
-            p.sendMessage(color("&cThis player doesn't have a Private Mine."));
+    @CommandCompletion("@players")
+    @Description("Teleport to a Player's PrivateMine")
+    public void teleport(Player p, OnlinePlayer target) {
+        Player t = target.getPlayer();
+        if (!storage.has(t)) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(target);
+        PrivateMine mine = storage.get(t);
         mine.teleport(p);
     }
 }

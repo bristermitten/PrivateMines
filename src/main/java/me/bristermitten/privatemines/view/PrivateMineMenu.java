@@ -13,7 +13,6 @@ public class PrivateMineMenu {
     private static MenuSpec original;
 
     public PrivateMineMenu(Player p, PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig) {
-
         if (original == null) {
             original = new MenuSpec();
             original.putAction("go-to-mine", e -> storage.getOrCreate((Player) e.getWhoClicked()).teleport());

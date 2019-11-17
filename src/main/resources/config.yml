@@ -11,12 +11,26 @@ Blocks:
   Spawnpoint: BEACON
   #Defines a corner of the mining area. Place this at both corners. They will be replaced with air and the mine will be filled
   Mine-Corner: POWERED_RAIL
+  Sell-NPC: WOOL
 
 #The default block for mines
 Default-Block: REDSTONE_BLOCK
 
+#Options for types of block a mine can be made of
 Block-Options:
   - REDSTONE_BLOCK
   - EMERALD_BLOCK
   - DIAMOND_BLOCK
   - GOLD_BLOCK
+
+#Name for the Sell NPC
+NPC-Name: Merchant
+NPC-Skin: TraderNPC
+
+Tax-Percentage: 5
+
+Colors:
+  INFO: GOLD
+  SYNTAX: AQUA
+  ERROR: RED
+  HELP: DARK_BLUE
