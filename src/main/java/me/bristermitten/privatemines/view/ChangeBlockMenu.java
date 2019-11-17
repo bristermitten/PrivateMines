@@ -5,6 +5,7 @@ import me.bristermitten.privatemines.Util;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
+import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ public class ChangeBlockMenu {
         MenuSpec spec = new MenuSpec();
         spec.load(original);
         spec.register(plugin);
+        PrivateMine mine = storage.getOrCreate(p);
         Material[] blocks = config.getBlockOptions().toArray(new Material[]{});
         p.openInventory(spec.genMenu((block, i) -> {
                     i.setType(block);
@@ -39,6 +41,6 @@ public class ChangeBlockMenu {
                     i.setItemMeta(itemMeta);
                     return i;
                 },
-                block -> e -> storage.getOrCreate(p).setBlock(block), blocks));
+                block -> e -> mine.setBlock(block), blocks));
     }
 }

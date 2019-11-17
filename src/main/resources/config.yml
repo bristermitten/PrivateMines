@@ -27,8 +27,10 @@ Block-Options:
 NPC-Name: Merchant
 NPC-Skin: TraderNPC
 
+#Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
 
+#Color Customisation for messages
 Colors:
   INFO: GOLD
   SYNTAX: AQUA

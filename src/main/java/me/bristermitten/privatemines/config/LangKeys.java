@@ -9,7 +9,9 @@ public enum LangKeys implements MessageKeyProvider {
     ERR_PLAYER_HAS_MINE,
     ERR_PLAYER_HAS_NO_MINE,
 
-    INFO_MINE_GIVEN;
+    INFO_MINE_GIVEN,
+    INFO_MINE_OPENED,
+    INFO_MINE_CLOSED;
 
     private final MessageKey key = MessageKey.of("privatemines." + name().toLowerCase());
 

@@ -28,6 +28,6 @@ public class SellNPC {
     }
 
     public NPC npc() {
-        return this.npc;
+        return npc;
     }
 }

@@ -62,6 +62,24 @@ public class PrivateMinesCommand extends BaseCommand {
                 .sendInfo(LangKeys.TAX_SET, "{tax}", String.valueOf(mine.getTaxPercentage()));
     }
 
+    @Subcommand("open")
+    @CommandPermission("privatemines.owner")
+    @Description("Allow other players into your mine")
+    public void open(Player p) {
+        PrivateMine mine = storage.getOrCreate(p);
+        mine.setOpen(true);
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
+    }
+
+    @Subcommand("close")
+    @CommandPermission("privatemines.owner")
+    @Description("Close your mine from other players")
+    public void close(Player p) {
+        PrivateMine mine = storage.getOrCreate(p);
+        mine.setOpen(false);
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
+    }
+
     @Subcommand("give")
     @CommandPermission("privatemines.give")
     @CommandCompletion("@players")

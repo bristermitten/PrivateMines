@@ -91,7 +91,7 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public Material getBlock() {
-        return this.block;
+        return block;
     }
 
     public void setBlock(Material block) {
@@ -115,7 +115,7 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public void teleport(Player p) {
-        p.teleport(this.locations.getSpawnPoint());
+        p.teleport(locations.getSpawnPoint());
     }
 
     public UUID getOwner() {
@@ -124,10 +124,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void teleport() {
         Player player = Bukkit.getPlayer(this.owner);
-        if (player != null) {
-            this.teleport(player);
-        }
-
+        if (player != null) teleport(player);
     }
 
     public boolean isOpen() {
@@ -177,5 +174,9 @@ public class PrivateMine implements ConfigurationSerializable {
         NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
         if (npc != null)
             npc.destroy();
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 }

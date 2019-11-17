@@ -134,7 +134,18 @@ public class MenuSpec {
                 if (!e.getInventory().getHolder().equals(holder)) return;
                 InventoryClickEvent.getHandlerList().unregister(l);
                 e.getHandlers().unregister(l);
+
+                //dereference to allow gc
                 l = null;
+                actionMap.clear();
+                actionSlotMap.clear();
+                conditionMap.clear();
+                conditionSlotMap.clear();
+                itemsMap.clear();
+                inventory = null;
+                backgroundItem = null;
+                everyItem = null;
+                title = null;
             }
         };
     }

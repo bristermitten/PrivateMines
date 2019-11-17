@@ -138,8 +138,8 @@ public class MineFactory {
             mineRegion.setFlag(DefaultFlag.BLOCK_BREAK, State.ALLOW);
             regionManager.addRegion(mineRegion);
             MineLocations locations = new MineLocations(spawnLoc, min, max, mineRegion);
-            NPC npc = (new SellNPC(config.getNPCName(), config.getNpcSkin(), npcLoc,
-                    owner.getUniqueId())).npc();
+            NPC npc = new SellNPC(config.getNPCName(), config.getNpcSkin(), npcLoc,
+                    owner.getUniqueId()).npc();
             return new PrivateMine(owner.getUniqueId(), true, this.config.getDefaultBlock(), r,
                     locations, region, npc.getUniqueId(), this.config.getTaxPercentage());
 
