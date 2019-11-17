@@ -20,14 +20,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SellNPCTrait extends Trait {
     @Persist("owner")
     @DelegatePersistence(SellNPCTrait.UUIDPersister.class)
     private UUID owner;
     private MineStorage storage = (PrivateMines.getPlugin(PrivateMines.class)).getStorage();
-    private AtomicBoolean cooldown = new AtomicBoolean(false);
 
     public SellNPCTrait() {
         super("SellNPC");
@@ -42,18 +40,13 @@ public class SellNPCTrait extends Trait {
         if (!e.getNPC().equals(npc)) {
             return;
         }
-        if (cooldown.get()) {
-            return;
-        }
         e.getClicker().performCommand("sellall");
-        cooldown.set(true);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(PrivateMines.getPlugin(PrivateMines.class),
-                () -> cooldown.set(false), 20L);
     }
 
     @EventHandler
     public void onAutoSell(AutoSellEvent e) {
-        PrivateMine privateMine = this.storage.get(this.owner);
+        if (e.getPlayer().getUniqueId().equals(owner)) return;
+        PrivateMine privateMine = storage.get(owner);
         if (privateMine == null) {
             return;
         }
@@ -62,11 +55,12 @@ public class SellNPCTrait extends Trait {
         }
         e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
         double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
-        PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(this.owner), tax);
+        PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
     }
 
     @EventHandler
     public void onSellAll(SellAllEvent e) {
+        if (e.getPlayer().getUniqueId().equals(owner)) return;
         PrivateMine privateMine = storage.get(owner);
         if (privateMine == null) {
             return;
@@ -81,6 +75,7 @@ public class SellNPCTrait extends Trait {
 
     @EventHandler
     public void onSignSell(SignSellEvent e) {
+        if (e.getPlayer().getUniqueId().equals(owner)) return;
         PrivateMine privateMine = storage.get(owner);
         if (privateMine == null) {
             return;

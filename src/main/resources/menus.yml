@@ -30,6 +30,9 @@ Menus:
       Every:
         Type: ENDER_PEARL
         Name: "&6%player%'s mine"
+        Lore:
+          - "&7Tax: &6%tax%%"
+          - "&7Block Type: &6%block%"
   Blocks:
     Title: "&6&lChange Block"
     Size: 9

@@ -1,6 +1,6 @@
 package me.bristermitten.privatemines;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -80,8 +81,22 @@ public class Util {
         return toVector(Vector.deserialize(map));
     }
 
+    public static void replaceMeta(ItemMeta meta, String... replacements) {
+        Map<String, String> replace = arrayToMap(replacements);
+        if (meta.hasDisplayName()) {
+            replace.forEach((k, v) -> meta.setDisplayName(meta.getDisplayName().replace(k, v)));
+        }
+        if (meta.hasLore()) {
+            meta.setLore(meta.getLore().stream()
+                    .map(AtomicReference::new)
+                    .peek(s -> replace.forEach((k, v) -> s.set(s.get().replace(k, v))))
+                    .map(AtomicReference::get)
+                    .collect(Collectors.toList()));
+        }
+    }
+
     public static String prettify(String s) {
-        return StringUtils.capitalize(s.toLowerCase().replace("_", " "));
+        return WordUtils.capitalize(s.toLowerCase().replace("_", " "));
     }
 }
 

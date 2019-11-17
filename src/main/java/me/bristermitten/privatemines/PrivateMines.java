@@ -53,6 +53,7 @@ public final class PrivateMines extends JavaPlugin {
         MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
 
         PaperCommandManager manager = new PaperCommandManager(this);
+        manager.getLocales().addBundleClassLoader(getClassLoader());
         mainConfig.getColors().forEach(manager::setFormat);
 
         //noinspection deprecation

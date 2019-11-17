@@ -1,14 +1,16 @@
 package me.bristermitten.privatemines.view;
 
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.Util;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static me.bristermitten.privatemines.Util.prettify;
 
 public class MinesMenu {
     private static MenuSpec original;
@@ -17,10 +19,7 @@ public class MinesMenu {
 
         if (original == null) {
             original = new MenuSpec();
-//            original.putAction("go-to-mine", e -> storage.getOrCreate((Player) e.getWhoClicked()).teleport());
-//            original.putAction("view-mines", e -> new MinesMenu(p));
             original.load(config.forName("Mines"));
-
         }
 
         MenuSpec spec = new MenuSpec();
@@ -32,8 +31,10 @@ public class MinesMenu {
         Inventory inventory = spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
-                    String name = itemMeta.getDisplayName().replace("%player%", pl.getName());
-                    itemMeta.setDisplayName(name);
+                    Util.replaceMeta(itemMeta,
+                            "%player%", pl.getName(),
+                            "%block%", prettify(storage.getOrCreate(pl).getBlock().name()),
+                            "%tax%", String.valueOf(storage.getOrCreate(pl).getTaxPercentage()));
                     i.setItemMeta(itemMeta);
                     return i;
                 },

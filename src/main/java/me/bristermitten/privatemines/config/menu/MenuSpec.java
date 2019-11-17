@@ -55,13 +55,13 @@ public class MenuSpec {
     public void load(MenuSpec other) {
         this.title = other.title;
         this.size = other.size;
-        this.itemsMap = other.itemsMap;
-        this.actionSlotMap = other.actionSlotMap;
-        this.actionMap = other.actionMap;
-        this.conditionMap = other.conditionMap;
-        this.conditionSlotMap = other.conditionSlotMap;
-        this.backgroundItem = other.backgroundItem;
-        this.everyItem = other.everyItem;
+        this.itemsMap = new HashMap<>(other.itemsMap);
+        this.actionSlotMap = new HashMap<>(other.actionSlotMap);
+        this.actionMap = new HashMap<>(other.actionMap);
+        this.conditionMap = new HashMap<>(other.conditionMap);
+        this.conditionSlotMap = new HashMap<>(other.conditionSlotMap);
+        this.backgroundItem = other.backgroundItem == null ? null : other.backgroundItem.clone();
+        this.everyItem = other.everyItem == null ? null : other.everyItem.clone();
     }
 
     public void load(ConfigurationSection section, String... placeholders) {
@@ -125,8 +125,9 @@ public class MenuSpec {
             public void onClick(InventoryClickEvent e) {
                 if (!e.getInventory().getHolder().equals(holder)) return;
                 e.setCancelled(true);
-                if (!actionSlotMap.containsKey(e.getSlot())) return;
-                actionSlotMap.get(e.getSlot()).accept(e);
+                Consumer<InventoryClickEvent> consumer = actionSlotMap.get(e.getSlot());
+                if (consumer == null) return;
+                consumer.accept(e);
             }
 
             @EventHandler
@@ -148,6 +149,19 @@ public class MenuSpec {
                 title = null;
             }
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MenuSpec)) return false;
+        MenuSpec menuSpec = (MenuSpec) o;
+        return Objects.equals(holder, menuSpec.holder);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(holder);
     }
 
     public void register(Plugin p) {

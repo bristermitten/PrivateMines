@@ -136,7 +136,7 @@ public class PrivateMine implements ConfigurationSerializable {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
                 Location location = player.getLocation();
-                location.setY(locations.getRegion().getMaximumPoint().getY());
+                location.setY(locations.getRegion().getMaximumPoint().getY() + 1);
                 player.teleport(location);
             }
         }

@@ -68,7 +68,7 @@ public class PrivateMinesCommand extends BaseCommand {
     public void open(Player p) {
         PrivateMine mine = storage.getOrCreate(p);
         mine.setOpen(true);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_OPENED);
     }
 
     @Subcommand("close")
