@@ -37,7 +37,7 @@ dependencies {
 compileJava {
     options.compilerArgs += ["-parameters"]
     options.fork = true
-    options.forkOptions.executable = 'javac'
+    //options.forkOptions.executable = 'javac'
 }
 shadowJar {
     relocate 'co.aikar', 'me.bristermitten.aikar'
