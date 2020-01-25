@@ -73,8 +73,7 @@ public final class PrivateMines extends JavaPlugin {
         manager.enableUnstableAPI("help");
 
         manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
-
-
+        
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
                 return;
@@ -103,7 +102,7 @@ public final class PrivateMines extends JavaPlugin {
             }
         }
     }
-
+    
     public MineStorage getStorage() {
         return storage;
     }
