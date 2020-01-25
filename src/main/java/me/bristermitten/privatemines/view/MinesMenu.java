@@ -19,15 +19,17 @@ public class MinesMenu {
 
         if (original == null) {
             original = new MenuSpec();
-            original.load(config.configurationForName("Mines"));
+            original.loadFrom(config.configurationForName("Mines"));
         }
 
         MenuSpec spec = new MenuSpec();
-        spec.load(original);
+        spec.copyFrom(original);
         spec.register(plugin);
+
         Player[] players =
                 Bukkit.getOnlinePlayers().stream().filter(storage::has).filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
+
         Inventory inventory = spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
@@ -39,6 +41,7 @@ public class MinesMenu {
                     return i;
                 },
                 pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players);
+
         spec.register(plugin);
         p.openInventory(inventory);
     }

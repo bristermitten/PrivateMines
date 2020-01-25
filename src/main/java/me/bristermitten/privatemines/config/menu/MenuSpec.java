@@ -42,9 +42,8 @@ public class MenuSpec {
         holder = new MenuHolder();
     }
 
-    public MenuSpec putAction(String name, Consumer<InventoryClickEvent> action) {
+    public void putAction(String name, Consumer<InventoryClickEvent> action) {
         actionMap.put(name, action);
-        return this;
     }
 
     public MenuSpec putCondition(String name, Predicate<InventoryClickEvent> action) {
@@ -52,7 +51,7 @@ public class MenuSpec {
         return this;
     }
 
-    public void load(MenuSpec other) {
+    public void copyFrom(MenuSpec other) {
         this.title = other.title;
         this.size = other.size;
         this.itemsMap = new HashMap<>(other.itemsMap);
@@ -64,7 +63,11 @@ public class MenuSpec {
         this.everyItem = other.everyItem == null ? null : other.everyItem.clone();
     }
 
-    public void load(ConfigurationSection section, String... placeholders) {
+    public void loadFrom(ConfigurationSection section, String... placeholders) {
+        if (section == null) {
+            throw new NullPointerException("MenuSpec section is null");
+        }
+
         title = Util.color(section.getString("Title"));
         size = section.getInt("Size");
         ConfigurationSection items = section.getConfigurationSection("Items");
@@ -100,8 +103,10 @@ public class MenuSpec {
     }
 
     @SafeVarargs
-    public final <T> Inventory genMenu(BiFunction<T, ItemStack, ItemStack> toItem,
-                                       Function<T, Consumer<InventoryClickEvent>> clickFunction, T... ts) {
+    public final <T> Inventory genMenu(BiFunction<T, ItemStack, ItemStack> toItem, Function<T,
+            Consumer<InventoryClickEvent>> clickFunction,
+                                       T... ts) {
+
         this.inventory = Bukkit.createInventory(holder, size, title);
         for (int i = 0, tsLength = ts.length; i < tsLength; i++) {
             T t = ts[i];

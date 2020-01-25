@@ -74,9 +74,7 @@ public final class PrivateMines extends JavaPlugin {
 
         manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
 
-        /*
-        Register a condition of
-         */
+
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
                 return;
@@ -124,6 +122,7 @@ public final class PrivateMines extends JavaPlugin {
 
         YamlConfiguration menusConfig = new YamlConfiguration();
         menusConfig.load(new File(getDataFolder(), "menus.yml"));
+
         this.menuConfig = new MenuConfig(menusConfig);
 
         getLogger().info("Loaded menus.yml");

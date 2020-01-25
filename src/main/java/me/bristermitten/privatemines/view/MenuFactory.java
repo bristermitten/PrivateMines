@@ -20,11 +20,11 @@ public class MenuFactory {
         this.pmConfig = pmConfig;
     }
 
-    public PrivateMineMenu createMenu(Player p) {
-        return new PrivateMineMenu(p, plugin, config, storage, pmConfig);
+    public void createMenu(Player p) {
+        new PrivateMineMenu(p, plugin, config, storage, pmConfig);
     }
 
-    public MinesMenu createMinesMenu(Player p) {
-        return new MinesMenu(p, config, plugin, storage);
+    public void createMinesMenu(Player p) {
+        new MinesMenu(p, config, plugin, storage);
     }
 }
