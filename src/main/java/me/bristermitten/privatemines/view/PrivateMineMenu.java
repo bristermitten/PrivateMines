@@ -20,8 +20,7 @@ public class PrivateMineMenu {
             original.putAction("change-block", e -> new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
                     config, storage));
         }
-        original.load(config.forName("Main"), "%BLOCK%", (storage.has(p) ? storage.get(p).getBlock().name() :
-                Material.STONE.name()));
+        original.load(config.configurationForName("Main"), "%BLOCK%", (storage.has(p) ? storage.get(p).getBlock() : Material.STONE).name());
 
         MenuSpec menuSpec = new MenuSpec();
         menuSpec.load(original);

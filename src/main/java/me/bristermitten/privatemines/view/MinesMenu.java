@@ -19,7 +19,7 @@ public class MinesMenu {
 
         if (original == null) {
             original = new MenuSpec();
-            original.load(config.forName("Mines"));
+            original.load(config.configurationForName("Mines"));
         }
 
         MenuSpec spec = new MenuSpec();

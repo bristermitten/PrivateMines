@@ -52,13 +52,31 @@ public final class PrivateMines extends JavaPlugin {
 
         MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
 
+        loadCommands(mainConfig, menuFactory);
+
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
+
+        if (!setupEconomy()) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
+                    getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
+    private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
         PaperCommandManager manager = new PaperCommandManager(this);
         manager.getLocales().addBundleClassLoader(getClassLoader());
+
         mainConfig.getColors().forEach(manager::setFormat);
 
         //noinspection deprecation
         manager.enableUnstableAPI("help");
+
         manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
+
+        /*
+        Register a condition of
+         */
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
                 return;
@@ -71,14 +89,6 @@ public final class PrivateMines extends JavaPlugin {
                         "Value must be <" + c.getConfigValue("max", 0));
             }
         });
-
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
-
-        if (!setupEconomy()) {
-            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
-                    getDescription().getName()));
-            getServer().getPluginManager().disablePlugin(this);
-        }
     }
 
     private boolean setupEconomy() {
@@ -102,15 +112,20 @@ public final class PrivateMines extends JavaPlugin {
 
     private void loadFiles() throws IOException, InvalidConfigurationException {
         saveResource("mines.yml", false);
+
         minesConfig = new YamlConfiguration();
         minesConfig.load(new File(getDataFolder(), "mines.yml"));
         storage.load(minesConfig);
+
         getLogger().info("Loaded mines.yml");
 
+
         saveResource("menus.yml", false);
+
         YamlConfiguration menusConfig = new YamlConfiguration();
         menusConfig.load(new File(getDataFolder(), "menus.yml"));
         this.menuConfig = new MenuConfig(menusConfig);
+
         getLogger().info("Loaded menus.yml");
     }
 

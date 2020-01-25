@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class MenuConfig {
 
-    private Map<String, ConfigurationSection> menuConfigs = new HashMap<>();
+    private final Map<String, ConfigurationSection> menuConfigs = new HashMap<>();
 
     public MenuConfig(FileConfiguration configuration) {
         load(configuration);
@@ -20,7 +20,7 @@ public class MenuConfig {
         }
     }
 
-    public ConfigurationSection forName(String name) {
+    public ConfigurationSection configurationForName(String name) {
         return menuConfigs.getOrDefault(name, null);
     }
 }

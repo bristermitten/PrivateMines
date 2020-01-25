@@ -21,7 +21,7 @@ public class ChangeBlockMenu {
     public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();
-            original.load(menuConfig.forName("Blocks"));
+            original.load(menuConfig.configurationForName("Blocks"));
         }
 
         MenuSpec spec = new MenuSpec();

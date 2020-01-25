@@ -61,7 +61,7 @@ public class MineFactory {
             Location location = this.manager.nextFreeLocation();
             World world = FaweAPI.getWorld(location.getWorld().getName());
             ClipboardFormat format = ClipboardFormat.SCHEMATIC;
-            EditSession e = (new EditSessionBuilder(world)).allowedRegionsEverywhere().limitUnlimited().build();
+            EditSession e = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited().build();
             Schematic schematic = format.load(new FileInputStream(file));
             if (schematic.getClipboard() == null) {
                 plugin.getLogger().severe("Schematic does not have a Clipboard!");
@@ -80,6 +80,7 @@ public class MineFactory {
             Material spawnMaterial = this.config.getBlockTypes().get(BlockType.SPAWNPOINT);
             Material cornerMaterial = this.config.getBlockTypes().get(BlockType.CORNER);
             Material npcMaterial = this.config.getBlockTypes().get(BlockType.NPC);
+
             for (Vector pt : new FastIterator(r, e)) {
                 Material type = Material.values()[world.getLazyBlock(pt).getType()];
 
@@ -140,6 +141,7 @@ public class MineFactory {
             MineLocations locations = new MineLocations(spawnLoc, min, max, mineRegion);
             NPC npc = new SellNPC(config.getNPCName(), config.getNpcSkin(), npcLoc,
                     owner.getUniqueId()).npc();
+
             return new PrivateMine(owner.getUniqueId(), true, this.config.getDefaultBlock(), r,
                     locations, region, npc.getUniqueId(), this.config.getTaxPercentage());
 

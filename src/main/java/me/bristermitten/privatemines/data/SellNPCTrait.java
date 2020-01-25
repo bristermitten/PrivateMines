@@ -45,6 +45,7 @@ public class SellNPCTrait extends Trait {
 
     @EventHandler
     public void onAutoSell(AutoSellEvent e) {
+
         if (e.getPlayer().getUniqueId().equals(owner)) return;
         PrivateMine privateMine = storage.get(owner);
         if (privateMine == null) {

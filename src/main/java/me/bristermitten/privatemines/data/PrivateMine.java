@@ -32,15 +32,15 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 public class PrivateMine implements ConfigurationSerializable {
-    private UUID owner;
+    private final UUID owner;
+    private final Region region;
+    private final MineLocations locations;
+    private final EditSession editSession;
+    private final ProtectedRegion wgRegion;
+    private final UUID npcId;
     private boolean open;
-    private Region region;
-    private MineLocations locations;
     private Material block;
-    private EditSession editSession;
     private BukkitTask task;
-    private ProtectedRegion wgRegion;
-    private UUID npcId;
     private double taxPercentage;
 
     public PrivateMine(UUID owner, boolean open, Material block, Region region, MineLocations locations,
@@ -59,7 +59,6 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fill(block);
     }
 
-    @SuppressWarnings("unchecked")
     public static PrivateMine deserialize(Map<String, Object> map) {
         UUID owner = UUID.fromString((String) map.get("Owner"));
         boolean open = (Boolean) map.get("Open");
@@ -131,6 +130,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return open;
     }
 
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
+
     public void fill(Material m) {
         //free any players
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -174,9 +177,5 @@ public class PrivateMine implements ConfigurationSerializable {
         NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
         if (npc != null)
             npc.destroy();
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
     }
 }
