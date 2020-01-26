@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package me.bristermitten.privatemines.data;
 
 import com.boydti.fawe.util.EditSessionBuilder;
@@ -32,11 +27,11 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 public class PrivateMine implements ConfigurationSerializable {
-    private final UUID owner;
-    private final Region region;
-    private final MineLocations locations;
+    UUID owner;
+    Region region;
+    MineLocations locations;
     private final EditSession editSession;
-    private final ProtectedRegion wgRegion;
+    ProtectedRegion wgRegion;
     private final UUID npcId;
     private boolean open;
     private Material block;
@@ -45,18 +40,18 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public PrivateMine(UUID owner, boolean open, Material block, Region region, MineLocations locations,
                        ProtectedRegion wgRegion, UUID npc, double taxPercentage) {
-        this.owner = owner;
-        this.open = open;
-        this.region = region;
-        this.locations = locations;
-        this.editSession =
+        owner = owner;
+        open = open;
+        region = region;
+        locations = locations;
+        editSession =
                 new EditSessionBuilder(Objects.requireNonNull(region.getWorld()))
                         .allowedRegions(new Region[]{region}).build();
-        this.block = block;
-        this.wgRegion = wgRegion;
-        this.npcId = npc;
-        this.taxPercentage = taxPercentage;
-        this.fill(block);
+        block = block;
+        wgRegion = wgRegion;
+        npcId = npc;
+        taxPercentage = taxPercentage;
+        fill(block);
     }
 
     public static PrivateMine deserialize(Map<String, Object> map) {
@@ -95,8 +90,8 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void setBlock(Material block) {
         if (block.isBlock()) {
-            this.block = block;
-            this.fill(block);
+            block = block;
+            fill(block);
         }
     }
 
