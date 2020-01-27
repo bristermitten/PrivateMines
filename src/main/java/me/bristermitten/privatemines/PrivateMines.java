@@ -54,8 +54,11 @@ public final class PrivateMines extends JavaPlugin {
 
         loadCommands(mainConfig, menuFactory);
 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
-
+        if (!CitizensAPI.getTraitFactory().getRegisteredTraits().contains(SellNPCTrait.class)) {
+            CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
+        } else {
+            return;
+        }
         if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
                     getDescription().getName()));
