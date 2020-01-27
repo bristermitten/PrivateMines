@@ -7,6 +7,13 @@ plugins {
 group = 'me.bristermitten'
 version = '1.0'
 
+subprojects {
+    apply plugin: 'java'
+    tasks.withType(Jar) {
+        destinationDir = file("$rootDir/build/New_libs")
+    }
+}
+
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
@@ -67,3 +74,9 @@ processResources {
     }
 }
 
+task copyJar() {
+    copy {
+        from "F://Coding//JavaCoding//privateminesprivate//lib//privatemines-1.0.jar"
+        into "F://Working Private Mines Server//plugins"
+    }
+}
