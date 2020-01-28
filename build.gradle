@@ -32,7 +32,6 @@ dependencies {
     implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
     implementation 'net.citizensnpcs:citizens:2.0.25-SNAPSHOT'
     implementation files("lib/AutoSellAPI-1.2.0.jar")
-    implementation files("lib/privatemines-1.0.jar")
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -49,7 +48,6 @@ compileJava {
 shadowJar {
     relocate 'co.aikar', 'me.bristermitten.aikar'
     minimize()
-    exclude '.classpath', '.project'
     dependencies {
         include(dependency('co.aikar:.*'))
         include(dependency('.*:expiringmap'))
