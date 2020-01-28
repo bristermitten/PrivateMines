@@ -9,6 +9,7 @@ import me.bristermitten.privatemines.data.PrivateMine;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -44,6 +45,7 @@ public class MineStorage {
         mines.put(mine.getOwner(), mine);
     }
 
+    @Nonnull
     public PrivateMine getOrCreate(Player p) {
         PrivateMine mine = mines.get(p.getUniqueId());
         if (mine == null) {

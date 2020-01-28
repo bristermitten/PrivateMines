@@ -22,6 +22,7 @@ import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -63,13 +64,14 @@ public class PrivateMine implements ConfigurationSerializable {
         UUID owner = UUID.fromString((String) map.get("Owner"));
         boolean open = (Boolean) map.get("Open");
         Material block = Material.matchMaterial((String) map.get("Block"));
-        Vector corner1 = Util.deserializeWeVector((Map<String, Object>) map.get("Corner1"));
-        Vector corner2 = Util.deserializeWeVector(((Map<String, Object>) map.get("Corner2")));
+        Vector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
+        Vector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
         MineLocations locations = MineLocations.deserialize((Map<String, Object>) map.get("Locations"));
         CuboidRegion region = new CuboidRegion(corner1, corner2);
         region.setWorld(new BukkitWorld(locations.getSpawnPoint().getWorld()));
         ProtectedRegion wgRegion =
-                WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld()).getRegion(owner.toString());
+                WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld())
+                        .getRegion(owner.toString());
 
         UUID npcId = UUID.fromString((String) map.get("NPC"));
         double taxPercentage = (Double) map.get("Tax");
@@ -169,10 +171,18 @@ public class PrivateMine implements ConfigurationSerializable {
         //noinspection deprecation
         editSession.setBlocks(region, new BaseBlock(0));
         editSession.flushQueue();
+
+        World world = locations.getSpawnPoint().getWorld();
         RegionManager regionManager =
-                WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld());
-        regionManager.removeRegion(wgRegion.getId());
-        regionManager.removeRegion(locations.getWgRegion().getId());
+                WorldGuardPlugin.inst().getRegionManager(world);
+
+        if (regionManager == null) {
+            PrivateMines.getPlugin(PrivateMines.class).getLogger()
+                    .warning(String.format("RegionManager for world %s is null", world.getName()));
+        } else {
+            regionManager.removeRegion(wgRegion.getId());
+            regionManager.removeRegion(locations.getWgRegion().getId());
+        }
 
         NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
         if (npc != null)

@@ -17,14 +17,16 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MineLocations implements ConfigurationSerializable {
     private Location spawnPoint;
     private Region region;
     private ProtectedRegion wgRegion;
-    private Location npcLocation;
 
     public MineLocations(Location spawnPoint, Vector mineAreaMin, Vector mineAreaMax, ProtectedRegion wgRegion) {
+        Objects.requireNonNull(spawnPoint, "SpawnPoint");
+        Objects.requireNonNull(wgRegion, "WorldGuardRegion");
         this.spawnPoint = spawnPoint;
         this.region = new CuboidRegion(mineAreaMin, mineAreaMax);
         this.wgRegion = wgRegion;

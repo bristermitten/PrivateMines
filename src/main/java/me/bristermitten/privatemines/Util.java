@@ -77,7 +77,7 @@ public class Util {
         return mapping;
     }
 
-    public static com.sk89q.worldedit.Vector deserializeWeVector(Map<String, Object> map) {
+    public static com.sk89q.worldedit.Vector deserializeWorldEditVector(Map<String, Object> map) {
         return toVector(Vector.deserialize(map));
     }
 

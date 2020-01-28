@@ -8,6 +8,7 @@ public enum LangKeys implements MessageKeyProvider {
     TAX_INFO,
     ERR_PLAYER_HAS_MINE,
     ERR_PLAYER_HAS_NO_MINE,
+    ERR_SENDER_HAS_NO_MINE,
 
     INFO_MINE_GIVEN,
     INFO_MINE_OPENED,

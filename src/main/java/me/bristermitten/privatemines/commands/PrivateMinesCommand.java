@@ -109,6 +109,18 @@ public class PrivateMinesCommand extends BaseCommand {
         storage.remove(t);
     }
 
+    @Subcommand("delete")
+    @Description("Delete your PrivateMine")
+    public void delete(Player sender) {
+        if (!storage.has(sender)) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_SENDER_HAS_NO_MINE);
+            return;
+        }
+        PrivateMine mine = storage.get(sender);
+        mine.delete();
+        storage.remove(sender);
+    }
+
     @Subcommand("status")
     @CommandPermission("privatemines.status")
     @CommandCompletion("@players")
