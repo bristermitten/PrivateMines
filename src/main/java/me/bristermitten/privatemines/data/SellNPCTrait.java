@@ -25,7 +25,7 @@ public class SellNPCTrait extends Trait {
     @Persist("owner")
     @DelegatePersistence(SellNPCTrait.UUIDPersister.class)
     private UUID owner;
-    private MineStorage storage = (PrivateMines.getPlugin(PrivateMines.class)).getStorage();
+    private MineStorage storage = PrivateMines.getPlugin(PrivateMines.class).getStorage();
 
     public SellNPCTrait() {
         super("SellNPC");
