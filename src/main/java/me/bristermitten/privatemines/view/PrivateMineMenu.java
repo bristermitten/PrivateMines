@@ -5,7 +5,7 @@ import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.service.MineStorage;
-import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

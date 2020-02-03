@@ -1,7 +1,7 @@
 package me.bristermitten.privatemines;
 
+import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
-import co.aikar.commands.PaperCommandManager;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
@@ -64,7 +64,7 @@ public final class PrivateMines extends JavaPlugin {
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
-        PaperCommandManager manager = new PaperCommandManager(this);
+        BukkitCommandManager manager = new BukkitCommandManager(this);
         manager.getLocales().addBundleClassLoader(getClassLoader());
 
         mainConfig.getColors().forEach(manager::setFormat);
@@ -73,7 +73,7 @@ public final class PrivateMines extends JavaPlugin {
         manager.enableUnstableAPI("help");
 
         manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
-        
+
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
                 return;
@@ -102,7 +102,7 @@ public final class PrivateMines extends JavaPlugin {
             }
         }
     }
-    
+
     public MineStorage getStorage() {
         return storage;
     }
