@@ -20,15 +20,17 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
+    implementation "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
     implementation "com.github.MilkBowl:VaultAPI:1.7"
-    implementation 'com.boydti:fawe-api:latest'
+    implementation "com.boydti:fawe-api:latest"
     implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
         exclude group: 'org.bukkit'
     }
-    implementation 'com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT'
+    implementation "com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT"
     implementation "co.aikar:acf-bukkit:0.5.0-SNAPSHOT"
-    implementation 'net.citizensnpcs:citizens:2.0.25-SNAPSHOT'
+    implementation("net.citizensnpcs:citizens:2.0.25-SNAPSHOT") {
+        transitive = false
+    }
     implementation files("lib/AutoSellAPI-1.2.0.jar")
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
