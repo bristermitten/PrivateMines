@@ -53,13 +53,11 @@ public class PrivateMinesCommand extends BaseCommand {
     public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage) {
         PrivateMine mine = storage.getOrCreate(p);
         if (taxPercentage == null) {
-            getCurrentCommandIssuer()
-                    .sendInfo(LangKeys.TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
+            getCurrentCommandIssuer().sendInfo(LangKeys.TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
             return;
         }
         mine.setTaxPercentage(taxPercentage);
-        getCurrentCommandIssuer()
-                .sendInfo(LangKeys.TAX_SET, "{tax}", String.valueOf(mine.getTaxPercentage()));
+        getCurrentCommandIssuer().sendInfo(LangKeys.TAX_SET, "{tax}", String.valueOf(mine.getTaxPercentage()));
     }
 
     @Subcommand("open")
@@ -139,6 +137,7 @@ public class PrivateMinesCommand extends BaseCommand {
                 .create());
     }
 
+
     @Subcommand("teleport")
     @CommandPermission("privatemines.teleport")
     @CommandCompletion("@players")
@@ -152,4 +151,5 @@ public class PrivateMinesCommand extends BaseCommand {
         PrivateMine mine = storage.get(t);
         mine.teleport(p);
     }
+
 }
