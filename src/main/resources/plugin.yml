@@ -1,8 +1,8 @@
 name: PrivateMines
 version: "1.0"
-main: me.bristermitten.privatemines.PrivateMines
+main: me.UntouchedOdin0.privatemines.PrivateMines
 authors: [BristerMitten, UntouchedOdin0]
-website: github.com/knightzmc
+website: github.com/UntouchedOdin0
 depend:
   - WorldEdit
   - FastAsyncWorldEdit

@@ -1,12 +1,13 @@
-package me.bristermitten.privatemines.view;
+package me.UntouchedOdin0.privatemines.view;
 
-import me.bristermitten.privatemines.PrivateMines;
-import me.bristermitten.privatemines.Util;
-import me.bristermitten.privatemines.config.PMConfig;
-import me.bristermitten.privatemines.config.menu.MenuConfig;
-import me.bristermitten.privatemines.config.menu.MenuSpec;
-import me.bristermitten.privatemines.data.PrivateMine;
-import me.bristermitten.privatemines.service.MineStorage;
+import me.UntouchedOdin0.privatemines.PrivateMines;
+import me.UntouchedOdin0.privatemines.Util;
+import me.UntouchedOdin0.privatemines.config.PMConfig;
+import me.UntouchedOdin0.privatemines.config.menu.MenuConfig;
+import me.UntouchedOdin0.privatemines.config.menu.MenuSpec;
+
+import me.UntouchedOdin0.privatemines.data.PrivateMine;
+import me.UntouchedOdin0.privatemines.service.MineStorage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;

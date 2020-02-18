@@ -4,7 +4,7 @@ plugins {
     id 'maven'
 }
 
-group = 'me.bristermitten'
+group = 'me.UntouchedOdin0'
 version = '1.0'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
@@ -46,7 +46,7 @@ compileJava {
 
 
 shadowJar {
-    relocate 'co.aikar', 'me.bristermitten.aikar'
+    relocate 'co.aikar', 'me.UntouchedOdin0.aikar'
     minimize()
     dependencies {
         include(dependency('co.aikar:.*'))
