@@ -116,7 +116,6 @@ public final class PrivateMines extends JavaPlugin {
 
         getLogger().info("Loaded mines.yml");
 
-
         saveResource("menus.yml", false);
 
         YamlConfiguration menusConfig = new YamlConfiguration();
