@@ -4,6 +4,7 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
+import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
@@ -27,7 +28,8 @@ public class PrivateMineMenu {
             original.putAction("change-block", e -> new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
                     config, storage));
         }
-        Material type = storage.has(p) ? storage.get(p).getBlock() : Material.STONE;
+        PrivateMine mine = storage.get(p);
+        Material type = mine != null ? mine.getBlock() : Material.STONE;
 
         original.loadFrom(config.configurationForName("Main"), "%BLOCK%", type.name());
 
