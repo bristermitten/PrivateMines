@@ -65,12 +65,12 @@ public class PMConfig {
         return colors;
     }
 
-    public String getNpcSkin() {
-        return this.npcSkin;
+    public String getNPCSkin() {
+        return npcSkin;
     }
 
     public double getTaxPercentage() {
-        return this.taxPercentage;
+        return taxPercentage;
     }
 
     public String getNPCName() {
@@ -78,26 +78,26 @@ public class PMConfig {
     }
 
     public Map<BlockType, Material> getBlockTypes() {
-        return this.blockTypes;
+        return blockTypes;
     }
 
     public String getWorldName() {
-        return this.worldName;
+        return worldName;
     }
 
     public int getMinesDistance() {
-        return this.minesDistance;
+        return minesDistance;
     }
 
     public String getSchematicName() {
-        return this.schematicName;
+        return schematicName;
     }
 
     public Material getDefaultBlock() {
-        return this.defaultBlock;
+        return defaultBlock;
     }
 
     public List<Material> getBlockOptions() {
-        return this.blockOptions;
+        return blockOptions;
     }
 }

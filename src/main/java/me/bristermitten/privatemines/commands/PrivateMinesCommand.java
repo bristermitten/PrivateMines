@@ -84,10 +84,12 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Give a Player a PrivateMine")
     public void give(OnlinePlayer target) {
         Player t = target.getPlayer();
+
         if (storage.has(t)) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
             return;
         }
+
         storage.getOrCreate(t).teleport();
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
     }

@@ -12,8 +12,8 @@ import java.util.Map;
 import static me.bristermitten.privatemines.world.MineWorldManager.Direction.NORTH;
 
 public class MineWorldManager {
-
     private final World minesWorld;
+    private final Location DEFAULT_LOCATION;
     private final int borderDistance;
     private int distance = 0;
     private Direction direction;
@@ -24,6 +24,11 @@ public class MineWorldManager {
                         .generator(new EmptyWorldGenerator()));
         this.borderDistance = config.getMinesDistance();
         this.direction = NORTH;
+        DEFAULT_LOCATION = new Location(minesWorld, 0, 0, 0);
+    }
+
+    public World getMinesWorld() {
+        return minesWorld;
     }
 
     public Map<String, Object> serialize() {
@@ -39,22 +44,17 @@ public class MineWorldManager {
     }
 
     public synchronized Location nextFreeLocation() {
-        Location defaultLoc = new Location(minesWorld, 0, 0, 0);
         if (distance == 0) {
             distance++;
-            return defaultLoc;
+            return DEFAULT_LOCATION;
         }
+
         if (direction == null) direction = NORTH;
-        Location loc = direction.add(defaultLoc, distance * borderDistance);
+        Location loc = direction.addTo(DEFAULT_LOCATION, distance * borderDistance);
         direction = direction.next();
         if (direction == NORTH) distance++;
         return loc;
 
-    }
-
-    public void reset() {
-        direction = NORTH;
-        distance = 0;
     }
 
     public enum Direction {
@@ -75,9 +75,8 @@ public class MineWorldManager {
         }
 
 
-        Location add(Location loc, int value) {
-            loc = loc.clone();
-            return loc.add(value * xMulti, 0, value * zMulti);
+        Location addTo(Location loc, int value) {
+            return loc.clone().add(value * xMulti, 0, value * zMulti);
         }
     }
 
