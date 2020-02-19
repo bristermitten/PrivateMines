@@ -8,3 +8,5 @@ Smaller Mine Schematic: https://cdn.discordapp.com/attachments/64249353394048205
 Larger Mine Schematic: https://cdn.discordapp.com/attachments/642493533940482059/644270526595989524/mine.schematic
 
 To build run `./gradlew build` on Linux/OSX or `gradlew build` on Windows
+
+https://ibb.co/9tMYTV1
