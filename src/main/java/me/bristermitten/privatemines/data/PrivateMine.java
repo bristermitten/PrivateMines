@@ -26,6 +26,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
@@ -60,6 +62,8 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fill(block);
     }
 
+    @NotNull
+    @Contract("_ -> new")
     public static PrivateMine deserialize(Map<String, Object> map) {
         UUID owner = UUID.fromString((String) map.get("Owner"));
         boolean open = (Boolean) map.get("Open");
@@ -149,6 +153,7 @@ public class PrivateMine implements ConfigurationSerializable {
         //noinspection deprecation
         editSession.setBlocks(locations.getRegion(), new BaseBlock(m.getId()));
         editSession.flushQueue();
+
         if (task != null) {
             task.cancel();
         }

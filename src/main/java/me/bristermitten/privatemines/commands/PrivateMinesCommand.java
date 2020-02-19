@@ -98,11 +98,13 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Delete a Player's PrivateMine")
     public void delete(OnlinePlayer target) {
         Player t = target.getPlayer();
-        if (!storage.has(t)) {
+        PrivateMine mine = storage.get(t);
+
+        if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(t);
+
         mine.delete();
         storage.remove(t);
     }
@@ -110,11 +112,13 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("delete")
     @Description("Delete your PrivateMine")
     public void delete(Player sender) {
-        if (!storage.has(sender)) {
+        PrivateMine mine = storage.get(sender);
+
+        if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_SENDER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(sender);
+
         mine.delete();
         storage.remove(sender);
     }
@@ -125,11 +129,13 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("View info about a Player's Private Mine")
     public void status(Player p, OnlinePlayer target) {
         Player t = target.getPlayer();
-        if (!storage.has(t)) {
+        PrivateMine mine = storage.get(t);
+
+        if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(t);
+
         p.sendMessage(Util.color("&7Block Type: &6" + Util.prettify(mine.getBlock().name())));
         p.spigot().sendMessage(new ComponentBuilder("").color(ChatColor.GOLD).
                 append("Click to teleport").
@@ -144,11 +150,12 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Teleport to a Player's PrivateMine")
     public void teleport(Player p, OnlinePlayer target) {
         Player t = target.getPlayer();
-        if (!storage.has(t)) {
+        PrivateMine mine = storage.get(t);
+
+        if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        PrivateMine mine = storage.get(t);
         mine.teleport(p);
     }
 
