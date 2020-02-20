@@ -8,6 +8,7 @@ package me.bristermitten.privatemines.config;
 import co.aikar.commands.MessageType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -40,21 +41,24 @@ public class PMConfig {
             this.schematicName = config.getString("Schematic-Name");
         }
 
-        for (String block : config.getConfigurationSection("Blocks").getKeys(false)) {
-            this.blockTypes.put(BlockType.fromName(block), Material.getMaterial(config.getString("Blocks." + block)));
+        ConfigurationSection blocks = config.getConfigurationSection("Blocks");
+        for (String block : blocks.getKeys(false)) {
+            this.blockTypes.put(BlockType.fromName(block), Material.getMaterial(blocks.getString(block)));
         }
 
         this.defaultBlock = Material.matchMaterial(config.getString("Default-Block"));
-        this.blockOptions =
-                config.getStringList("Block-Options").stream().map(Material::matchMaterial).collect(Collectors.toList());
+        this.blockOptions = config.getStringList("Block-Options")
+                .stream().map(Material::matchMaterial).collect(Collectors.toList());
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
 
-        for (String key : config.getConfigurationSection("Colors").getKeys(false)) {
+        ConfigurationSection colors = config.getConfigurationSection("Colors");
+        
+        for (String key : colors.getKeys(false)) {
             try {
-                colors.put((MessageType) MessageType.class.getField(key).get(null),
-                        ChatColor.valueOf(config.getString("Colors." + key)));
+                this.colors.put((MessageType) MessageType.class.getField(key).get(null),
+                        ChatColor.valueOf(colors.getString(key)));
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }

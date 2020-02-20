@@ -9,6 +9,9 @@ import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.object.visitor.FastIterator;
 import com.boydti.fawe.util.EditSessionBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;
@@ -41,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
@@ -68,6 +72,7 @@ public class MineFactory {
 
     @SuppressWarnings("deprecation")
     public PrivateMine create(Player owner) {
+
         try {
             Location location = manager.nextFreeLocation();
             Schematic schematic = loadSchematic();
@@ -75,7 +80,6 @@ public class MineFactory {
 
             if (clipboard == null) {
                 plugin.getLogger().severe("Schematic does not have a Clipboard!");
-
                 return null;
             }
 
