@@ -30,7 +30,7 @@ NPC-Skin: TraderNPC
 #Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
 
-#Color Customisation for messages
+#Color Customization for messages
 Colors:
   INFO: GOLD
   SYNTAX: AQUA
