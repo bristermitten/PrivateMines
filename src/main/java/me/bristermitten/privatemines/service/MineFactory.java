@@ -194,17 +194,6 @@ public class MineFactory {
 
     }
 
-    @NotNull
-    private ProtectedRegion createMineWorldGuardRegion(Player owner, Vector min, Vector max, ProtectedRegion parent) throws CircularInheritanceException {
-        ProtectedRegion mineRegion = new ProtectedCuboidRegion(
-                owner.getUniqueId().toString() + "-mine",
-                min.toBlockPoint(),
-                max.toBlockPoint());
-
-        mineRegion.setParent(parent);
-        mineRegion.setFlag(DefaultFlag.BLOCK_BREAK, State.ALLOW);
-        return mineRegion;
-    }
 
     @NotNull
     private ProtectedRegion createMainWorldGuardRegion(Player owner, Region r) {
@@ -221,6 +210,19 @@ public class MineFactory {
         domain.addPlayer(owner.getUniqueId());
         region.setOwners(domain);
         return region;
+    }
+
+    @NotNull
+    private ProtectedRegion createMineWorldGuardRegion(Player owner, Vector min, Vector max, ProtectedRegion parent) throws CircularInheritanceException {
+        ProtectedRegion mineRegion = new ProtectedCuboidRegion(
+                owner.getUniqueId().toString() + "-mine",
+                min.toBlockPoint(),
+                max.toBlockPoint());
+
+        mineRegion.setParent(parent);
+        mineRegion.setPriority(1);
+        mineRegion.setFlag(DefaultFlag.BLOCK_BREAK, State.ALLOW);
+        return mineRegion;
     }
 
     @NotNull
