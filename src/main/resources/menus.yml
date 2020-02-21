@@ -1,6 +1,6 @@
 Menus:
   Main:
-    Title: "&6&lMine Menu"
+    Title: "Personal Mines"
     Size: 9
     Background:
       Type: STAINED_GLASS_PANE
