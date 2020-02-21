@@ -15,6 +15,7 @@ import static me.bristermitten.privatemines.Util.prettify;
 public class MinesMenu {
     private static MenuSpec original;
 
+    private final Inventory inventory;
     public MinesMenu(Player p, MenuConfig config, PrivateMines plugin, MineStorage storage) {
 
         if (original == null) {
@@ -30,7 +31,7 @@ public class MinesMenu {
                 Bukkit.getOnlinePlayers().stream().filter(storage::has).filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
 
-        Inventory inventory = spec.genMenu(
+        inventory = spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
                     Util.replaceMeta(itemMeta,
@@ -43,6 +44,9 @@ public class MinesMenu {
                 pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players);
 
         spec.register(plugin);
+    }
+
+    public void open(Player p){
         p.openInventory(inventory);
     }
 }

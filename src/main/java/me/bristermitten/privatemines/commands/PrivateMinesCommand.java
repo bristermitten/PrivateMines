@@ -18,6 +18,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
@@ -25,7 +26,10 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
 
+
     public PrivateMinesCommand(MenuFactory factory, MineStorage storage) {
+        Validate.notNull(factory, "factory");
+        Validate.notNull(storage, "storage");
         this.factory = factory;
         this.storage = storage;
     }
@@ -52,12 +56,14 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Set your mine's tax percentage")
     public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage) {
         PrivateMine mine = storage.getOrCreate(p);
+
         if (taxPercentage == null) {
-            getCurrentCommandIssuer().sendInfo(LangKeys.TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
             return;
         }
+
         mine.setTaxPercentage(taxPercentage);
-        getCurrentCommandIssuer().sendInfo(LangKeys.TAX_SET, "{tax}", String.valueOf(mine.getTaxPercentage()));
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
     }
 
     @Subcommand("open")

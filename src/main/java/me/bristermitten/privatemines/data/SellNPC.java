@@ -20,6 +20,7 @@ public class SellNPC {
 
     public static NPC createSellNPC(String name, String skinName, Location location, UUID owner) {
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
+        npc.spawn(location);
         npc.setProtected(true);
         ((SkinnableEntity) npc.getEntity()).setSkinName(skinName);
         npc.getTrait(LookClose.class).toggle();
@@ -27,7 +28,6 @@ public class SellNPC {
         SellNPCTrait trait = npc.getTrait(SellNPCTrait.class);
         trait.setOwner(owner);
 
-        npc.spawn(location);
         return npc;
     }
 

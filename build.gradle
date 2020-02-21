@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'me.bristermitten'
-version = '1.0'
+version = '1.1'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -21,6 +21,7 @@ repositories {
 
 dependencies {
     implementation "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+//    implementation "org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT"
     implementation "com.github.MilkBowl:VaultAPI:1.7"
     implementation "com.boydti:fawe-api:latest"
     implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
@@ -46,7 +47,7 @@ compileJava {
 
 
 shadowJar {
-    relocate 'co.aikar', 'me.bristermitten.aikar'
+//    relocate 'co.aikar', 'me.bristermitten.aikar'
     minimize()
     dependencies {
         include(dependency('co.aikar:.*'))

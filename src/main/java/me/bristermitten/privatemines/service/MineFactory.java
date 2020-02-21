@@ -9,9 +9,6 @@ import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.object.visitor.FastIterator;
 import com.boydti.fawe.util.EditSessionBuilder;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;
@@ -30,6 +27,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion.CircularInheritanceException;
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.Util;
 import me.bristermitten.privatemines.config.BlockType;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineLocations;
@@ -37,16 +35,20 @@ import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.data.SellNPC;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import net.citizensnpcs.api.npc.NPC;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Directional;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class MineFactory {
     public static final boolean DEFAULT_MINE_OPEN = true;
@@ -68,9 +70,20 @@ public class MineFactory {
 
         this.extent = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited()
                 .fastmode(true).build();
+
+        if (!file.exists()) {
+            Logger logger = plugin.getLogger();
+            logger.severe("-------------------------------------------------");
+            logger.severe("File mine.schematic does not exist!");
+            logger.severe("-------------------------------------------------");
+
+            Bukkit.getPluginManager().disablePlugin(plugin);
+        }
+
     }
 
     @SuppressWarnings("deprecation")
+    @Nonnull
     public PrivateMine create(Player owner) {
 
         try {
@@ -80,12 +93,13 @@ public class MineFactory {
 
             if (clipboard == null) {
                 plugin.getLogger().severe("Schematic does not have a Clipboard!");
-                return null;
+                throw new IllegalStateException();
             }
 
             location.setY(clipboard.getOrigin().getBlockY());
 
             Vector centerVector = BukkitUtil.toVector(location);
+
             schematic.paste(extent, centerVector, false, true, null);
 
             Region region = clipboard.getRegion();
@@ -102,13 +116,18 @@ public class MineFactory {
             Material cornerMaterial = blockTypes.get(BlockType.CORNER);
             Material npcMaterial = blockTypes.get(BlockType.NPC);
 
-            for (Vector pt : new FastIterator(region, extent)) {
+            for (final Vector pt : new FastIterator(region, extent)) {
                 Material type = Material.values()[world.getLazyBlock(pt).getType()];
 
                 if (type == Material.AIR) continue;
 
                 if (spawnLoc == null && type == spawnMaterial) {
-                    spawnLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ());
+                    spawnLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ())
+                            .add(0.5, 0, 0.5);
+                    Block block = spawnLoc.getBlock();
+                    if (block.getState().getData() instanceof Directional) {
+                        spawnLoc.setYaw(Util.getYaw(((Directional) block.getState().getData()).getFacing()));
+                    }
                     world.setBlock(pt, new BaseBlock(0));
                     continue;
                 }
@@ -126,10 +145,8 @@ public class MineFactory {
                     continue;
                 }
                 if (type == npcMaterial) {
-                    npcLoc =
-                            new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ())
-                                    .getBlock().getLocation();
-                    npcLoc.add(npcLoc.getX() > 0 ? 0.5 : -0.5, 0.0, npcLoc.getZ() > 0 ? 0.5 : -0.5);
+                    npcLoc = new Location(location.getWorld(), pt.getBlockX(), pt.getBlockY(), pt.getBlockZ())
+                            .add(0.5, 0, 0.5);
                     world.setBlock(pt, new BaseBlock(0));
                 }
             }
@@ -139,6 +156,7 @@ public class MineFactory {
             if (min == null || max == null || min.equals(max)) {
                 throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
             }
+
             if (npcLoc == null) npcLoc = spawnLoc;
 
             RegionManager regionManager =
@@ -205,6 +223,7 @@ public class MineFactory {
         return region;
     }
 
+    @NotNull
     private Schematic loadSchematic() throws IOException {
         ClipboardFormat format = ClipboardFormat.SCHEMATIC;
         return format.load(new FileInputStream(file));

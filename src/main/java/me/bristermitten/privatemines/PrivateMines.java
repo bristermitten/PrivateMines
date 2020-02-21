@@ -23,12 +23,10 @@ import java.io.IOException;
 
 public final class PrivateMines extends JavaPlugin {
 
+    private static Economy econ;
     private MineStorage storage;
     private MenuConfig menuConfig;
-
     private YamlConfiguration minesConfig;
-
-    private static Economy econ;
 
     public static Economy getEconomy() {
         return econ;
