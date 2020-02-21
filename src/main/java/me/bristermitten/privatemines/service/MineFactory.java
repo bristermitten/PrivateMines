@@ -220,6 +220,7 @@ public class MineFactory {
                 max.toBlockPoint());
 
         mineRegion.setParent(parent);
+        mineRegion.setOwners(parent.getOwners());
         mineRegion.setPriority(1);
         mineRegion.setFlag(DefaultFlag.BLOCK_BREAK, State.ALLOW);
         return mineRegion;
