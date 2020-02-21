@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'me.bristermitten'
-version = '1.0'
+version = '1.1'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
