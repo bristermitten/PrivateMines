@@ -3,6 +3,7 @@ package me.bristermitten.privatemines;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -97,6 +98,21 @@ public class Util {
 
     public static String prettify(String s) {
         return WordUtils.capitalize(s.toLowerCase().replace("_", " "));
+    }
+
+    public static float getYaw(BlockFace face) {
+        switch (face) {
+            case WEST:
+                return 90f;
+            case NORTH:
+                return 180f;
+            case EAST:
+                return -90f;
+            case SOUTH:
+                return -180f;
+            default:
+                return 0f;
+        }
     }
 }
 
