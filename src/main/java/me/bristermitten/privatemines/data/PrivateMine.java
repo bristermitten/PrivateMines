@@ -62,6 +62,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fill(block);
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     @Contract("_ -> new")
     public static PrivateMine deserialize(Map<String, Object> map) {
@@ -144,9 +145,7 @@ public class PrivateMine implements ConfigurationSerializable {
         //free any players
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
-                Location location = player.getLocation();
-                location.setY(locations.getRegion().getMaximumPoint().getY() + 1);
-                player.teleport(location);
+                player.teleport(locations.getSpawnPoint());
             }
         }
 
