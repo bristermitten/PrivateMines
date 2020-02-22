@@ -5,6 +5,7 @@
 
 package me.bristermitten.privatemines.data;
 
+import me.bristermitten.privatemines.PrivateMines;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
@@ -26,6 +27,13 @@ public class SellNPC {
         npc.getTrait(LookClose.class).toggle();
 
         SellNPCTrait trait = npc.getTrait(SellNPCTrait.class);
+
+        if (trait == null) {
+            PrivateMines.getPlugin(PrivateMines.class).getLogger().warning("SellNPCTrait is null");
+            trait = new SellNPCTrait();
+            npc.addTrait(trait);
+        }
+        
         trait.setOwner(owner);
 
         return npc;

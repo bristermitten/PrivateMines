@@ -41,7 +41,7 @@ public final class PrivateMines extends JavaPlugin {
 
         PMConfig mainConfig = new PMConfig(getConfig());
         MineWorldManager mineManager = new MineWorldManager(mainConfig);
-        
+
         MineFactory factory = loadMineFactory(mainConfig, mineManager);
 
         if (factory == null) return;
