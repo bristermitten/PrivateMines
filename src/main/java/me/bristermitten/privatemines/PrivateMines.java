@@ -13,13 +13,16 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public final class PrivateMines extends JavaPlugin {
 
@@ -38,7 +41,10 @@ public final class PrivateMines extends JavaPlugin {
 
         PMConfig mainConfig = new PMConfig(getConfig());
         MineWorldManager mineManager = new MineWorldManager(mainConfig);
-        MineFactory factory = new MineFactory(this, mineManager, mainConfig);
+        
+        MineFactory factory = loadMineFactory(mainConfig, mineManager);
+
+        if (factory == null) return;
         this.storage = new MineStorage(factory);
 
         try {
@@ -59,6 +65,24 @@ public final class PrivateMines extends JavaPlugin {
                     getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
         }
+    }
+
+    @Nullable
+    private MineFactory loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
+        File mineSchematic = new File(getDataFolder(), mainConfig.getSchematicName());
+
+        if (!mineSchematic.exists()) {
+            Logger logger = getLogger();
+            logger.severe("-------------------------------------------------");
+            logger.severe("File mine.schematic does not exist!");
+            logger.severe("-------------------------------------------------");
+
+            Bukkit.getPluginManager().disablePlugin(this);
+            return null;
+        }
+
+        MineFactory factory = new MineFactory(this, mineManager, mainConfig, mineSchematic);
+        return factory;
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {

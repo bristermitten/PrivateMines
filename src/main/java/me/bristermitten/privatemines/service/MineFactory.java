@@ -60,25 +60,16 @@ public class MineFactory {
     private final EditSession extent;
     private final World world;
 
-    public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config) {
+    public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, File file) {
         this.plugin = plugin;
         this.manager = manager;
-        this.file = new File(plugin.getDataFolder(), config.getSchematicName());
+        this.file = file;
         this.config = config;
 
         world = FaweAPI.getWorld(manager.getMinesWorld().getName());
 
         this.extent = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited()
                 .fastmode(true).build();
-
-        if (!file.exists()) {
-            Logger logger = plugin.getLogger();
-            logger.severe("-------------------------------------------------");
-            logger.severe("File mine.schematic does not exist!");
-            logger.severe("-------------------------------------------------");
-
-            Bukkit.getPluginManager().disablePlugin(plugin);
-        }
 
     }
 
