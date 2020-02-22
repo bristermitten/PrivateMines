@@ -19,10 +19,7 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.Util;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -146,6 +143,7 @@ public class PrivateMine implements ConfigurationSerializable {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
                 player.teleport(locations.getSpawnPoint());
+                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
             }
         }
 
