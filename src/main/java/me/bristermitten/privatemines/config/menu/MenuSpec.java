@@ -63,7 +63,7 @@ public class MenuSpec {
         this.everyItem = other.everyItem == null ? null : other.everyItem.clone();
     }
 
-    public void loadFrom(ConfigurationSection section, String... placeholders) {
+    public void loadFrom(ConfigurationSection section, Object... placeholders) {
         if (section == null) {
             throw new NullPointerException("MenuSpec section is null");
         }

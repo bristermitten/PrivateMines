@@ -24,7 +24,7 @@ public class MenuFactory {
         new PrivateMineMenu(p, plugin, config, storage, pmConfig);
     }
 
-    public void createMinesMenu(Player p) {
-        new MinesMenu(p, config, plugin, storage);
+    public void createAndOpenMinesMenu(Player p) {
+        new MinesMenu(config, plugin, storage).open(p);
     }
 }

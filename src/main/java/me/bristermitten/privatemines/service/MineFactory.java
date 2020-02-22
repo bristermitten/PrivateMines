@@ -35,7 +35,6 @@ import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.data.SellNPC;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -48,7 +47,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class MineFactory {
     public static final boolean DEFAULT_MINE_OPEN = true;
@@ -179,8 +177,7 @@ public class MineFactory {
                     config.getTaxPercentage());
 
         } catch (WorldEditException | CircularInheritanceException | IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
 
     }
@@ -196,6 +193,7 @@ public class MineFactory {
         region.setFlag(DefaultFlag.BLOCK_BREAK, State.DENY);
         region.setFlag(DefaultFlag.BLOCK_PLACE, State.DENY);
         region.setFlag(DefaultFlag.MOB_SPAWNING, State.DENY);
+        region.setFlag(DefaultFlag.INTERACT, State.ALLOW);
 
         DefaultDomain domain = new DefaultDomain();
         domain.addPlayer(owner.getUniqueId());

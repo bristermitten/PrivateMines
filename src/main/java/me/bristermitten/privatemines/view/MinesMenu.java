@@ -4,6 +4,7 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.Util;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
+import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class MinesMenu {
     private static MenuSpec original;
 
     private final Inventory inventory;
-    public MinesMenu(Player p, MenuConfig config, PrivateMines plugin, MineStorage storage) {
+    public MinesMenu( MenuConfig config, PrivateMines plugin, MineStorage storage) {
 
         if (original == null) {
             original = new MenuSpec();
@@ -34,10 +35,11 @@ public class MinesMenu {
         inventory = spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
+                    PrivateMine mine = storage.getOrCreate(pl);
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
-                            "%block%", prettify(storage.getOrCreate(pl).getBlock().name()),
-                            "%tax%", String.valueOf(storage.getOrCreate(pl).getTaxPercentage()));
+                            "%block%", prettify(mine.getBlock().name()),
+                            "%tax%", mine.getTaxPercentage());
                     i.setItemMeta(itemMeta);
                     return i;
                 },

@@ -81,8 +81,7 @@ public final class PrivateMines extends JavaPlugin {
             return null;
         }
 
-        MineFactory factory = new MineFactory(this, mineManager, mainConfig, mineSchematic);
-        return factory;
+        return new MineFactory(this, mineManager, mainConfig, mineSchematic);
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {

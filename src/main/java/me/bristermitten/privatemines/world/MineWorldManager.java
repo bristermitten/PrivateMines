@@ -21,7 +21,9 @@ public class MineWorldManager {
     public MineWorldManager(PMConfig config) {
         this.minesWorld = Bukkit.createWorld(
                 new WorldCreator(config.getWorldName())
+                        .environment(World.Environment.NORMAL)
                         .generator(new EmptyWorldGenerator()));
+
         this.borderDistance = config.getMinesDistance();
         this.direction = NORTH;
         DEFAULT_LOCATION = new Location(minesWorld, 0, 0, 0);
