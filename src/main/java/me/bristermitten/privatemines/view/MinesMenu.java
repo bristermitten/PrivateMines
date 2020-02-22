@@ -17,7 +17,8 @@ public class MinesMenu {
     private static MenuSpec original;
 
     private final Inventory inventory;
-    public MinesMenu( MenuConfig config, PrivateMines plugin, MineStorage storage) {
+
+    public MinesMenu(MenuConfig config, PrivateMines plugin, MineStorage storage) {
 
         if (original == null) {
             original = new MenuSpec();
@@ -48,7 +49,7 @@ public class MinesMenu {
         spec.register(plugin);
     }
 
-    public void open(Player p){
+    public void open(Player p) {
         p.openInventory(inventory);
     }
 }

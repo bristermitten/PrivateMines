@@ -5,7 +5,11 @@
 
 package me.bristermitten.privatemines.data;
 
+import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.clip.autosell.events.AutoSellEvent;
 import me.clip.autosell.events.SellAllEvent;
@@ -74,6 +78,14 @@ public class SellNPCTrait extends Trait {
         double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
+
+
+        BukkitCommandManager manager = PrivateMines.getPlugin(PrivateMines.class).getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(e.getPlayer());
+        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
+                "{amount}", String.valueOf(tax),
+                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
+
     }
 
     @EventHandler
@@ -89,6 +101,12 @@ public class SellNPCTrait extends Trait {
         double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
+
+        BukkitCommandManager manager = PrivateMines.getPlugin(PrivateMines.class).getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(e.getPlayer());
+        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
+                "{amount}", String.valueOf(tax),
+                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
     }
 
     public static class UUIDPersister implements Persister<UUID> {

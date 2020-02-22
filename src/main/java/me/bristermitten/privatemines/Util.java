@@ -73,6 +73,7 @@ public class Util {
         if (meta.hasDisplayName()) {
             replace.forEach((k, v) -> meta.setDisplayName(meta.getDisplayName().replace(k, v)));
         }
+
         if (meta.hasLore()) {
             meta.setLore(meta.getLore().stream()
                     .map(line -> {

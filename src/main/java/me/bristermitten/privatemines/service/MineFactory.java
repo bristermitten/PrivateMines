@@ -161,7 +161,7 @@ public class MineFactory {
             MineLocations locations = new MineLocations(spawnLoc, min, max, mineRegion);
             NPC npc = SellNPC.createSellNPC(
                     config.getNPCName(),
-                    config.getNPCSkin(),
+                    owner.getName(),
                     npcLoc,
                     owner.getUniqueId());
 
