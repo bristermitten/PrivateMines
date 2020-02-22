@@ -146,6 +146,7 @@ public class PrivateMine implements ConfigurationSerializable {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
                 player.teleport(locations.getSpawnPoint());
+                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
             }
         }
 
