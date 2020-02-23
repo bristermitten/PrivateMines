@@ -1,7 +1,7 @@
 Menus:
   Main:
     Title: "Personal Mines"
-    Size: 9
+    Size: 18
     Background:
       Type: STAINED_GLASS_PANE
       Data: 15
@@ -11,6 +11,9 @@ Menus:
         Action: "change-block"
         Type: "%BLOCK%"
         Name: "&6&lChange Mine Block"
+        Lore:
+          - "&fClick to change"
+          - "&fyour mine block!"
       '4':
         Action: "go-to-mine"
         Type: ENDER_PEARL
@@ -19,8 +22,24 @@ Menus:
         Action: 'view-mines'
         Type: GLASS
         Name: "&6&lView other Mines"
+        Lore:
+          - "&fClick to view other"
+          - "&fplayers private mines!"
+      '10':
+        Action: 'view-mines'
+        Type: PAINTING
+        Name: "&6&lMine Theme"
+        Lore:
+          - "&fClick to change"
+          - "&fyour mine theme!"
+      '12':
+        Action: 'view-mines'
+        Type: HOPPER
+        Name: "&b&lPercent Mined"
+        Lore:
+          - "&f%percentmined%%"
   Mines:
-    Title: "&6&lMines"
+    Title: "Mines"
     Size: 54
     Background:
       Type: STAINED_GLASS_PANE
@@ -34,7 +53,7 @@ Menus:
           - "&7Tax: &6%tax%%"
           - "&7Block Type: &6%block%"
   Blocks:
-    Title: "&6&lChange Block"
+    Title: "Change Block"
     Size: 9
     Background:
       Type: STAINED_GLASS_PANE
