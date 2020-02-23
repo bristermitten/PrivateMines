@@ -67,15 +67,20 @@ public class SellNPCTrait extends Trait {
 
     @EventHandler
     public void onSellAll(SellAllEvent e) {
+        if (e.getItemsSold().isEmpty()) return;
         if (e.getPlayer().getUniqueId().equals(owner)) return;
         PrivateMine privateMine = storage.get(owner);
+        System.out.println(privateMine);
         if (privateMine == null) {
             return;
         }
+
         if (!privateMine.contains(e.getPlayer())) {
             return;
         }
+
         double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
+        System.out.println(tax);
         e.setTotalCost(e.getTotalCost() - tax);
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
 
@@ -85,11 +90,13 @@ public class SellNPCTrait extends Trait {
         manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
                 "{amount}", String.valueOf(tax),
                 "{tax}", String.valueOf(privateMine.getTaxPercentage()));
+        System.out.println("message sent");
 
     }
 
     @EventHandler
     public void onSignSell(SignSellEvent e) {
+        if (e.getItemsSold().isEmpty()) return;
         if (e.getPlayer().getUniqueId().equals(owner)) return;
         PrivateMine privateMine = storage.get(owner);
         if (privateMine == null) {

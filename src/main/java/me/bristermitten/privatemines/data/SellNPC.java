@@ -30,7 +30,6 @@ public class SellNPC {
         SellNPCTrait trait = npc.getTrait(SellNPCTrait.class);
 
         if (trait == null) {
-            PrivateMines.getPlugin(PrivateMines.class).getLogger().warning("SellNPCTrait is null");
             trait = new SellNPCTrait();
             npc.addTrait(trait);
         }
