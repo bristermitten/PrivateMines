@@ -122,6 +122,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void teleport(Player p) {
         p.teleport(locations.getSpawnPoint());
+        p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
     }
 
     public UUID getOwner() {
