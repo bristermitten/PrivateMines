@@ -38,7 +38,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Manage your Private Mine or go to others")
     public void main(Player p) {
         if (p.hasPermission("privatemines.owner")) {
-            factory.createMenu(p);
+            factory.createMainMenu(p);
         } else {
             factory.createAndOpenMinesMenu(p);
         }

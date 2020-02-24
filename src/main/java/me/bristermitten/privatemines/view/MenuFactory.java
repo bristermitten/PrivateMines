@@ -6,6 +6,9 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.entity.Player;
 
+/**
+ * Factory pattern for creating Menus
+ */
 public class MenuFactory {
     private final MineStorage storage;
 
@@ -20,7 +23,7 @@ public class MenuFactory {
         this.pmConfig = pmConfig;
     }
 
-    public void createMenu(Player p) {
+    public void createMainMenu(Player p) {
         new PrivateMineMenu(p, plugin, config, storage, pmConfig);
     }
 

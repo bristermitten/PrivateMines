@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.config.menu;
 
 import me.bristermitten.privatemines.Util;
+import me.bristermitten.privatemines.view.MinesMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
@@ -19,46 +20,64 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
+/**
+ * A specification for a Menu. This is sort of like a template,
+ * and can be copied for placeholders in each item.
+ * <p>
+ * The general pattern is that 1 MenuSpec holds the actual "raw" data from the config,
+ * and the rest are copied and have placeholders applied.
+ * <p>
+ * For an example see {@link me.bristermitten.privatemines.view.PrivateMineMenu}
+ */
 public class MenuSpec {
-
     private final InventoryHolder holder;
+    /**
+     * Maps slot to Item
+     */
     private Map<Integer, ItemStack> itemsMap = new HashMap<>();
+    /**
+     * Maps slot to a specific piece of code
+     */
     private Map<Integer, Consumer<InventoryClickEvent>> actionSlotMap = new HashMap<>();
+    /**
+     * Maps specific names in the config to code (for example "view-mines" to
+     * opening the {@link MinesMenu}
+     */
     private Map<String, Consumer<InventoryClickEvent>> actionMap = new HashMap<>();
-    private Map<String, Predicate<InventoryClickEvent>> conditionMap = new HashMap<>();
-    private Map<Integer, Predicate<InventoryClickEvent>> conditionSlotMap = new HashMap<>();
     private int size;
     private String title;
     private Inventory inventory;
-    private Listener l;
+    private Listener listener;
     private ItemStack backgroundItem;
 
+    /**
+     * An ItemStack that will be used as a template item (eg in {@link MinesMenu})
+     */
     private ItemStack everyItem;
 
     public MenuSpec() {
         holder = new MenuHolder();
     }
 
-    public void putAction(String name, Consumer<InventoryClickEvent> action) {
+    public void addAction(String name, Consumer<InventoryClickEvent> action) {
         actionMap.put(name, action);
     }
 
-    public MenuSpec putCondition(String name, Predicate<InventoryClickEvent> action) {
-        conditionMap.put(name, action);
-        return this;
-    }
 
+    /**
+     * Copy from another MenuSpec
+     * This can then have placeholders applied
+     *
+     * @param other the spec to copy from
+     */
     public void copyFrom(MenuSpec other) {
         this.title = other.title;
         this.size = other.size;
         this.itemsMap = new HashMap<>(other.itemsMap);
         this.actionSlotMap = new HashMap<>(other.actionSlotMap);
         this.actionMap = new HashMap<>(other.actionMap);
-        this.conditionMap = new HashMap<>(other.conditionMap);
-        this.conditionSlotMap = new HashMap<>(other.conditionSlotMap);
         this.backgroundItem = other.backgroundItem == null ? null : other.backgroundItem.clone();
         this.everyItem = other.everyItem == null ? null : other.everyItem.clone();
     }
@@ -80,11 +99,9 @@ public class MenuSpec {
             int slot = s.getInt("Slot", Integer.parseInt(s.getName()));
             ItemStack item = Util.deserializeStack(s.getValues(true), placeholders);
             itemsMap.put(slot, item);
+
             if (s.contains("Action")) {
                 actionSlotMap.put(slot, actionMap.get(s.getString("Action")));
-            }
-            if (s.contains("Condition")) {
-                conditionSlotMap.put(slot, conditionMap.get(s.getString("Condition")));
             }
         }
         if (section.contains("Background")) {
@@ -138,15 +155,13 @@ public class MenuSpec {
             @EventHandler
             public void onClose(InventoryCloseEvent e) {
                 if (!e.getInventory().getHolder().equals(holder)) return;
-                InventoryClickEvent.getHandlerList().unregister(l);
-                e.getHandlers().unregister(l);
+                InventoryClickEvent.getHandlerList().unregister(listener);
+                e.getHandlers().unregister(listener);
 
                 //dereference to allow gc
-                l = null;
+                listener = null;
                 actionMap.clear();
                 actionSlotMap.clear();
-                conditionMap.clear();
-                conditionSlotMap.clear();
                 itemsMap.clear();
                 inventory = null;
                 backgroundItem = null;
@@ -170,9 +185,9 @@ public class MenuSpec {
     }
 
     public void register(Plugin p) {
-        if (l != null) return;
-        l = toListener();
-        Bukkit.getPluginManager().registerEvents(l, p);
+        if (listener != null) return;
+        listener = toListener();
+        Bukkit.getPluginManager().registerEvents(listener, p);
     }
 
     private class MenuHolder implements InventoryHolder {

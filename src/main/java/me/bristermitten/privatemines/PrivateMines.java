@@ -54,7 +54,6 @@ public final class PrivateMines extends JavaPlugin {
             getLogger().severe("An error occurred loading data!");
             e.printStackTrace();
         }
-
         MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
 
         loadCommands(mainConfig, menuFactory);

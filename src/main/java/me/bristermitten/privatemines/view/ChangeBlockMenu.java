@@ -14,6 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Handles the menu to change a Private Mine block
+ */
 public class ChangeBlockMenu {
 
     private static MenuSpec original;
