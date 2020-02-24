@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -46,11 +47,11 @@ public class MineStorage {
     }
 
     @Nonnull
-    public PrivateMine getOrCreate(Player p) {
+    public PrivateMine getOrCreate(Player p, File f) {
         PrivateMine mine = mines.get(p.getUniqueId());
 
         if (mine == null) {
-            mine = factory.create(p);
+            mine = factory.create(p, f);
             mines.put(p.getUniqueId(), mine);
         }
 
