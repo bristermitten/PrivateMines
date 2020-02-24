@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package me.bristermitten.privatemines.service;
 
 import com.boydti.fawe.FaweAPI;
@@ -73,11 +68,11 @@ public class MineFactory {
 
     @SuppressWarnings("deprecation")
     @Nonnull
-    public PrivateMine create(Player owner) {
+    public PrivateMine create(Player owner, File file) {
 
         try {
             Location location = manager.nextFreeLocation();
-            Schematic schematic = loadSchematic();
+            Schematic schematic = loadSchematic(file);
             Clipboard clipboard = schematic.getClipboard();
 
             if (clipboard == null) {
@@ -165,7 +160,6 @@ public class MineFactory {
                     npcLoc,
                     owner.getUniqueId());
 
-
             return new PrivateMine(
                     owner.getUniqueId(),
                     DEFAULT_MINE_OPEN,
@@ -179,9 +173,7 @@ public class MineFactory {
         } catch (WorldEditException | CircularInheritanceException | IOException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 
     @NotNull
     private ProtectedRegion createMainWorldGuardRegion(Player owner, Region r) {
@@ -216,9 +208,9 @@ public class MineFactory {
     }
 
     @NotNull
-    private Schematic loadSchematic() throws IOException {
+    private Schematic loadSchematic(File f) throws IOException {
         ClipboardFormat format = ClipboardFormat.SCHEMATIC;
-        return format.load(new FileInputStream(file));
+        return format.load(new FileInputStream(f));
     }
 
     public MineWorldManager getManager() {
