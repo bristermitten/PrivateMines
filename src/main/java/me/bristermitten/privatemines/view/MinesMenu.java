@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
+
 import static me.bristermitten.privatemines.Util.prettify;
 
 /**
@@ -21,7 +23,7 @@ public class MinesMenu {
 
     private final Inventory inventory;
 
-    public MinesMenu(MenuConfig config, PrivateMines plugin, MineStorage storage) {
+    public MinesMenu(MenuConfig config, PrivateMines plugin, MineStorage storage, File f) {
 
         if (original == null) {
             original = new MenuSpec();
@@ -40,7 +42,7 @@ public class MinesMenu {
         inventory = spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
-                    PrivateMine mine = storage.getOrCreate(pl);
+                    PrivateMine mine = storage.getOrCreate(pl, f);
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
                             "%block%", prettify(mine.getBlock().name()),
@@ -48,7 +50,7 @@ public class MinesMenu {
                     i.setItemMeta(itemMeta);
                     return i;
                 },
-                pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players);
+                pl -> e -> storage.getOrCreate(pl, f).teleport((Player) e.getWhoClicked()), players);
 
         spec.register(plugin);
     }
