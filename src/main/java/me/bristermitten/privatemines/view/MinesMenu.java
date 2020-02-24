@@ -13,6 +13,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import static me.bristermitten.privatemines.Util.prettify;
 
+/**
+ * Menu for viewing all open Private Mines
+ */
 public class MinesMenu {
     private static MenuSpec original;
 
@@ -30,7 +33,8 @@ public class MinesMenu {
         spec.register(plugin);
 
         Player[] players =
-                Bukkit.getOnlinePlayers().stream().filter(storage::has).filter(pl -> storage.get(pl).isOpen())
+                Bukkit.getOnlinePlayers().stream().filter(storage::has)
+                        .filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
 
         inventory = spec.genMenu(

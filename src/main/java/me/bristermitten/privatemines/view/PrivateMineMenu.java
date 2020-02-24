@@ -9,6 +9,7 @@ import me.bristermitten.privatemines.service.MineStorage;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 public class PrivateMineMenu {
 
@@ -23,11 +24,13 @@ public class PrivateMineMenu {
 
         if (original == null) {
             original = new MenuSpec();
-            original.putAction("go-to-mine", e -> storage.getOrCreate((Player) e.getWhoClicked()).teleport());
-            original.putAction("view-mines",
-                    e -> new MinesMenu(config, plugin, storage).open((Player) e.getWhoClicked()));
-            original.putAction("change-block", e -> new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
-                    config, storage));
+
+            original.addAction("go-to-mine",
+                    e -> goToMine(storage, e));
+            original.addAction("view-mines",
+                    e -> openMinesMenu(plugin, config, storage, e));
+            original.addAction("change-block",
+                    e -> openChangeBlockMenu(plugin, config, storage, pmConfig, e));
         }
         PrivateMine mine = storage.get(p);
         Material type = mine != null ? mine.getBlock() : Material.STONE;
@@ -40,5 +43,19 @@ public class PrivateMineMenu {
         menuSpec.register(plugin);
 
         p.openInventory(menuSpec.genMenu());
+    }
+
+    private void goToMine(MineStorage storage, InventoryClickEvent e) {
+        storage.getOrCreate((Player) e.getWhoClicked()).teleport();
+    }
+
+    private void openMinesMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, InventoryClickEvent e) {
+        new MinesMenu(config, plugin, storage).open((Player) e.getWhoClicked());
+    }
+
+    private void openChangeBlockMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
+                                     InventoryClickEvent e) {
+        new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
+                config, storage);
     }
 }
