@@ -8,11 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Util {
@@ -25,21 +21,9 @@ public class Util {
         return new com.sk89q.worldedit.Vector(v.getX(), v.getY(), v.getZ());
     }
 
-    public static Map<String, Object> serializeStack(ItemStack s) {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("Amount", s.getAmount());
-        map.put("Type", s.getType());
-        map.put("Data", s.getDurability());
-        if (s.hasItemMeta()) {
-            ItemMeta meta = s.getItemMeta();
-            map.put("Name", meta.getDisplayName());
-            map.put("Lore", meta.getLore());
-        }
-        return map;
-    }
 
     @SuppressWarnings("unchecked")
-    public static ItemStack deserializeStack(Map<String, Object> map, String... placeholders) {
+    public static ItemStack deserializeStack(Map<String, Object> map, Object... placeholders) {
         Map<String, String> mappings = arrayToMap(placeholders);
         ItemStack s = new ItemStack(Material.AIR);
         s.setAmount((Integer) map.getOrDefault("Amount", 1));
@@ -67,31 +51,39 @@ public class Util {
         return s.stream().map(Util::color).collect(Collectors.toList());
     }
 
-    public static Map<String, String> arrayToMap(String... replacements) {
+    public static Map<String, String> arrayToMap(Object... replacements) {
+
         replacements = Arrays.copyOf(replacements, replacements.length - replacements.length % 2);
-        Map<String, String> mapping = new HashMap<>();
-        for (int i = 0; i < replacements.length - 1; i++) {
-            String key = replacements[i];
-            String value = replacements[i + 1];
-            mapping.put(key, value);
+
+        Map<String, String> placeholders = new LinkedHashMap<>(replacements.length / 2);
+        for (int i = 0; i < replacements.length - 1; i += 2) {
+            placeholders.put(String.valueOf(replacements[i]), String.valueOf(replacements[i + 1]));
         }
-        return mapping;
+
+        return placeholders;
     }
 
     public static com.sk89q.worldedit.Vector deserializeWorldEditVector(Map<String, Object> map) {
         return toVector(Vector.deserialize(map));
     }
 
-    public static void replaceMeta(ItemMeta meta, String... replacements) {
+    public static void replaceMeta(ItemMeta meta, Object... replacements) {
         Map<String, String> replace = arrayToMap(replacements);
+
         if (meta.hasDisplayName()) {
             replace.forEach((k, v) -> meta.setDisplayName(meta.getDisplayName().replace(k, v)));
         }
+
         if (meta.hasLore()) {
             meta.setLore(meta.getLore().stream()
-                    .map(AtomicReference::new)
-                    .peek(s -> replace.forEach((k, v) -> s.set(s.get().replace(k, v))))
-                    .map(AtomicReference::get)
+                    .map(line -> {
+                        for (Map.Entry<String, String> entry : replace.entrySet()) {
+                            String key = entry.getKey();
+                            String value = entry.getValue();
+                            line = line.replace(key, value);
+                        }
+                        return line;
+                    })
                     .collect(Collectors.toList()));
         }
     }

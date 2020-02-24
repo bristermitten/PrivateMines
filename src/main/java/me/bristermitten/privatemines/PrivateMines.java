@@ -30,6 +30,7 @@ public final class PrivateMines extends JavaPlugin {
     private MineStorage storage;
     private MenuConfig menuConfig;
     private YamlConfiguration minesConfig;
+    private BukkitCommandManager manager;
 
     public static Economy getEconomy() {
         return econ;
@@ -81,12 +82,11 @@ public final class PrivateMines extends JavaPlugin {
             return null;
         }
 
-        MineFactory factory = new MineFactory(this, mineManager, mainConfig, mineSchematic);
-        return factory;
+        return new MineFactory(this, mineManager, mainConfig, mineSchematic);
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
-        BukkitCommandManager manager = new BukkitCommandManager(this);
+        manager = new BukkitCommandManager(this);
         manager.getLocales().addBundleClassLoader(getClassLoader());
 
         mainConfig.getColors().forEach(manager::setFormat);
@@ -163,5 +163,9 @@ public final class PrivateMines extends JavaPlugin {
             getLogger().severe("An error occurred saving data!");
             e.printStackTrace();
         }
+    }
+
+    public BukkitCommandManager getManager() {
+        return manager;
     }
 }

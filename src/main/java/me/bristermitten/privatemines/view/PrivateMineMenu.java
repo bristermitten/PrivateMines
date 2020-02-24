@@ -24,7 +24,8 @@ public class PrivateMineMenu {
         if (original == null) {
             original = new MenuSpec();
             original.putAction("go-to-mine", e -> storage.getOrCreate((Player) e.getWhoClicked()).teleport());
-            original.putAction("view-mines", e -> new MinesMenu((Player) e.getWhoClicked(), config, plugin, storage));
+            original.putAction("view-mines",
+                    e -> new MinesMenu(config, plugin, storage).open((Player) e.getWhoClicked()));
             original.putAction("change-block", e -> new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig,
                     config, storage));
         }

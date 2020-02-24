@@ -1,10 +1,7 @@
 package me.bristermitten.privatemines.world;
 
 import me.bristermitten.privatemines.config.PMConfig;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +18,9 @@ public class MineWorldManager {
     public MineWorldManager(PMConfig config) {
         this.minesWorld = Bukkit.createWorld(
                 new WorldCreator(config.getWorldName())
-                        .generator(new EmptyWorldGenerator()));
+                        .type(WorldType.FLAT)
+                        .generatorSettings("2;0;1;"));
+
         this.borderDistance = config.getMinesDistance();
         this.direction = NORTH;
         DEFAULT_LOCATION = new Location(minesWorld, 0, 0, 0);

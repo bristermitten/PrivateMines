@@ -40,7 +40,7 @@ public class PrivateMinesCommand extends BaseCommand {
         if (p.hasPermission("privatemines.owner")) {
             factory.createMenu(p);
         } else {
-            factory.createMinesMenu(p);
+            factory.createAndOpenMinesMenu(p);
         }
     }
 
