@@ -21,6 +21,8 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 
+import java.io.File;
+
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
@@ -54,8 +56,8 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("tax")
     @CommandPermission("privatemines.owner")
     @Description("Set your mine's tax percentage")
-    public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage) {
-        PrivateMine mine = storage.getOrCreate(p);
+    public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage, File f) {
+        PrivateMine mine = storage.getOrCreate(p, f);
 
         if (taxPercentage == null) {
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
@@ -69,8 +71,8 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("open")
     @CommandPermission("privatemines.owner")
     @Description("Allow other players into your mine")
-    public void open(Player p) {
-        PrivateMine mine = storage.getOrCreate(p);
+    public void open(Player p, File f) {
+        PrivateMine mine = storage.getOrCreate(p, f);
         mine.setOpen(true);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_OPENED);
     }
@@ -78,8 +80,8 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("close")
     @CommandPermission("privatemines.owner")
     @Description("Close your mine from other players")
-    public void close(Player p) {
-        PrivateMine mine = storage.getOrCreate(p);
+    public void close(Player p, File f) {
+        PrivateMine mine = storage.getOrCreate(p, f);
         mine.setOpen(false);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
     }
@@ -88,7 +90,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.give")
     @CommandCompletion("@players")
     @Description("Give a Player a PrivateMine")
-    public void give(OnlinePlayer target) {
+    public void give(OnlinePlayer target, File f) {
         Player t = target.getPlayer();
 
         if (storage.has(t)) {
@@ -96,7 +98,7 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
 
-        storage.getOrCreate(t).teleport();
+        storage.getOrCreate(t, f).teleport();
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
     }
 
