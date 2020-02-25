@@ -43,7 +43,7 @@ public class ChangeThemeMenu {
                             Util.prettify(block.name()))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
-                    return i;
+                    return i; //
                 },
                 block -> e -> mine.setBlock(block), blocks));
     }
