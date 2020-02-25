@@ -1,3 +1,7 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by Fernflower decompiler)
+//
 package me.bristermitten.privatemines.service;
 
 import me.bristermitten.privatemines.data.PrivateMine;
