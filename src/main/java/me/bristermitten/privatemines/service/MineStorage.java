@@ -42,11 +42,11 @@ public class MineStorage {
     }
 
     @Nonnull
-    public PrivateMine getOrCreate(Player p, File f) {
+    public PrivateMine getOrCreate(Player p) {
         PrivateMine mine = mines.get(p.getUniqueId());
 
         if (mine == null) {
-            mine = factory.create(p, f);
+            mine = factory.create(p);
             mines.put(p.getUniqueId(), mine);
         }
 

@@ -31,7 +31,7 @@ public class ChangeThemeMenu {
         MenuSpec spec = new MenuSpec();
         spec.copyFrom(original);
         spec.register(plugin);
-        PrivateMine mine = storage.getOrCreate(p, f);
+        PrivateMine mine = storage.getOrCreate(p);
         Material[] blocks = config.getBlockOptions().toArray(new Material[]{});
         p.openInventory(spec.genMenu((block, i) -> {
                     i.setType(block);

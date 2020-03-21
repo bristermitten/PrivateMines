@@ -49,6 +49,7 @@ public class SellNPCTrait extends Trait {
         e.getClicker().performCommand("sellall");
     }
 
+
     @EventHandler
     public void onAutoSell(AutoSellEvent e) {
 
@@ -63,6 +64,12 @@ public class SellNPCTrait extends Trait {
         e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
         double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
+
+        BukkitCommandManager manager = PrivateMines.getPlugin(PrivateMines.class).getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(e.getPlayer());
+        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
+                "{amount}", String.valueOf(tax),
+                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
     }
 
     @EventHandler

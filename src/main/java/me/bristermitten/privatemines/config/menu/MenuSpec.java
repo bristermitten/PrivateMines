@@ -65,7 +65,6 @@ public class MenuSpec {
         actionMap.put(name, action);
     }
 
-
     /**
      * Copy from another MenuSpec
      * This can then have placeholders applied

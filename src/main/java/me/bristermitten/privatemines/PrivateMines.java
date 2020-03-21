@@ -45,6 +45,8 @@ public final class PrivateMines extends JavaPlugin {
 
         MineFactory factory = loadMineFactory(mainConfig, mineManager);
 
+        File file = new File("file");
+
         if (factory == null) return;
         this.storage = new MineStorage(factory);
 
@@ -54,7 +56,7 @@ public final class PrivateMines extends JavaPlugin {
             getLogger().severe("An error occurred loading data!");
             e.printStackTrace();
         }
-        MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
+        MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig, file);
 
         loadCommands(mainConfig, menuFactory);
 
@@ -154,6 +156,9 @@ public final class PrivateMines extends JavaPlugin {
         getLogger().info("Saved mines.yml");
     }
 
+    private void loadSchematicFolder() throws IOException {
+
+    }
     @Override
     public void onDisable() {
         try {

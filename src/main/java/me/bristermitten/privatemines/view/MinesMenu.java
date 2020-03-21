@@ -11,6 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
+
 import static me.bristermitten.privatemines.Util.prettify;
 
 /**
@@ -21,7 +23,7 @@ public class MinesMenu {
 
     private final Inventory inventory;
 
-    public MinesMenu(MenuConfig config, PrivateMines plugin, MineStorage storage) {
+    public MinesMenu(MenuConfig config, PrivateMines plugin, MineStorage storage, File f) {
 
         if (original == null) {
             original = new MenuSpec();

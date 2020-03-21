@@ -18,8 +18,14 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.milkbowl.vault.chat.Chat;
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.io.File;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
@@ -144,11 +150,18 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
 
-        p.sendMessage(Util.color("&7Block Type: &6" + Util.prettify(mine.getBlock().name())));
-        p.spigot().sendMessage(new ComponentBuilder("").color(ChatColor.GOLD).
-                append("Click to teleport").
-                event(new ClickEvent(Action.RUN_COMMAND, "/pm teleport " + t.getName()))
-                .create());
+        TextComponent blocktype = new TextComponent( Util.color("&7Block Type: &6" + Util.prettify(mine.getBlock().name())) );
+        TextComponent msg = new TextComponent( Util.color("&6Click to teleport" ));
+
+        msg.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to teleport").create()));
+        msg.setClickEvent(new ClickEvent(Action.SUGGEST_COMMAND, "/pm teleport " + t.getName()));
+        p.spigot().sendMessage(blocktype);
+        p.spigot().sendMessage(msg);
+       // p.sendMessage(Util.color("&7Block Type: &6" + Util.prettify(mine.getBlock().name())));
+        //p.spigot().sendMessage(new ComponentBuilder("").color(ChatColor.GOLD).
+          //      append("Click to teleport").
+            //    event(new ClickEvent(Action.RUN_COMMAND, "/pm teleport " + t.getName()))
+              //  .create());
     }
 
 
@@ -166,5 +179,4 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         mine.teleport(p);
     }
-
 }

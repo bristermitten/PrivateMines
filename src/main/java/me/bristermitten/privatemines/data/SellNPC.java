@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package me.bristermitten.privatemines.data;
 
 import me.bristermitten.privatemines.PrivateMines;
@@ -10,10 +5,12 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.npc.skin.SkinnableEntity;
 import net.citizensnpcs.trait.LookClose;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class SellNPC {
     private SellNPC() {
@@ -36,6 +33,7 @@ public class SellNPC {
 
         trait.setOwner(owner);
 
+        Bukkit.getLogger().log(Level.INFO, trait.toString());
         return npc;
     }
 

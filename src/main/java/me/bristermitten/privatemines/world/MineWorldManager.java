@@ -78,5 +78,4 @@ public class MineWorldManager {
             return loc.clone().add(value * xMulti, 0, value * zMulti);
         }
     }
-
 }

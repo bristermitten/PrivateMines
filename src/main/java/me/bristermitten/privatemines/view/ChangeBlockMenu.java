@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class ChangeBlockMenu {
 
     private static MenuSpec original;
 
-    public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
+    public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage, File f) {
         if (original == null) {
             original = new MenuSpec();
             original.loadFrom(menuConfig.configurationForName("Blocks"));
