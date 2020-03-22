@@ -1,7 +1,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '4.0.4'
     id 'java'
-    id 'maven'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
 }
 
 group = 'me.bristermitten'
@@ -21,40 +21,33 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT'
-    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
+    compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    implementation "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
     implementation "com.github.MilkBowl:VaultAPI:1.7"
-    implementation 'com.boydti:fawe-api:latest'
-    implementation('com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT') {
+    implementation "com.boydti:fawe-api:latest"
+
+    implementation("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT") {
         exclude group: 'org.bukkit'
     }
-    implementation 'com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT'
-    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    implementation 'net.citizensnpcs:citizens:2.0.25-SNAPSHOT'
+
+    implementation "com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT"
+    implementation "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
     implementation files("lib/AutoSellAPI-1.2.0.jar")
-    implementation files("lib/privatemines-1.0.jar")
-    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "junit:junit:4.12"
+
 }
 
-
-/**
- * This adds a -parameter flag to the `javac` command that's run so ACF can make meaningful help messages
- */
 compileJava {
     options.compilerArgs += ["-parameters"]
     options.fork = true
 }
 
-
 shadowJar {
     relocate 'co.aikar', 'me.bristermitten.aikar'
     minimize()
-    exclude '.classpath', '.project'
-    dependencies {
-        include(dependency('co.aikar:.*'))
-        include(dependency('.*:expiringmap'))
-        exclude(dependency(files('lib/AutoSellAPI-1.2.0.jar')))
-    }
+    configurations = [project.configurations.compile]
 }
 
 build.dependsOn shadowJar
@@ -67,9 +60,20 @@ processResources {
     }
 }
 
-task copyJar() {
-    copy {
-        from "F:/Coding/JavaCoding/privateminesprivate/libs/privateminesprivate-1.0.jar"
-        into "F:/Working Private Mines Server/plugins"
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+//task copyJar {
+//    copy {
+//        from "${outputs.files[0]}"
+//        into "F:/Working Private Mines Server/plugins"
+//    }
+//}

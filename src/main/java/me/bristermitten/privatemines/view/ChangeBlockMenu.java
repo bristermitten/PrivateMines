@@ -22,7 +22,7 @@ public class ChangeBlockMenu {
 
     private static MenuSpec original;
 
-    public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage, File f) {
+    public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();
             original.loadFrom(menuConfig.configurationForName("Blocks"));

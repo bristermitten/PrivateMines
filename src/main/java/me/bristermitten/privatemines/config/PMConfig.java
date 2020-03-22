@@ -54,7 +54,7 @@ public class PMConfig {
         this.taxPercentage = config.getDouble("Tax-Percentage");
 
         ConfigurationSection colors = config.getConfigurationSection("Colors");
-        
+
         for (String key : colors.getKeys(false)) {
             try {
                 this.colors.put((MessageType) MessageType.class.getField(key).get(null),
