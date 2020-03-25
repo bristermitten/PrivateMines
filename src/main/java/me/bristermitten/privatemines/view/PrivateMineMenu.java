@@ -15,6 +15,9 @@ public class PrivateMineMenu {
 
 	private static MenuSpec original;
 
+	/*
+	  Manages the /pmine Menu
+	 */
 	public PrivateMineMenu(Player p, PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
 	                       MenuFactory factory) {
 		Validate.notNull(p, "Player");
@@ -35,6 +38,11 @@ public class PrivateMineMenu {
 			original.addAction("change-schematic",
 					e -> factory.createAndOpenThemeMenu((Player) e.getWhoClicked()));
 		}
+
+		/*
+		  Gets the block type from the config
+		  TODO mom i'm scared i think I fucked up here
+		 */
 		PrivateMine mine = storage.get(p);
 		Material type = mine != null ? mine.getBlock() : Material.STONE;
 
@@ -48,10 +56,16 @@ public class PrivateMineMenu {
 		p.openInventory(menuSpec.genMenu());
 	}
 
+	/*
+	  Create the click event for going to the mine.
+	 */
 	private void goToMine(MineStorage storage, InventoryClickEvent e) {
 		storage.getOrCreate((Player) e.getWhoClicked()).teleport();
 	}
 
+	/*
+	 TODO https://i.pinimg.com/originals/d3/e0/a1/d3e0a1221de8cca4601b8885af1b6f39.jpg
+	 */
 	private void openMinesMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, InventoryClickEvent e) {
 		new MinesMenu((Player) e.getWhoClicked(), config, plugin, storage);
 	}

@@ -165,6 +165,10 @@ public class PrivateMine implements ConfigurationSerializable {
 		this.open = open;
 	}
 
+	/*
+	   Fills the blocks in the mine.
+	 */
+
 	public void fill(Material m) {
 		//free any players
 		for (Player player : Bukkit.getOnlinePlayers()) {
@@ -186,6 +190,10 @@ public class PrivateMine implements ConfigurationSerializable {
 				() -> fill(block), 1200L);
 	}
 
+
+	/*
+	  Delete the mine.
+	 */
 	public void delete() {
 		if (task != null) {
 			task.cancel();
@@ -204,6 +212,9 @@ public class PrivateMine implements ConfigurationSerializable {
 			npc.destroy();
 	}
 
+	/*
+	Delete the Private Mine Region.
+	 */
 	private void removeRegion() {
 		World world = locations.getSpawnPoint().getWorld();
 		RegionManager regionManager =
@@ -218,6 +229,9 @@ public class PrivateMine implements ConfigurationSerializable {
 		}
 	}
 
+	/*
+	  Teleport all the players back to spawn.
+	 */
 	private void removeAllPlayers() {
 		for (Player player : Bukkit.getOnlinePlayers()) {
 			if (this.contains(player)) {
@@ -226,8 +240,10 @@ public class PrivateMine implements ConfigurationSerializable {
 		}
 	}
 
+	/*
+	  Sets the new mine schematic (Used when changing themes)
+	 */
 	public void setMineSchematic(MineSchematic mineSchematic) {
-		Material block = getBlock();
 		fill(Material.AIR);
 		boolean open = isOpen();
 		setOpen(false);
@@ -245,6 +261,6 @@ public class PrivateMine implements ConfigurationSerializable {
 		this.npcId = newMine.npcId;
 		this.mineSchematic = mineSchematic;
 		setOpen(open);
-		fill(block);
+
 	}
 }

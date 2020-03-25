@@ -34,6 +34,10 @@ public class PMConfig {
         this.load(configuration);
     }
 
+    /*
+       Load up all the configuration files and details.
+     */
+
     public void load(FileConfiguration config) {
         this.worldName = config.getString("World-Name");
         this.minesDistance = config.getInt("Mine-Distance");

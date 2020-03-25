@@ -13,6 +13,10 @@ data class MineSchematic(
 		val icon: ItemStack
 ) {
 
+	/*
+	   Load the private mine schematic.
+	 */
+
 	val schematic: Schematic
 		get() {
 			if (!file.exists()) {

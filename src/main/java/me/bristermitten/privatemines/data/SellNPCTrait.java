@@ -41,6 +41,9 @@ public class SellNPCTrait extends Trait {
         this.owner = owner;
     }
 
+    /*
+      Used when a player right clicks the npc
+     */
     @EventHandler
     public void onClick(NPCRightClickEvent e) {
         if (!e.getNPC().equals(npc)) {
@@ -49,7 +52,9 @@ public class SellNPCTrait extends Trait {
         e.getClicker().performCommand("sellall");
     }
 
-
+    /*
+    Used when somebody is mining in the private mine with /autosell toggled on.
+     */
     @EventHandler
     public void onAutoSell(AutoSellEvent e) {
 
@@ -72,6 +77,9 @@ public class SellNPCTrait extends Trait {
                 "{tax}", String.valueOf(privateMine.getTaxPercentage()));
     }
 
+    /*
+       Used when the player is using /sellall
+     */
     @EventHandler
     public void onSellAll(SellAllEvent e) {
         if (e.getItemsSold().isEmpty()) return;
@@ -101,6 +109,11 @@ public class SellNPCTrait extends Trait {
 
     }
 
+    /*
+      Used when the player is selling at a sign,
+      this shouldn't be used because we used npcs,
+       but here just in case.
+     */
     @EventHandler
     public void onSignSell(SignSellEvent e) {
         if (e.getItemsSold().isEmpty()) return;

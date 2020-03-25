@@ -59,10 +59,17 @@ public class MineFactory {
 				.fastmode(true).build();
 	}
 
+	/*
+	Crates the private mine using the schematic specified at the next free location.
+	 */
+
 	public PrivateMine create(Player owner, MineSchematic mineSchematic) {
 		return create(owner, mineSchematic, manager.nextFreeLocation());
 	}
 
+	/*
+	Creates the private mine, pastes the schematic, sets the spawn location and fills the mine.
+	 */
 	@SuppressWarnings("deprecation")
 	public PrivateMine create(Player owner, MineSchematic mineSchematic, final Location location) {
 		try {
@@ -94,6 +101,10 @@ public class MineFactory {
 			Material npcMaterial = blockTypes.get(BlockType.NPC);
 
 
+			/*
+			 Loops through all of the blocks to find the spawn location block, replaces it with air and sets the location
+			 in the config.
+			 */
 			for (Vector pt : new FastIterator(region, editSession)) {
 				Material type = Material.values()[world.getLazyBlock(pt).getType()];
 				if (type == Material.AIR) continue;
@@ -108,6 +119,9 @@ public class MineFactory {
 					continue;
 				}
 
+				/*
+				  Loops through all the blocks finding the corner block.
+				 */
 				if (type == cornerMaterial) {
 					if (min == null) {
 						min = new Vector(pt);
@@ -120,6 +134,10 @@ public class MineFactory {
 					plugin.getLogger().warning("Mine schematic contains >2 corner blocks!");
 					continue;
 				}
+
+				/*
+				  Loops through all the blocks finding the NPC block and sets the NPC location.
+				 */
 				if (type == npcMaterial) {
 					npcLoc =
 							new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
@@ -127,6 +145,11 @@ public class MineFactory {
 					world.setBlock(pt, new BaseBlock(0));
 				}
 			}
+
+			//TODO
+			/*
+			   ??????
+			 */
 
 			if (spawnLoc == null) spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
 
@@ -136,6 +159,9 @@ public class MineFactory {
 
 			if (npcLoc == null) npcLoc = spawnLoc;
 
+			/*
+			Creates the region for the mine, sets the locations and creates the sell NPC.
+			 */
 			RegionManager regionManager =
 					WorldGuardPlugin.inst().getRegionManager(location.getWorld());
 
@@ -170,6 +196,8 @@ public class MineFactory {
 		}
 	}
 
+	//TODO
+
 	@NotNull
 	private ProtectedRegion createMainWorldGuardRegion(Player owner, Region r) {
 		ProtectedRegion region = new ProtectedCuboidRegion(
@@ -187,6 +215,8 @@ public class MineFactory {
 		region.setOwners(domain);
 		return region;
 	}
+
+	//TODO
 
 	@NotNull
 	private ProtectedRegion createMineWorldGuardRegion(Player owner, Vector min, Vector max, ProtectedRegion parent) throws CircularInheritanceException {

@@ -22,6 +22,10 @@ public class ChangeBlockMenu {
 
     private static MenuSpec original;
 
+    /*
+    Loads the configuration for the change block menu
+    TODO Check
+     */
     public ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();

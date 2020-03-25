@@ -4,6 +4,11 @@ import co.aikar.locales.MessageKey;
 import co.aikar.locales.MessageKeyProvider;
 
 public enum LangKeys implements MessageKeyProvider {
+
+    /*
+    This class manages all the messages from within the plugin
+     */
+
     ERR_PLAYER_HAS_MINE,
     ERR_PLAYER_HAS_NO_MINE,
     ERR_SENDER_HAS_NO_MINE,

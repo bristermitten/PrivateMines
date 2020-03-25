@@ -14,12 +14,18 @@ public class MenuConfig {
         load(configuration);
     }
 
+    /*
+     Loads the config files for the menus.
+     */
     public void load(FileConfiguration config) {
         for (String menus : config.getConfigurationSection("Menus").getKeys(false)) {
             menuConfigs.put(menus, config.getConfigurationSection("Menus." + menus));
         }
     }
 
+    /*
+       Unknown, please comment what this part does.
+     */
     public ConfigurationSection configurationForName(String name) {
         return menuConfigs.getOrDefault(name, null);
     }

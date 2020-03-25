@@ -20,11 +20,17 @@ public class MineStorage {
 		this.factory = factory;
 	}
 
+	/*
+	  Saves the yml file for mine storage.
+	 */
 	public void save(YamlConfiguration configuration) {
 		configuration.set("Data-Do-Not-Change", factory.getManager().serialize());
 		configuration.set("Mines", mines.values().stream().map(PrivateMine::serialize).collect(Collectors.toList()));
 	}
 
+	/*
+	  Loads the yml file for mine storage.
+	 */
 	@SuppressWarnings("unchecked")
 	public void load(YamlConfiguration config) {
 		if (config.contains("Data-Do-Not-Change")) {
@@ -38,10 +44,16 @@ public class MineStorage {
 
 	}
 
+	/*
+	 Loads the private mine and sets the owner to the mine.
+	 */
 	private void load(PrivateMine mine) {
 		mines.put(mine.getOwner(), mine);
 	}
 
+	/*
+	 Either gets the private mine for the player or it creates a new one
+	 */
 	@Nonnull
 	public PrivateMine getOrCreate(Player p) {
 		PrivateMine mine = mines.get(p.getUniqueId());
@@ -61,18 +73,30 @@ public class MineStorage {
 		return mine;
 	}
 
+	/*
+	  Gets the player's private mine
+	 */
 	public PrivateMine get(Player p) {
 		return mines.get(p.getUniqueId());
 	}
 
+	/*
+	  Gets the players private mine
+	 */
 	public PrivateMine get(UUID p) {
 		return mines.get(p);
 	}
 
+	/*
+	  Checks if the player has a private mine.
+	 */
 	public boolean has(Player p) {
 		return mines.containsKey(p.getUniqueId());
 	}
 
+	/*
+	 Removes a player's private mine.
+	 */
 	public void remove(Player target) {
 		mines.remove(target.getUniqueId());
 	}

@@ -108,6 +108,9 @@ public class MenuSpec {
 		}
 	}
 
+	/*
+	    Generates the menu
+	 */
 	public Inventory genMenu() {
 		this.inventory = Bukkit.createInventory(holder, size, title);
 		itemsMap.forEach(inventory::setItem);
@@ -140,6 +143,9 @@ public class MenuSpec {
 		return inventory;
 	}
 
+	/*
+	  Creates the listeners for the menu
+	 */
 	public Listener toListener() {
 		return new Listener() {
 			@EventHandler
@@ -151,6 +157,9 @@ public class MenuSpec {
 				consumer.accept(e);
 			}
 
+			/*
+			   Clears all the listener handlers because the menu was closed.
+			 */
 			@EventHandler
 			public void onClose(InventoryCloseEvent e) {
 				if (!e.getInventory().getHolder().equals(holder)) return;
@@ -170,6 +179,9 @@ public class MenuSpec {
 		};
 	}
 
+	/*
+	   Unknown
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -178,17 +190,26 @@ public class MenuSpec {
 		return Objects.equals(holder, menuSpec.holder);
 	}
 
+	/*
+	  Unknown
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(holder);
 	}
 
+	/*
+	  Registers the listeners for the plugin
+	 */
 	public void register(Plugin p) {
 		if (listener != null) return;
 		listener = toListener();
 		Bukkit.getPluginManager().registerEvents(listener, p);
 	}
 
+	/*
+	   Manages the menu holder
+	 */
 	private class MenuHolder implements InventoryHolder {
 		private final UUID uuid = UUID.randomUUID();
 

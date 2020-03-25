@@ -13,6 +13,9 @@ public class SellNPC {
 	private SellNPC() {
 	}
 
+	/*
+	Creates the sell NPC.
+	 */
 	public static NPC createSellNPC(String name, String skinName, Location location, UUID owner) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		npc.spawn(location);
