@@ -8,7 +8,7 @@ Schematic-Name: mine.schematic
 #This maps different block types to different locations in the schematic
 Blocks:
   #Defines where the players will initially spawn. If this block has a direction, the direction will be used
-  Spawnpoint: CHEST
+  Spawnpoint: SIGN
   #Defines a corner of the mining area. Place this at both corners. They will be replaced with air and the mine will be filled
   Mine-Corner: POWERED_RAIL
   Sell-NPC: WOOL

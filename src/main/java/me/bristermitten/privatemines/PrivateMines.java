@@ -40,6 +40,9 @@ public final class PrivateMines extends JavaPlugin {
 		return econ;
 	}
 
+	/*
+	   Used when the plugin is enabled at the start, loads all the services.
+	 */
 	@Override
 	public void onEnable() {
 		saveDefaultConfig();
