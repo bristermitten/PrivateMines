@@ -227,6 +227,7 @@ public class PrivateMine implements ConfigurationSerializable {
 	}
 
 	public void setMineSchematic(MineSchematic mineSchematic) {
+		Material block = getBlock();
 		fill(Material.AIR);
 		boolean open = isOpen();
 		setOpen(false);
@@ -244,6 +245,6 @@ public class PrivateMine implements ConfigurationSerializable {
 		this.npcId = newMine.npcId;
 		this.mineSchematic = mineSchematic;
 		setOpen(open);
-
+		fill(block);
 	}
 }
