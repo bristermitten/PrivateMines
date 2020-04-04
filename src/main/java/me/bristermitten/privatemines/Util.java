@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 
 public class Util {
 
-	public static Vector toVector(com.sk89q.worldedit.Vector vector) {
+	public static Vector toBukkitVector(com.sk89q.worldedit.Vector vector) {
 		return new Vector(vector.getX(), vector.getY(), vector.getZ());
 	}
 
-	public static com.sk89q.worldedit.Vector toVector(Vector v) {
+	public static com.sk89q.worldedit.Vector toWEVector(Vector v) {
 		return new com.sk89q.worldedit.Vector(v.getX(), v.getY(), v.getZ());
 	}
 
@@ -70,7 +70,7 @@ public class Util {
 	}
 
 	public static com.sk89q.worldedit.Vector deserializeWorldEditVector(Map<String, Object> map) {
-		return toVector(Vector.deserialize(map));
+		return toWEVector(Vector.deserialize(map));
 	}
 
 	public static void replaceMeta(ItemMeta meta, Object... replacements) {

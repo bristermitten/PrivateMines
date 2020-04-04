@@ -25,156 +25,160 @@ import java.io.IOException;
 
 public final class PrivateMines extends JavaPlugin {
 
-	private static Economy econ;
-	private MineStorage storage;
-	private MenuConfig menuConfig;
-	private YamlConfiguration minesConfig;
-	private BukkitCommandManager manager;
-	private MineFactory factory;
+    private static Economy econ;
+    private MineStorage storage;
+    private MenuConfig menuConfig;
+    private YamlConfiguration minesConfig;
+    private BukkitCommandManager manager;
+    private MineFactory factory;
+    private MineResetTask resetTask;
 
-	public static PrivateMines getPlugin() {
-		return PrivateMines.getPlugin(PrivateMines.class);
-	}
+    public static PrivateMines getPlugin() {
+        return PrivateMines.getPlugin(PrivateMines.class);
+    }
 
-	public static Economy getEconomy() {
-		return econ;
-	}
+    public static Economy getEconomy() {
+        return econ;
+    }
 
-	/*
-	   Used when the plugin is enabled at the start, loads all the services.
-	 */
-	@Override
-	public void onEnable() {
-		saveDefaultConfig();
+    /*
+       Used when the plugin is enabled at the start, loads all the services.
+     */
+    @Override
+    public void onEnable() {
+        saveDefaultConfig();
 
-		PMConfig mainConfig = new PMConfig(getConfig());
-		MineWorldManager mineManager = new MineWorldManager(mainConfig);
+        PMConfig mainConfig = new PMConfig(getConfig());
+        MineWorldManager mineManager = new MineWorldManager(mainConfig);
 
-		factory = loadMineFactory(mainConfig, mineManager);
-
-
-		this.storage = new MineStorage(factory);
-
-		try {
-			loadFiles();
-		} catch (IOException | InvalidConfigurationException e) {
-			getLogger().severe("An error occurred loading data!");
-			e.printStackTrace();
-		}
-
-		MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
-
-		loadCommands(mainConfig, menuFactory);
-
-		CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
-
-		if (!setupEconomy()) {
-			getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
-					getDescription().getName()));
-			getServer().getPluginManager().disablePlugin(this);
-		}
-	}
-
-	@NotNull
-	private MineFactory loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
-		return new MineFactory(this, mineManager, mainConfig);
-	}
-
-	private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
-		manager = new BukkitCommandManager(this);
-		manager.getLocales().addBundleClassLoader(getClassLoader());
-
-		mainConfig.getColors().forEach(manager::setFormat);
-
-		//noinspection deprecation
-		manager.enableUnstableAPI("help");
-
-		manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
-
-		manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
-			if (value == null) {
-				return;
-			}
-			if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
-				throw new ConditionFailedException("Value must be >" + c.getConfigValue("min", 0));
-			}
-			if (c.hasConfig("max") && c.getConfigValue("max", 0) < value) {
-				throw new ConditionFailedException(
-						"Value must be <" + c.getConfigValue("max", 0));
-			}
-		});
-	}
-
-	private boolean setupEconomy() {
-		if (getServer().getPluginManager().getPlugin("Vault") == null) {
-			return false;
-		} else {
-			RegisteredServiceProvider<Economy> rsp =
-					getServer().getServicesManager().getRegistration(Economy.class);
-			if (rsp == null) {
-				return false;
-			} else {
-				econ = rsp.getProvider();
-				return econ != null;
-			}
-		}
-	}
-
-	public MineStorage getStorage() {
-		return storage;
-	}
-
-	private void loadFiles() throws IOException, InvalidConfigurationException {
-		YamlConfiguration schematicsConfig = new YamlConfiguration();
-		saveResource("schematics/schematics.yml", false);
-		schematicsConfig.load(new File(getDataFolder(), "schematics/schematics.yml"));
-
-		SchematicStorage.INSTANCE.loadAll(schematicsConfig);
-
-		getLogger().info("Loaded schematics.yml");
-
-		saveResource("mines.yml", false);
-
-		minesConfig = new YamlConfiguration();
-		minesConfig.load(new File(getDataFolder(), "mines.yml"));
-		storage.load(minesConfig);
-
-		getLogger().info("Loaded mines.yml");
+        factory = loadMineFactory(mainConfig, mineManager);
 
 
-		saveResource("menus.yml", false);
+        this.storage = new MineStorage(factory);
 
-		YamlConfiguration menusConfig = new YamlConfiguration();
-		menusConfig.load(new File(getDataFolder(), "menus.yml"));
+        try {
+            loadFiles();
+        } catch (IOException | InvalidConfigurationException e) {
+            getLogger().severe("An error occurred loading data!");
+            e.printStackTrace();
+        }
 
-		this.menuConfig = new MenuConfig(menusConfig);
+        MenuFactory menuFactory = new MenuFactory(storage, this, menuConfig, mainConfig);
 
-		getLogger().info("Loaded menus.yml");
+        loadCommands(mainConfig, menuFactory);
 
-	}
+        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
 
-	private void saveFiles() throws IOException {
-		storage.save(minesConfig);
-		minesConfig.save(new File(getDataFolder(), "mines.yml"));
-		getLogger().info("Saved mines.yml");
-	}
+        if (!setupEconomy()) {
+            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
+                    getDescription().getName()));
+            getServer().getPluginManager().disablePlugin(this);
+        }
+
+        new MineResetTask(this, storage).start();
+
+    }
+
+    @NotNull
+    private MineFactory loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
+        return new MineFactory(this, mineManager, mainConfig);
+    }
+
+    private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
+        manager = new BukkitCommandManager(this);
+        manager.getLocales().addBundleClassLoader(getClassLoader());
+
+        mainConfig.getColors().forEach(manager::setFormat);
+
+        //noinspection deprecation
+        manager.enableUnstableAPI("help");
+
+        manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
+
+        manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
+            if (value == null) {
+                return;
+            }
+            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
+                throw new ConditionFailedException("Value must be >" + c.getConfigValue("min", 0));
+            }
+            if (c.hasConfig("max") && c.getConfigValue("max", 0) < value) {
+                throw new ConditionFailedException(
+                        "Value must be <" + c.getConfigValue("max", 0));
+            }
+        });
+    }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        } else {
+            RegisteredServiceProvider<Economy> rsp =
+                    getServer().getServicesManager().getRegistration(Economy.class);
+            if (rsp == null) {
+                return false;
+            } else {
+                econ = rsp.getProvider();
+                return econ != null;
+            }
+        }
+    }
+
+    public MineStorage getStorage() {
+        return storage;
+    }
+
+    private void loadFiles() throws IOException, InvalidConfigurationException {
+        YamlConfiguration schematicsConfig = new YamlConfiguration();
+        saveResource("schematics/schematics.yml", false);
+        schematicsConfig.load(new File(getDataFolder(), "schematics/schematics.yml"));
+
+        SchematicStorage.INSTANCE.loadAll(schematicsConfig);
+
+        getLogger().info("Loaded schematics.yml");
+
+        saveResource("mines.yml", false);
+
+        minesConfig = new YamlConfiguration();
+        minesConfig.load(new File(getDataFolder(), "mines.yml"));
+        storage.load(minesConfig);
+
+        getLogger().info("Loaded mines.yml");
 
 
-	@Override
-	public void onDisable() {
-		try {
-			saveFiles();
-		} catch (IOException e) {
-			getLogger().severe("An error occurred saving data!");
-			e.printStackTrace();
-		}
-	}
+        saveResource("menus.yml", false);
 
-	public BukkitCommandManager getManager() {
-		return manager;
-	}
+        YamlConfiguration menusConfig = new YamlConfiguration();
+        menusConfig.load(new File(getDataFolder(), "menus.yml"));
 
-	public MineFactory getFactory() {
-		return factory;
-	}
+        this.menuConfig = new MenuConfig(menusConfig);
+
+        getLogger().info("Loaded menus.yml");
+
+    }
+
+    private void saveFiles() throws IOException {
+        storage.save(minesConfig);
+        minesConfig.save(new File(getDataFolder(), "mines.yml"));
+        getLogger().info("Saved mines.yml");
+    }
+
+
+    @Override
+    public void onDisable() {
+        try {
+            saveFiles();
+        } catch (IOException e) {
+            getLogger().severe("An error occurred saving data!");
+            e.printStackTrace();
+        }
+    }
+
+    public BukkitCommandManager getManager() {
+        return manager;
+    }
+
+    public MineFactory getFactory() {
+        return factory;
+    }
 }

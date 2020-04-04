@@ -45,7 +45,6 @@ public class PrivateMinesCommand extends BaseCommand {
 		}
 	}
 
-
 	@SuppressWarnings("deprecation")
 	@HelpCommand
 	public void help(CommandIssuer issuer) {

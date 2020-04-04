@@ -38,8 +38,8 @@ public class MineLocations implements ConfigurationSerializable {
     @SuppressWarnings("unchecked")
     public static MineLocations deserialize(Map<String, Object> map) {
         Location spawnPoint = Location.deserialize((Map<String, Object>) map.get("SpawnPoint"));
-        Vector min = Util.toVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Min")));
-        Vector max = Util.toVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Max")));
+        Vector min = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Min")));
+        Vector max = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Max")));
         RegionManager regionManager = WorldGuardPlugin.inst().getRegionManager(spawnPoint.getWorld());
         ProtectedRegion wgRegion = regionManager.getRegion((String) map.get("Region"));
         return new MineLocations(spawnPoint, min, max, wgRegion);
@@ -48,8 +48,8 @@ public class MineLocations implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
         map.put("SpawnPoint", this.spawnPoint.serialize());
-        map.put("Min", Util.toVector(this.region.getMinimumPoint()).serialize());
-        map.put("Max", Util.toVector(this.region.getMaximumPoint()).serialize());
+        map.put("Min", Util.toBukkitVector(this.region.getMinimumPoint()).serialize());
+        map.put("Max", Util.toBukkitVector(this.region.getMaximumPoint()).serialize());
         map.put("Region", this.wgRegion.getId());
         return map;
     }

@@ -29,7 +29,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,229 +37,227 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 public class PrivateMine implements ConfigurationSerializable {
-	private UUID owner;
-	private Region region;
-	private MineLocations locations;
-	private EditSession editSession;
-	private ProtectedRegion wgRegion;
-	private UUID npcId;
-	private boolean open;
-	private Material block;
-	private BukkitTask task;
-	private double taxPercentage;
-	private MineSchematic mineSchematic;
+    public static final int RESET_THRESHOLD = 1200 * 20 * 1000;
+    private UUID owner;
+    private Region region;
+    private MineLocations locations;
+    private EditSession editSession;
+    private ProtectedRegion wgRegion;
+    private UUID npcId;
+    private boolean open;
+    private Material block;
+    private double taxPercentage;
+    private MineSchematic mineSchematic;
+    private long nextResetTime;
 
-	public PrivateMine(UUID owner,
-	                   boolean open,
-	                   Material block,
-	                   Region region,
-	                   MineLocations locations,
-	                   ProtectedRegion wgRegion,
-	                   UUID npc,
-	                   double taxPercentage,
-	                   MineSchematic mineSchematic) {
-		this.owner = owner;
-		this.open = open;
-		this.region = region;
-		this.locations = locations;
-		this.block = block;
-		this.wgRegion = wgRegion;
-		this.npcId = npc;
-		this.taxPercentage = taxPercentage;
-		this.mineSchematic = mineSchematic;
+    public PrivateMine(UUID owner,
+                       boolean open,
+                       Material block,
+                       Region region,
+                       MineLocations locations,
+                       ProtectedRegion wgRegion,
+                       UUID npc,
+                       double taxPercentage,
+                       MineSchematic mineSchematic) {
+        this.owner = owner;
+        this.open = open;
+        this.region = region;
+        this.locations = locations;
+        this.block = block;
+        this.wgRegion = wgRegion;
+        this.npcId = npc;
+        this.taxPercentage = taxPercentage;
+        this.mineSchematic = mineSchematic;
 
-		this.editSession = new EditSessionBuilder(FaweAPI.getWorld(locations.getSpawnPoint().getWorld().getName()))
-				.allowedRegions(new Region[]{region}).fastmode(true).build();
-		this.fill(block);
-	}
+        this.editSession = new EditSessionBuilder(FaweAPI.getWorld(locations.getSpawnPoint().getWorld().getName()))
+                .allowedRegions(new Region[]{region}).fastmode(true).build();
+        this.fill(block);
+    }
 
-	@SuppressWarnings("unchecked")
-	@NotNull
-	@Contract("_ -> new")
-	public static PrivateMine deserialize(Map<String, Object> map) {
-		UUID owner = UUID.fromString((String) map.get("Owner"));
+    @SuppressWarnings("unchecked")
+    @NotNull
+    @Contract("_ -> new")
+    public static PrivateMine deserialize(Map<String, Object> map) {
+        UUID owner = UUID.fromString((String) map.get("Owner"));
 
-		boolean open = (Boolean) map.get("Open");
+        boolean open = (Boolean) map.get("Open");
 
-		Material block = Material.matchMaterial((String) map.get("Block"));
-		Vector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
-		Vector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
+        Material block = Material.matchMaterial((String) map.get("Block"));
+        Vector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
+        Vector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
 
-		MineLocations locations = MineLocations.deserialize((Map<String, Object>) map.get("Locations"));
-		CuboidRegion region = new CuboidRegion(corner1, corner2);
-		region.setWorld(new BukkitWorld(locations.getSpawnPoint().getWorld()));
-		ProtectedRegion wgRegion =
-				WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld())
-						.getRegion(owner.toString());
+        MineLocations locations = MineLocations.deserialize((Map<String, Object>) map.get("Locations"));
+        CuboidRegion region = new CuboidRegion(corner1, corner2);
+        region.setWorld(new BukkitWorld(locations.getSpawnPoint().getWorld()));
+        ProtectedRegion wgRegion =
+                WorldGuardPlugin.inst().getRegionManager(locations.getSpawnPoint().getWorld())
+                        .getRegion(owner.toString());
 
-		UUID npcId = UUID.fromString((String) map.get("NPC"));
-		double taxPercentage = (Double) map.get("Tax");
+        UUID npcId = UUID.fromString((String) map.get("NPC"));
+        double taxPercentage = (Double) map.get("Tax");
 
-		String schematicName = (String) map.get("Schematic");
-		MineSchematic schematic = SchematicStorage.INSTANCE.get(schematicName);
+        String schematicName = (String) map.get("Schematic");
+        MineSchematic schematic = SchematicStorage.INSTANCE.get(schematicName);
 
-		if (schematic == null) {
-			throw new IllegalArgumentException("Invalid Schematic " + schematicName);
-		}
+        if (schematic == null) {
+            throw new IllegalArgumentException("Invalid Schematic " + schematicName);
+        }
 
-		return new PrivateMine(owner, open, block, region, locations, wgRegion, npcId, taxPercentage, schematic);
-	}
+        return new PrivateMine(owner, open, block, region, locations, wgRegion, npcId, taxPercentage, schematic);
+    }
 
-	public double getTaxPercentage() {
-		return this.taxPercentage;
-	}
+    public double getTaxPercentage() {
+        return this.taxPercentage;
+    }
 
-	public void setTaxPercentage(double amount) {
-		this.taxPercentage = amount;
-	}
+    public void setTaxPercentage(double amount) {
+        this.taxPercentage = amount;
+    }
 
-	public boolean contains(Player p) {
-		return this.region.contains(Util.toVector(p.getLocation().toVector()));
-	}
+    public boolean contains(Player p) {
+        return this.region.contains(Util.toWEVector(p.getLocation().toVector()));
+    }
 
-	public Material getBlock() {
-		return block;
-	}
+    public Material getBlock() {
+        return block;
+    }
 
-	public void setBlock(Material block) {
-		if (block.isBlock()) {
-			this.block = block;
-			this.fill(block);
-		}
-	}
+    public void setBlock(Material block) {
+        if (block.isBlock()) {
+            this.block = block;
+            this.fill(block);
+        }
+    }
 
-	public Map<String, Object> serialize() {
-		Map<String, Object> map = new TreeMap<>();
-		map.put("Owner", this.owner.toString());
-		map.put("Open", this.open);
-		map.put("Block", this.block.name());
-		map.put("Locations", this.locations.serialize());
-		map.put("Corner1", Util.toVector(this.region.getMinimumPoint()).serialize());
-		map.put("Corner2", Util.toVector(this.region.getMaximumPoint()).serialize());
-		map.put("NPC", this.npcId.toString());
-		map.put("Tax", this.taxPercentage);
-		map.put("Schematic", this.mineSchematic.getName());
-		return map;
-	}
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new TreeMap<>();
+        map.put("Owner", this.owner.toString());
+        map.put("Open", this.open);
+        map.put("Block", this.block.name());
+        map.put("Locations", this.locations.serialize());
+        map.put("Corner1", Util.toBukkitVector(this.region.getMinimumPoint()).serialize());
+        map.put("Corner2", Util.toBukkitVector(this.region.getMaximumPoint()).serialize());
+        map.put("NPC", this.npcId.toString());
+        map.put("Tax", this.taxPercentage);
+        map.put("Schematic", this.mineSchematic.getName());
+        return map;
+    }
 
-	public void teleport(Player p) {
-		p.teleport(locations.getSpawnPoint());
-		p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
-	}
+    public void teleport(Player p) {
+        p.teleport(locations.getSpawnPoint());
+        p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
+    }
 
-	public UUID getOwner() {
-		return owner;
-	}
+    public UUID getOwner() {
+        return owner;
+    }
 
-	public void teleport() {
-		Player player = Bukkit.getPlayer(this.owner);
-		if (player != null) teleport(player);
-	}
+    public void teleport() {
+        Player player = Bukkit.getPlayer(this.owner);
+        if (player != null) teleport(player);
+    }
 
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
+    public boolean isOpen() {
+        return open;
+    }
 
 	/*
 	   Fills the blocks in the mine.
 	 */
 
-	public void fill(Material m) {
-		//free any players
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (locations.getRegion().contains(Util.toVector(player.getLocation().toVector()))) {
-				player.teleport(locations.getSpawnPoint());
-				player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
-			}
-		}
+    public void setOpen(boolean open) {
+        this.open = open;
+    }
 
-		//noinspection deprecation
-		editSession.setBlocks(locations.getRegion(), new BaseBlock(m.getId()));
-		editSession.flushQueue();
+    public void fill(Material m) {
+        //free any players
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (locations.getRegion().contains(Util.toWEVector(player.getLocation().toVector()))) {
+                player.teleport(locations.getSpawnPoint());
+                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
+            }
+        }
 
-		if (task != null) {
-			task.cancel();
-		}
-
-		task = Bukkit.getScheduler().runTaskLater(PrivateMines.getPlugin(PrivateMines.class),
-				() -> fill(block), 1200L);
-	}
+        //noinspection deprecation
+        editSession.setBlocks(locations.getRegion(), new BaseBlock(m.getId()));
+        editSession.flushQueue();
 
 
-	/*
-	  Delete the mine.
-	 */
-	public void delete() {
-		if (task != null) {
-			task.cancel();
-		}
+        nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
+    }
 
-		removeAllPlayers();
 
-		//noinspection deprecation
-		editSession.setBlocks(region, new BaseBlock(0));
-		editSession.flushQueue();
+    public boolean shouldReset() {
+        return locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
+    }
 
-		removeRegion();
+    /*
+      Delete the mine.
+     */
+    public void delete() {
 
-		NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
-		if (npc != null)
-			npc.destroy();
-	}
+        removeAllPlayers();
 
-	/*
-	Delete the Private Mine Region.
-	 */
-	private void removeRegion() {
-		World world = locations.getSpawnPoint().getWorld();
-		RegionManager regionManager =
-				WorldGuardPlugin.inst().getRegionManager(world);
+        //noinspection deprecation
+        editSession.setBlocks(region, new BaseBlock(0));
+        editSession.flushQueue();
 
-		if (regionManager == null) {
-			PrivateMines.getPlugin().getLogger().warning(
-					String.format("RegionManager for world %s is null", world.getName()));
-		} else {
-			regionManager.removeRegion(wgRegion.getId());
-			regionManager.removeRegion(locations.getWgRegion().getId());
-		}
-	}
+        removeRegion();
 
-	/*
-	  Teleport all the players back to spawn.
-	 */
-	private void removeAllPlayers() {
-		for (Player player : Bukkit.getOnlinePlayers()) {
-			if (this.contains(player)) {
-				player.performCommand("spawn");
-			}
-		}
-	}
+        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
+        if (npc != null)
+            npc.destroy();
+    }
 
-	/*
-	  Sets the new mine schematic (Used when changing themes)
-	 */
-	public void setMineSchematic(MineSchematic mineSchematic) {
-		fill(Material.AIR);
-		boolean open = isOpen();
-		setOpen(false);
-		delete();
+    /*
+    Delete the Private Mine Region.
+     */
+    private void removeRegion() {
+        World world = locations.getSpawnPoint().getWorld();
+        RegionManager regionManager =
+                WorldGuardPlugin.inst().getRegionManager(world);
 
-		PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
-				Bukkit.getPlayer(owner),
-				mineSchematic,
-				Util.toLocation(region.getCenter(), locations.getSpawnPoint().getWorld()));
+        if (regionManager == null) {
+            PrivateMines.getPlugin().getLogger().warning(
+                    String.format("RegionManager for world %s is null", world.getName()));
+        } else {
+            regionManager.removeRegion(wgRegion.getId());
+            regionManager.removeRegion(locations.getWgRegion().getId());
+        }
+    }
 
-		this.locations = newMine.locations;
-		this.editSession = newMine.editSession;
-		this.region = newMine.region;
-		this.wgRegion = newMine.wgRegion;
-		this.npcId = newMine.npcId;
-		this.mineSchematic = mineSchematic;
-		setOpen(open);
+    /*
+      Teleport all the players back to spawn.
+     */
+    private void removeAllPlayers() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (this.contains(player)) {
+                player.performCommand("spawn");
+            }
+        }
+    }
 
-	}
+    /*
+      Sets the new mine schematic (Used when changing themes)
+     */
+    public void setMineSchematic(MineSchematic mineSchematic) {
+        fill(Material.AIR);
+        boolean open = isOpen();
+        setOpen(false);
+        delete();
+
+        PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
+                Bukkit.getPlayer(owner),
+                mineSchematic,
+                Util.toLocation(region.getCenter(), locations.getSpawnPoint().getWorld()));
+
+        this.locations = newMine.locations;
+        this.editSession = newMine.editSession;
+        this.region = newMine.region;
+        this.wgRegion = newMine.wgRegion;
+        this.npcId = newMine.npcId;
+        this.mineSchematic = mineSchematic;
+        setOpen(open);
+
+    }
 }
