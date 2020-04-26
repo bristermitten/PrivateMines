@@ -205,8 +205,9 @@ public class PrivateMine implements ConfigurationSerializable {
         removeRegion();
 
         NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
-        if (npc != null)
+        if (npc != null) {
             npc.destroy();
+        }
     }
 
     /*
@@ -214,12 +215,10 @@ public class PrivateMine implements ConfigurationSerializable {
      */
     private void removeRegion() {
         World world = locations.getSpawnPoint().getWorld();
-        RegionManager regionManager =
-                WorldGuardPlugin.inst().getRegionManager(world);
+        RegionManager regionManager = WorldGuardPlugin.inst().getRegionManager(world);
 
         if (regionManager == null) {
-            PrivateMines.getPlugin().getLogger().warning(
-                    String.format("RegionManager for world %s is null", world.getName()));
+            PrivateMines.getPlugin().getLogger().warning(String.format("RegionManager for world %s is null", world.getName()));
         } else {
             regionManager.removeRegion(wgRegion.getId());
             regionManager.removeRegion(locations.getWgRegion().getId());

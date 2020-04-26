@@ -124,11 +124,11 @@ public class MenuSpec {
 	@SafeVarargs
 	public final <T> Inventory genMenu(BiFunction<T, ItemStack, ItemStack> toItem,
 	                                   Function<T, Consumer<InventoryClickEvent>> clickFunction,
-	                                   T... ts) {
+	                                   T... data) {
 
 		this.inventory = Bukkit.createInventory(holder, size, title);
-		for (int i = 0, tsLength = ts.length; i < tsLength; i++) {
-			T t = ts[i];
+		for (int i = 0, tsLength = data.length; i < tsLength; i++) {
+			T t = data[i];
 			ItemStack newItem = toItem.apply(t, everyItem.clone());
 			inventory.addItem(newItem);
 			actionSlotMap.put(i, clickFunction.apply(t));
