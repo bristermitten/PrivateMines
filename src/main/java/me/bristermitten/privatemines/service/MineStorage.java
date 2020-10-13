@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class MineStorage {
+
+    public static final String DATA_DO_NOT_CHANGE = "Data-Do-Not-Change";
     private final Map<UUID, PrivateMine> mines = new HashMap<>();
     private final MineFactory factory;
 
@@ -26,7 +28,7 @@ public class MineStorage {
       Saves the yml file for mine storage.
      */
     public void save(YamlConfiguration configuration) {
-        configuration.set("Data-Do-Not-Change", factory.getManager().serialize());
+        configuration.set(DATA_DO_NOT_CHANGE, factory.getManager().serialize());
         configuration.set("Mines", mines.values().stream().map(PrivateMine::serialize).collect(Collectors.toList()));
     }
 
@@ -35,8 +37,8 @@ public class MineStorage {
      */
     @SuppressWarnings("unchecked")
     public void load(YamlConfiguration config) {
-        if (config.contains("Data-Do-Not-Change")) {
-            factory.getManager().load(config.getConfigurationSection("Data-Do-Not-Change")
+        if (config.contains(DATA_DO_NOT_CHANGE)) {
+            factory.getManager().load(config.getConfigurationSection(DATA_DO_NOT_CHANGE)
                     .getValues(true));
         }
 
@@ -62,7 +64,7 @@ public class MineStorage {
 
         if (mine == null) {
 
-            MineSchematic defaultSchematic = SchematicStorage.INSTANCE.getDefault();
+            MineSchematic defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
             if (defaultSchematic == null) {
                 p.sendMessage(ChatColor.RED + "No Default Schematic. Contact an Admin.");
                 throw new IllegalStateException("No Default Schematic found");

@@ -1,7 +1,6 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.70'
 }
 
 group = 'me.bristermitten'
@@ -21,20 +20,20 @@ repositories {
 }
 
 dependencies {
-    compile "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
 
-    implementation "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
-    implementation "com.github.MilkBowl:VaultAPI:1.7"
-    implementation "com.boydti:fawe-api:latest"
+    compileOnly "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+    compileOnly "com.boydti:fawe-api:latest"
 
-    implementation("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT") {
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT") {
         exclude group: 'org.bukkit'
     }
 
-    implementation "com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT"
-    implementation "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
-    implementation files("lib/AutoSellAPI-1.2.0.jar")
+    compileOnly "com.sk89q.worldguard:worldguard-legacy:6.1.3-SNAPSHOT"
+    compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
+    compileOnly files("lib/AutoSellAPI-1.2.0.jar")
+
     testImplementation "junit:junit:4.12"
 
 }
@@ -47,7 +46,6 @@ compileJava {
 shadowJar {
     relocate 'co.aikar', 'me.bristermitten.aikar'
     minimize()
-    configurations = [project.configurations.compile]
 }
 
 build.dependsOn shadowJar
@@ -59,21 +57,3 @@ processResources {
         filter ReplaceTokens, tokens: [version: version]
     }
 }
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-
-//task copyJar {
-//    copy {
-//        from "${outputs.files[0]}"
-//        into "F:/Working Private Mines Server/plugins"
-//    }
-//}

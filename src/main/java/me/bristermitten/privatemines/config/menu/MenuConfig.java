@@ -2,7 +2,6 @@ package me.bristermitten.privatemines.config.menu;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +26,6 @@ public class MenuConfig {
     /**
      * Gets a configuration for a given menu config
      */
-    @Nullable
     public ConfigurationSection configurationForName(String name) {
         return menuConfigs.getOrDefault(name, null);
     }

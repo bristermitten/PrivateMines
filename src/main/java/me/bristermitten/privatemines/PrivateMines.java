@@ -2,6 +2,7 @@ package me.bristermitten.privatemines;
 
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
+import com.avaje.ebean.validation.NotNull;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
@@ -18,27 +19,25 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
-
 import java.io.File;
 import java.io.IOException;
 
 public final class PrivateMines extends JavaPlugin {
 
-    private static Economy econ;
+    public static final String MINES_FILE_NAME = "mines.yml";
+    private Economy econ;
     private MineStorage storage;
     private MenuConfig menuConfig;
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
     private MineFactory factory;
-    private MineResetTask resetTask;
 
     public static PrivateMines getPlugin() {
-        return PrivateMines.getPlugin(PrivateMines.class);
+        return JavaPlugin.getPlugin(PrivateMines.class);
     }
 
     public static Economy getEconomy() {
-        return econ;
+        return getPlugin().econ;
     }
 
     /*
@@ -70,7 +69,7 @@ public final class PrivateMines extends JavaPlugin {
         CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
 
         if (!setupEconomy()) {
-            getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!",
+            getLogger().severe(() -> String.format("[%s] - Disabled due to no Vault dependency found!",
                     getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -133,14 +132,14 @@ public final class PrivateMines extends JavaPlugin {
         saveResource("schematics/schematics.yml", false);
         schematicsConfig.load(new File(getDataFolder(), "schematics/schematics.yml"));
 
-        SchematicStorage.INSTANCE.loadAll(schematicsConfig);
+        SchematicStorage.getInstance().loadAll(schematicsConfig);
 
         getLogger().info("Loaded schematics.yml");
 
-        saveResource("mines.yml", false);
+        saveResource(MINES_FILE_NAME, false);
 
         minesConfig = new YamlConfiguration();
-        minesConfig.load(new File(getDataFolder(), "mines.yml"));
+        minesConfig.load(new File(getDataFolder(), MINES_FILE_NAME));
         storage.load(minesConfig);
 
         getLogger().info("Loaded mines.yml");
@@ -159,7 +158,7 @@ public final class PrivateMines extends JavaPlugin {
 
     private void saveFiles() throws IOException {
         storage.save(minesConfig);
-        minesConfig.save(new File(getDataFolder(), "mines.yml"));
+        minesConfig.save(new File(getDataFolder(), MINES_FILE_NAME));
         getLogger().info("Saved mines.yml");
     }
 

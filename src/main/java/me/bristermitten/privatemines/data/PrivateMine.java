@@ -29,8 +29,6 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -75,8 +73,6 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
-    @Contract("_ -> new")
     public static PrivateMine deserialize(Map<String, Object> map) {
         UUID owner = UUID.fromString((String) map.get("Owner"));
 
@@ -97,7 +93,7 @@ public class PrivateMine implements ConfigurationSerializable {
         double taxPercentage = (Double) map.get("Tax");
 
         String schematicName = (String) map.get("Schematic");
-        MineSchematic schematic = SchematicStorage.INSTANCE.get(schematicName);
+        MineSchematic schematic = SchematicStorage.getInstance().get(schematicName);
 
         if (schematic == null) {
             throw new IllegalArgumentException("Invalid Schematic " + schematicName);
@@ -218,7 +214,7 @@ public class PrivateMine implements ConfigurationSerializable {
         RegionManager regionManager = WorldGuardPlugin.inst().getRegionManager(world);
 
         if (regionManager == null) {
-            PrivateMines.getPlugin().getLogger().warning(String.format("RegionManager for world %s is null", world.getName()));
+            PrivateMines.getPlugin().getLogger().warning(() -> String.format("RegionManager for world %s is null", world.getName()));
         } else {
             regionManager.removeRegion(wgRegion.getId());
             regionManager.removeRegion(locations.getWgRegion().getId());
@@ -241,7 +237,7 @@ public class PrivateMine implements ConfigurationSerializable {
      */
     public void setMineSchematic(MineSchematic mineSchematic) {
         fill(Material.AIR);
-        boolean open = isOpen();
+        boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();
 
@@ -256,7 +252,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.wgRegion = newMine.wgRegion;
         this.npcId = newMine.npcId;
         this.mineSchematic = mineSchematic;
-        setOpen(open);
+        setOpen(mineIsOpen);
 
     }
 }

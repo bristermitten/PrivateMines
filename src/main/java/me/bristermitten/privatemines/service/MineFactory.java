@@ -1,5 +1,6 @@
 package me.bristermitten.privatemines.service;
 
+import com.avaje.ebean.validation.NotNull;
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.object.visitor.FastIterator;
@@ -35,7 +36,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Directional;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -146,15 +146,11 @@ public class MineFactory {
 				}
 			}
 
-			//TODO
-			/*
-			   ??????
-			 */
 
 			if (spawnLoc == null) spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
 
 			if (min == null || max == null || min.equals(max)) {
-				throw new RuntimeException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
+				throw new IllegalArgumentException("Mine schematic did not define 2 corner blocks, mine cannot be formed");
 			}
 
 			if (npcLoc == null) npcLoc = spawnLoc;
@@ -192,11 +188,9 @@ public class MineFactory {
 					mineSchematic);
 
 		} catch (WorldEditException | CircularInheritanceException e) {
-			throw new RuntimeException(e);
+			throw new IllegalStateException(e);
 		}
 	}
-
-	//TODO
 
 	@NotNull
 	private ProtectedRegion createMainWorldGuardRegion(Player owner, Region r) {
@@ -215,8 +209,6 @@ public class MineFactory {
 		region.setOwners(domain);
 		return region;
 	}
-
-	//TODO
 
 	@NotNull
 	private ProtectedRegion createMineWorldGuardRegion(Player owner, Vector min, Vector max, ProtectedRegion parent) throws CircularInheritanceException {
