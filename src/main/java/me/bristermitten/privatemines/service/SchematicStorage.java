@@ -17,7 +17,9 @@ public class SchematicStorage
 {
 
     private static final SchematicStorage instance = new SchematicStorage();
-
+    private final Map<String, MineSchematic> schematics = new HashMap<>();
+    private final File schematicsDir = new File(PrivateMines.getPlugin().getDataFolder(), "schematics");
+    private MineSchematic defaultSchematic = null;
     private SchematicStorage()
     {
     }
@@ -26,12 +28,9 @@ public class SchematicStorage
     {
         return instance;
     }
-    private final Map<String, MineSchematic> schematics = new HashMap<>();
-    private final File schematicsDir = new File(PrivateMines.getPlugin().getDataFolder(), "schematics");
 
-    private MineSchematic defaultSchematic = null;
-
-    public void loadAll(final YamlConfiguration config) {
+    public void loadAll(final YamlConfiguration config)
+    {
         schematics.clear();
 
         final ConfigurationSection section = config.getConfigurationSection("Schematics");
@@ -45,7 +44,7 @@ public class SchematicStorage
 
             if (!file.exists())
             {
-                PrivateMines.getPlugin().getLogger().warning("Schematic $file does not exist, not registered");
+                PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
                 continue;
             }
 
@@ -61,11 +60,13 @@ public class SchematicStorage
         }
     }
 
-    public MineSchematic get(final String name)    {
+    public MineSchematic get(final String name)
+    {
         return schematics.get(name);
     }
 
-    public Collection<MineSchematic> getAll() {
+    public Collection<MineSchematic> getAll()
+    {
         return schematics.values();
     }
 

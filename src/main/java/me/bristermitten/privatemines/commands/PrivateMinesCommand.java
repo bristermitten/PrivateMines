@@ -122,6 +122,7 @@ private final MineStorage storage;
 
     @Subcommand("delete")
     @Description("Delete your PrivateMine")
+    @CommandPermission("privatemines.owner")
     public void delete(Player sender)
     {
         PrivateMine mine = storage.get(sender);

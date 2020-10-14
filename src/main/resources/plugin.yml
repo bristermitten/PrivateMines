@@ -4,7 +4,6 @@ main: me.bristermitten.privatemines.PrivateMines
 authors: [BristerMitten, UntouchedOdin0]
 website: github.com/knightzmc
 depend:
-  - WorldEdit
   - FastAsyncWorldEdit
   - Vault
   - WorldGuard
