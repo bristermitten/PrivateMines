@@ -5,6 +5,9 @@
 
 package me.bristermitten.privatemines.data;
 
+import co.aikar.commands.BukkitCommandIssuer;
+import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.MessageType;
 import com.boydti.fawe.FaweAPI;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
@@ -18,6 +21,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.Util;
+import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -27,16 +31,19 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class PrivateMine implements ConfigurationSerializable {
+public class PrivateMine implements ConfigurationSerializable
+{
+
     public static final int RESET_THRESHOLD = 1200 * 20 * 1000;
-    private UUID owner;
+    private final UUID owner;
+    private final Set<UUID> bannedPlayers;
     private Region region;
     private MineLocations locations;
     private EditSession editSession;
@@ -49,15 +56,17 @@ public class PrivateMine implements ConfigurationSerializable {
     private long nextResetTime;
 
     public PrivateMine(UUID owner,
-                       boolean open,
+                       Set<UUID> bannedPlayers, boolean open,
                        Material block,
                        Region region,
                        MineLocations locations,
                        ProtectedRegion wgRegion,
                        UUID npc,
                        double taxPercentage,
-                       MineSchematic mineSchematic) {
+                       MineSchematic mineSchematic)
+    {
         this.owner = owner;
+        this.bannedPlayers = bannedPlayers;
         this.open = open;
         this.region = region;
         this.locations = locations;
@@ -73,7 +82,8 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static PrivateMine deserialize(Map<String, Object> map) {
+    public static PrivateMine deserialize(Map<String, Object> map)
+    {
         UUID owner = UUID.fromString((String) map.get("Owner"));
 
         boolean open = (Boolean) map.get("Open");
@@ -95,37 +105,49 @@ public class PrivateMine implements ConfigurationSerializable {
         String schematicName = (String) map.get("Schematic");
         MineSchematic schematic = SchematicStorage.getInstance().get(schematicName);
 
-        if (schematic == null) {
+        if (schematic == null)
+        {
             throw new IllegalArgumentException("Invalid Schematic " + schematicName);
         }
 
-        return new PrivateMine(owner, open, block, region, locations, wgRegion, npcId, taxPercentage, schematic);
+        Set<UUID> bannedPlayers = Optional.ofNullable((List<String>) map.get("BannedPlayers"))
+                .map(strings -> strings.stream().map(UUID::fromString).collect(Collectors.toSet()))
+                .orElse(new HashSet<>());
+
+        return new PrivateMine(owner, bannedPlayers, open, block, region, locations, wgRegion, npcId, taxPercentage, schematic);
     }
 
-    public double getTaxPercentage() {
+    public double getTaxPercentage()
+    {
         return this.taxPercentage;
     }
 
-    public void setTaxPercentage(double amount) {
+    public void setTaxPercentage(double amount)
+    {
         this.taxPercentage = amount;
     }
 
-    public boolean contains(Player p) {
+    public boolean contains(Player p)
+    {
         return this.region.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-    public Material getBlock() {
+    public Material getBlock()
+    {
         return block;
     }
 
-    public void setBlock(Material block) {
-        if (block.isBlock()) {
+    public void setBlock(Material block)
+    {
+        if (block.isBlock())
+        {
             this.block = block;
             this.fill(block);
         }
     }
 
-    public Map<String, Object> serialize() {
+    public Map<String, Object> serialize()
+    {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
         map.put("Open", this.open);
@@ -136,24 +158,38 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
         map.put("Schematic", this.mineSchematic.getName());
+        map.put("BannedPlayers", this.bannedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
         return map;
     }
 
-    public void teleport(Player p) {
-        p.teleport(locations.getSpawnPoint());
-        p.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
+    public void teleport(Player player)
+    {
+        if (bannedPlayers.contains(player.getUniqueId()))
+        {
+            BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+            BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+
+            return;
+        }
+
+        player.teleport(locations.getSpawnPoint());
+        player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
     }
 
-    public UUID getOwner() {
+    public UUID getOwner()
+    {
         return owner;
     }
 
-    public void teleport() {
+    public void teleport()
+    {
         Player player = Bukkit.getPlayer(this.owner);
         if (player != null) teleport(player);
     }
 
-    public boolean isOpen() {
+    public boolean isOpen()
+    {
         return open;
     }
 
@@ -161,14 +197,18 @@ public class PrivateMine implements ConfigurationSerializable {
 	   Fills the blocks in the mine.
 	 */
 
-    public void setOpen(boolean open) {
+    public void setOpen(boolean open)
+    {
         this.open = open;
     }
 
-    public void fill(Material m) {
-        //free any players
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (locations.getRegion().contains(Util.toWEVector(player.getLocation().toVector()))) {
+    public void fill(Material m)
+    {
+        //free any players who might be in the mine
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            if (locations.getRegion().contains(Util.toWEVector(player.getLocation().toVector())))
+            {
                 player.teleport(locations.getSpawnPoint());
                 player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
             }
@@ -183,14 +223,16 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
 
-    public boolean shouldReset() {
+    public boolean shouldReset()
+    {
         return locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
     }
 
     /*
       Delete the mine.
      */
-    public void delete() {
+    public void delete()
+    {
 
         removeAllPlayers();
 
@@ -201,7 +243,8 @@ public class PrivateMine implements ConfigurationSerializable {
         removeRegion();
 
         NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
-        if (npc != null) {
+        if (npc != null)
+        {
             npc.destroy();
         }
     }
@@ -209,13 +252,16 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
     Delete the Private Mine Region.
      */
-    private void removeRegion() {
+    private void removeRegion()
+    {
         World world = locations.getSpawnPoint().getWorld();
         RegionManager regionManager = WorldGuardPlugin.inst().getRegionManager(world);
 
-        if (regionManager == null) {
+        if (regionManager == null)
+        {
             PrivateMines.getPlugin().getLogger().warning(() -> String.format("RegionManager for world %s is null", world.getName()));
-        } else {
+        } else
+        {
             regionManager.removeRegion(wgRegion.getId());
             regionManager.removeRegion(locations.getWgRegion().getId());
         }
@@ -224,9 +270,12 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Teleport all the players back to spawn.
      */
-    private void removeAllPlayers() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (this.contains(player)) {
+    private void removeAllPlayers()
+    {
+        for (Player player : Bukkit.getOnlinePlayers())
+        {
+            if (this.contains(player))
+            {
                 player.performCommand("spawn");
             }
         }
@@ -235,7 +284,8 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Sets the new mine schematic (Used when changing themes)
      */
-    public void setMineSchematic(MineSchematic mineSchematic) {
+    public void setMineSchematic(MineSchematic mineSchematic)
+    {
         fill(Material.AIR);
         boolean mineIsOpen = isOpen();
         setOpen(false);
@@ -254,5 +304,28 @@ public class PrivateMine implements ConfigurationSerializable {
         this.mineSchematic = mineSchematic;
         setOpen(mineIsOpen);
 
+    }
+
+    public boolean ban(Player player)
+    {
+        if (this.contains(player))
+        {
+            BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+            BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+
+            player.performCommand("spawn");
+        }
+
+        return bannedPlayers.add(player.getUniqueId());
+    }
+
+    public boolean unban(Player player)
+    {
+        BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+        manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_UNBANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+
+        return bannedPlayers.remove(player.getUniqueId());
     }
 }

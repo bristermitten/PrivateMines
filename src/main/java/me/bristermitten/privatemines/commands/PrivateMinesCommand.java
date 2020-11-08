@@ -181,4 +181,45 @@ public class PrivateMinesCommand extends BaseCommand
         mine.teleport(p);
     }
 
+    @Subcommand("ban|banish|blacklist")
+    @CommandPermission("privatemines.ban")
+    @CommandCompletion("@players")
+    @Description("Ban a player from visiting your PrivateMine")
+    public void ban(Player p, OnlinePlayer target)
+    {
+        PrivateMine mine = storage.get(p);
+        if (mine == null)
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_SENDER_HAS_NO_MINE);
+            return;
+        }
+        if (mine.ban(target.getPlayer()))
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_BANNED, "{player}", target.player.getName());
+        } else
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, "{player}", target.player.getName());
+        }
+    }
+
+    @Subcommand("unban|pardon")
+    @CommandPermission("privatemines.ban")
+    @CommandCompletion("@players")
+    @Description("Unban a player from visiting your PrivateMine")
+    public void unban(Player p, OnlinePlayer target)
+    {
+        PrivateMine mine = storage.get(p);
+        if (mine == null)
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_SENDER_HAS_NO_MINE);
+            return;
+        }
+        if (mine.unban(target.getPlayer()))
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_UNBANNED, "{player}", target.player.getName());
+        } else
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_BANNED, "{player}", target.player.getName());
+        }
+    }
 }
