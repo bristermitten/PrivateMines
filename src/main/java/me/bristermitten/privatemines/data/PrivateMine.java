@@ -31,7 +31,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -42,6 +41,7 @@ public class PrivateMine implements ConfigurationSerializable
 {
 
     public static final int RESET_THRESHOLD = 1200 * 20 * 1000;
+    public static final String PLAYER_PLACEHOLDER = "{player}";
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
     private Region region;
@@ -56,7 +56,8 @@ public class PrivateMine implements ConfigurationSerializable
     private long nextResetTime;
 
     public PrivateMine(UUID owner,
-                       Set<UUID> bannedPlayers, boolean open,
+                       Set<UUID> bannedPlayers,
+                       boolean open,
                        Material block,
                        Region region,
                        MineLocations locations,
@@ -166,9 +167,9 @@ public class PrivateMine implements ConfigurationSerializable
     {
         if (bannedPlayers.contains(player.getUniqueId()))
         {
-            BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+            BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
             BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, PLAYER_PLACEHOLDER, Bukkit.getOfflinePlayer(owner).getName());
 
             return;
         }
@@ -310,9 +311,9 @@ public class PrivateMine implements ConfigurationSerializable
     {
         if (this.contains(player))
         {
-            BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+            BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
             BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+            manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, PLAYER_PLACEHOLDER, Bukkit.getOfflinePlayer(owner).getName());
 
             player.performCommand("spawn");
         }
@@ -322,9 +323,9 @@ public class PrivateMine implements ConfigurationSerializable
 
     public boolean unban(Player player)
     {
-        BukkitCommandManager manager = JavaPlugin.getPlugin(PrivateMines.class).getManager();
+        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
         BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-        manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_UNBANNED, "{player}", Bukkit.getOfflinePlayer(owner).getName());
+        manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_UNBANNED, PLAYER_PLACEHOLDER, Bukkit.getOfflinePlayer(owner).getName());
 
         return bannedPlayers.remove(player.getUniqueId());
     }
