@@ -20,6 +20,7 @@ public class SchematicStorage
     private final Map<String, MineSchematic> schematics = new HashMap<>();
     private final File schematicsDir = new File(PrivateMines.getPlugin().getDataFolder(), "schematics");
     private MineSchematic defaultSchematic = null;
+
     private SchematicStorage()
     {
     }
