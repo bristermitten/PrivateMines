@@ -20,8 +20,9 @@ import static me.bristermitten.privatemines.Util.prettify;
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand
 {
-private final MenuFactory factory;
-private final MineStorage storage;
+
+    private final MenuFactory factory;
+    private final MineStorage storage;
 
     public PrivateMinesCommand(MenuFactory factory, MineStorage storage)
     {
@@ -40,6 +41,14 @@ private final MineStorage storage;
         {
             factory.createAndOpenMinesMenu(p);
         }
+    }
+
+    @Subcommand("list")
+    @Description("List all Private Mines")
+    @CommandPermission("privatemines.list")
+    public void list(Player p)
+    {
+        factory.createAndOpenMinesMenu(p);
     }
 
     @HelpCommand
@@ -148,7 +157,7 @@ private final MineStorage storage;
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        p.sendMessage(Util.color("&7Block Type: &6"+ prettify(mine.getBlock().name())));
+        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().name())));
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))
@@ -156,7 +165,7 @@ private final MineStorage storage;
                 .create());
     }
 
-    @Subcommand("teleport")
+    @Subcommand("teleport|visit")
     @CommandPermission("privatemines.teleport")
     @CommandCompletion("@players")
     @Description("Teleport to a Player's PrivateMine")
@@ -171,6 +180,5 @@ private final MineStorage storage;
         }
         mine.teleport(p);
     }
-
 
 }
