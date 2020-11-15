@@ -42,7 +42,7 @@ public class PrivateMinesCommand extends BaseCommand
             factory.openMainMenu(p);
         } else
         {
-            factory.createAndOpenMinesMenu(p);
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
         }
     }
 
