@@ -15,7 +15,6 @@ import java.util.Map;
 
 public class SchematicStorage
 {
-
     private static final SchematicStorage instance = new SchematicStorage();
     private final Map<String, MineSchematic> schematics = new HashMap<>();
     private final File schematicsDir = new File(PrivateMines.getPlugin().getDataFolder(), "schematics");

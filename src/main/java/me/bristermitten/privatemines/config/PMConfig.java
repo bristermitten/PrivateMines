@@ -18,9 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PMConfig {
-    private String worldName = "mines";
+    private String worldName = "privatemines";
     private int minesDistance = 150;
-    private String schematicName = "mine.schematic";
     private Map<BlockType, Material> blockTypes = new HashMap<>();
     private Material defaultBlock = Material.STONE;
     private List<Material> blockOptions = new ArrayList<>();
@@ -41,9 +40,6 @@ public class PMConfig {
     public void load(FileConfiguration config) {
         this.worldName = config.getString("World-Name");
         this.minesDistance = config.getInt("Mine-Distance");
-        if (config.contains("Schematic-Name")) {
-            this.schematicName = config.getString("Schematic-Name");
-        }
 
         ConfigurationSection blocks = config.getConfigurationSection("Blocks");
         for (String block : blocks.getKeys(false)) {
@@ -97,9 +93,6 @@ public class PMConfig {
         return minesDistance;
     }
 
-    public String getSchematicName() {
-        return schematicName;
-    }
 
     public Material getDefaultBlock() {
         return defaultBlock;
