@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.Util;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
@@ -21,11 +22,13 @@ import static me.bristermitten.privatemines.Util.prettify;
 public class PrivateMinesCommand extends BaseCommand
 {
 
+    private final PrivateMines plugin;
     private final MenuFactory factory;
     private final MineStorage storage;
 
-    public PrivateMinesCommand(MenuFactory factory, MineStorage storage)
+    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage)
     {
+        this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
     }
@@ -63,6 +66,11 @@ public class PrivateMinesCommand extends BaseCommand
     @Description("Set your mine's tax percentage")
     public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage)
     {
+        if (!plugin.isAutoSellEnabled())
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
+            return;
+        }
         final PrivateMine mine = storage.getOrCreate(p);
         if (taxPercentage == null)
         {

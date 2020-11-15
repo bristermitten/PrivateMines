@@ -3,9 +3,10 @@ version: @version@
 main: me.bristermitten.privatemines.PrivateMines
 authors: [BristerMitten, UntouchedOdin0]
 website: github.com/knightzmc
+softdepend:
+  - AutoSell
+  - Citizens
 depend:
   - FastAsyncWorldEdit
   - Vault
   - WorldGuard
-  - Citizens
-  - AutoSell

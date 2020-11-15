@@ -1,5 +1,5 @@
 #The name of the mines
-World-Name: mines
+World-Name: privatemines
 #How many blocks each mine should be apart from the other. This must be at least the radius of the mine schematic (distance from the center to the edge) or the mines will overlap
 Mine-Distance: 150
 #the schematic name for the mine. this file must exist or bad things will happen!
@@ -29,6 +29,8 @@ NPC-Skin: TraderNPC
 
 #Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
+
+Default-Open: true
 
 #Color Customization for messages
 Colors:

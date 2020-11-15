@@ -30,7 +30,6 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.data.SellNPC;
 import me.bristermitten.privatemines.world.MineWorldManager;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,11 +38,13 @@ import org.bukkit.material.Directional;
 
 import java.util.HashSet;
 import java.util.Map;
+import java.util.UUID;
 
 public class MineFactory
 {
 
-    public static final boolean DEFAULT_MINE_OPEN = true;
+    public static final String DEFAULT_MINE_OPEN_KEY = "Default-Open";
+
     private final MineWorldManager manager;
     private final PMConfig config;
     private final PrivateMines plugin;
@@ -186,21 +187,28 @@ public class MineFactory
 
             MineLocations locations = new MineLocations(spawnLoc, min, max, mineRegion);
 
-            NPC npc = SellNPC.createSellNPC(
-                    config.getNPCName(),
-                    owner.getName(),
-                    npcLoc,
-                    owner.getUniqueId());
+            UUID npcUUID;
+            if (plugin.isCitizensEnabled())
+            {
+                npcUUID = SellNPC.createSellNPC(
+                        config.getNPCName(),
+                        owner.getName(),
+                        npcLoc,
+                        owner.getUniqueId()).getUniqueId();
+            } else
+            {
+                npcUUID = UUID.randomUUID();
+            }
 
             return new PrivateMine(
                     owner.getUniqueId(),
                     new HashSet<>(),
-                    DEFAULT_MINE_OPEN,
+                    plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
                     config.getDefaultBlock(),
                     region,
                     locations,
                     worldGuardRegion,
-                    npc.getUniqueId(),
+                    npcUUID,
                     config.getTaxPercentage(),
                     mineSchematic);
 

@@ -15,14 +15,17 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.IOException;
 
-public final class PrivateMines extends JavaPlugin {
+public final class PrivateMines extends JavaPlugin
+{
 
     public static final String MINES_FILE_NAME = "mines.yml";
     private Economy econ;
@@ -32,19 +35,35 @@ public final class PrivateMines extends JavaPlugin {
     private BukkitCommandManager manager;
     private MineFactory factory;
 
-    public static PrivateMines getPlugin() {
+    private boolean autoSellEnabled = false;
+    private boolean citizensEnabled = false;
+
+    public static PrivateMines getPlugin()
+    {
         return JavaPlugin.getPlugin(PrivateMines.class);
     }
 
-    public static Economy getEconomy() {
+    public static Economy getEconomy()
+    {
         return getPlugin().econ;
+    }
+
+    public boolean isAutoSellEnabled()
+    {
+        return autoSellEnabled;
+    }
+
+    public boolean isCitizensEnabled()
+    {
+        return citizensEnabled;
     }
 
     /*
        Used when the plugin is enabled at the start, loads all the services.
      */
     @Override
-    public void onEnable() {
+    public void onEnable()
+    {
         saveDefaultConfig();
 
         PMConfig mainConfig = new PMConfig(getConfig());
@@ -55,9 +74,12 @@ public final class PrivateMines extends JavaPlugin {
 
         this.storage = new MineStorage(factory);
 
-        try {
+        try
+        {
             loadFiles();
-        } catch (IOException | InvalidConfigurationException e) {
+        }
+        catch (IOException | InvalidConfigurationException e)
+        {
             getLogger().severe("An error occurred loading data!");
             e.printStackTrace();
         }
@@ -66,9 +88,19 @@ public final class PrivateMines extends JavaPlugin {
 
         loadCommands(mainConfig, menuFactory);
 
-        CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
+        if (Bukkit.getPluginManager().isPluginEnabled("Citizens"))
+        {
+            citizensEnabled = true;
+            CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
+        }
 
-        if (!setupEconomy()) {
+        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell"))
+        {
+            autoSellEnabled = true;
+        }
+
+        if (!setupEconomy())
+        {
             getLogger().severe(() -> String.format("[%s] - Disabled due to no Vault dependency found!",
                     getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
@@ -79,11 +111,13 @@ public final class PrivateMines extends JavaPlugin {
     }
 
     @NotNull
-    private MineFactory loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
+    private MineFactory loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager)
+    {
         return new MineFactory(this, mineManager, mainConfig);
     }
 
-    private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
+    private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory)
+    {
         manager = new BukkitCommandManager(this);
         manager.getLocales().addBundleClassLoader(getClassLoader());
 
@@ -92,42 +126,52 @@ public final class PrivateMines extends JavaPlugin {
         //noinspection deprecation
         manager.enableUnstableAPI("help");
 
-        manager.registerCommand(new PrivateMinesCommand(menuFactory, storage));
+        manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
-            if (value == null) {
+            if (value == null)
+            {
                 return;
             }
-            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value) {
+            if (c.hasConfig("min") && c.getConfigValue("min", 0) > value)
+            {
                 throw new ConditionFailedException("Value must be >" + c.getConfigValue("min", 0));
             }
-            if (c.hasConfig("max") && c.getConfigValue("max", 0) < value) {
+            if (c.hasConfig("max") && c.getConfigValue("max", 0) < value)
+            {
                 throw new ConditionFailedException(
                         "Value must be <" + c.getConfigValue("max", 0));
             }
         });
     }
 
-    private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+    private boolean setupEconomy()
+    {
+        if (getServer().getPluginManager().getPlugin("Vault") == null)
+        {
             return false;
-        } else {
+        } else
+        {
             RegisteredServiceProvider<Economy> rsp =
                     getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp == null) {
+            if (rsp == null)
+            {
                 return false;
-            } else {
+            } else
+            {
                 econ = rsp.getProvider();
                 return econ != null;
             }
         }
     }
 
-    public MineStorage getStorage() {
+    public MineStorage getStorage()
+    {
         return storage;
     }
 
-    private void loadFiles() throws IOException, InvalidConfigurationException {
+    private void loadFiles() throws IOException, InvalidConfigurationException
+    {
         YamlConfiguration schematicsConfig = new YamlConfiguration();
         saveResource("schematics/schematics.yml", false);
         schematicsConfig.load(new File(getDataFolder(), "schematics/schematics.yml"));
@@ -156,7 +200,8 @@ public final class PrivateMines extends JavaPlugin {
 
     }
 
-    private void saveFiles() throws IOException {
+    private void saveFiles() throws IOException
+    {
         storage.save(minesConfig);
         minesConfig.save(new File(getDataFolder(), MINES_FILE_NAME));
         getLogger().info("Saved mines.yml");
@@ -164,20 +209,26 @@ public final class PrivateMines extends JavaPlugin {
 
 
     @Override
-    public void onDisable() {
-        try {
+    public void onDisable()
+    {
+        try
+        {
             saveFiles();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             getLogger().severe("An error occurred saving data!");
             e.printStackTrace();
         }
     }
 
-    public BukkitCommandManager getManager() {
+    public BukkitCommandManager getManager()
+    {
         return manager;
     }
 
-    public MineFactory getFactory() {
+    public MineFactory getFactory()
+    {
         return factory;
     }
 }

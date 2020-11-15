@@ -243,10 +243,13 @@ public class PrivateMine implements ConfigurationSerializable
 
         removeRegion();
 
-        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
-        if (npc != null)
+        if (PrivateMines.getPlugin().isCitizensEnabled())
         {
-            npc.destroy();
+            NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
+            if (npc != null)
+            {
+                npc.destroy();
+            }
         }
     }
 
