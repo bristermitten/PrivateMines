@@ -1,0 +1,18 @@
+repositories {
+    maven { url = 'http://maven.sk89q.com/repo/' }
+    maven { url = 'https://papermc.io/repo/repository/maven-public/' }
+    maven { url = 'https://repo.citizensnpcs.co/' }
+
+}
+
+dependencies {
+    compileOnly "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+    compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
+
+
+
+    compileOnly "com.sk89q.worldedit:worldedit-bukkit:7.0.0"
+    compileOnly "com.sk89q.worldguard:worldguard-bukkit:7.0.0"
+
+    compileOnly project(':base')
+}

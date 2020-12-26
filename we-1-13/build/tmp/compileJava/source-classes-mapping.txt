@@ -1,0 +1,7 @@
+me/bristermitten/privatemines/worldedit/WE1_13MineSchematic.java
+ me.bristermitten.privatemines.worldedit.WE1_13MineSchematic
+me/bristermitten/privatemines/worldedit/WE1_13MineFactoryCompat.java
+ me.bristermitten.privatemines.worldedit.WE1_13MineFactoryCompat
+ me.bristermitten.privatemines.worldedit.WE1_13MineFactoryCompat$1
+me/bristermitten/privatemines/worldedit/WE1_13Hook.java
+ me.bristermitten.privatemines.worldedit.WE1_13Hook
