@@ -10,8 +10,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class WE1_8MineSchematic extends MineSchematic<Schematic> {
-    protected WE1_8MineSchematic(String name, List<String> description, File file, ItemStack icon) {
+public class LegacyWEMineSchematic extends MineSchematic<Schematic> {
+    protected LegacyWEMineSchematic(String name, List<String> description, File file, ItemStack icon) {
         super(name, description, file, icon);
     }
 

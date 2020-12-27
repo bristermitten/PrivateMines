@@ -1,0 +1,27 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '6.0.0'
+}
+
+repositories {
+    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+}
+
+dependencies {
+    implementation project(':base')
+    implementation project(':we-1-8')
+    implementation project(':we-1-13')
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
+}
+
+shadowJar {
+    relocate 'co.aikar.commands', 'me.bristermitten.libs.commands'
+    relocate 'co.aikar.locales', 'me.bristermitten.libs.locales'
+    archiveFileName = "PrivateMines-${project.version}.jar"
+}

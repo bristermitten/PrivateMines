@@ -13,31 +13,21 @@ import com.sk89q.worldedit.regions.RegionOperationException;
 import com.sk89q.worldedit.world.World;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import org.bukkit.Location;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.Iterator;
 
-public class WE1_8MineFactoryCompat implements MineFactoryCompat<Schematic> {
+public class LegacyWEMineFactoryCompat implements MineFactoryCompat<Schematic> {
 
     private final EditSession editSession;
     private final World world;
 
-    public WE1_8MineFactoryCompat(MineWorldManager manager) {
+    public LegacyWEMineFactoryCompat(MineWorldManager manager) {
         this.world = FaweAPI.getWorld(manager.getMinesWorld().getName());
 
         this.editSession = new EditSessionBuilder(world).allowedRegionsEverywhere().limitUnlimited()
                 .fastmode(true).build();
     }
 
-    @Override
-    public void setMineFlags(IWrappedRegion region) {
-
-    }
-
-    @Override
-    public void setMainFlags(IWrappedRegion region) {
-
-    }
 
     @Override
     public WorldEditRegion pasteSchematic(Schematic schematic, Location location) {
@@ -61,15 +51,15 @@ public class WE1_8MineFactoryCompat implements MineFactoryCompat<Schematic> {
             e.printStackTrace();
         }
 
-        final WorldEditVector min = WE1_8Hook.transform(region.getMinimumPoint());
-        final WorldEditVector max = WE1_8Hook.transform(region.getMaximumPoint());
+        final WorldEditVector min = LegacyWEHook.transform(region.getMinimumPoint());
+        final WorldEditVector max = LegacyWEHook.transform(region.getMaximumPoint());
 
         return new WorldEditRegion(min, max, location.getWorld());
     }
 
     @Override
     public Iterable<WorldEditVector> loop(WorldEditRegion region) {
-        final FastIterator vectors = new FastIterator(WE1_8Hook.transform(region), editSession);
+        final FastIterator vectors = new FastIterator(LegacyWEHook.transform(region), editSession);
         final Iterator<Vector> fastIterator = vectors.iterator();
         final Iterator<WorldEditVector> weVecIterator = new Iterator<WorldEditVector>() {
             @Override
@@ -79,7 +69,7 @@ public class WE1_8MineFactoryCompat implements MineFactoryCompat<Schematic> {
 
             @Override
             public WorldEditVector next() {
-                return WE1_8Hook.transform(fastIterator.next());
+                return LegacyWEHook.transform(fastIterator.next());
             }
         }; //Iterator#map when java ;-;
         return () -> weVecIterator;

@@ -15,7 +15,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.util.List;
 
-public class WE1_8Hook implements WorldEditHook {
+public class LegacyWEHook implements WorldEditHook {
 
     public static Region transform(WorldEditRegion region) {
         return new CuboidRegion(
@@ -46,11 +46,11 @@ public class WE1_8Hook implements WorldEditHook {
 
     @Override
     public MineFactoryCompat<?> createMineFactoryCompat() {
-        return new WE1_8MineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
+        return new LegacyWEMineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
     }
 
     @Override
     public MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
-        return new WE1_8MineSchematic(name, description, file, item);
+        return new LegacyWEMineSchematic(name, description, file, item);
     }
 }

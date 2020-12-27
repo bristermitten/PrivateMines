@@ -13,26 +13,15 @@ import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.World;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import org.bukkit.Location;
-import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
 import java.util.Iterator;
 
-public class WE1_13MineFactoryCompat implements MineFactoryCompat<Clipboard> {
+public class ModernMineFactoryCompat implements MineFactoryCompat<Clipboard> {
 
     private final World world;
 
-    public WE1_13MineFactoryCompat(MineWorldManager manager) {
+    public ModernMineFactoryCompat(MineWorldManager manager) {
         this.world = BukkitAdapter.adapt(manager.getMinesWorld());
-
-    }
-
-    @Override
-    public void setMineFlags(IWrappedRegion region) {
-
-    }
-
-    @Override
-    public void setMainFlags(IWrappedRegion region) {
 
     }
 
@@ -55,8 +44,8 @@ public class WE1_13MineFactoryCompat implements MineFactoryCompat<Clipboard> {
                 region.setWorld(world);
                 region.shift(centerVector.subtract(clipboard.getOrigin()));
 
-                final WorldEditVector min = WE1_13Hook.transform(region.getMinimumPoint());
-                final WorldEditVector max = WE1_13Hook.transform(region.getMaximumPoint());
+                final WorldEditVector min = ModernWEHook.transform(region.getMinimumPoint());
+                final WorldEditVector max = ModernWEHook.transform(region.getMaximumPoint());
 
                 return new WorldEditRegion(min, max, location.getWorld());
             } catch (WorldEditException e) {
@@ -69,7 +58,7 @@ public class WE1_13MineFactoryCompat implements MineFactoryCompat<Clipboard> {
     @Override
     public Iterable<WorldEditVector> loop(WorldEditRegion region) {
 
-        final Iterator<BlockVector3> vectors = WE1_13Hook.transform(region).iterator();
+        final Iterator<BlockVector3> vectors = ModernWEHook.transform(region).iterator();
         final Iterator<WorldEditVector> weVecIterator = new Iterator<WorldEditVector>() {
             @Override
             public boolean hasNext() {
@@ -78,7 +67,7 @@ public class WE1_13MineFactoryCompat implements MineFactoryCompat<Clipboard> {
 
             @Override
             public WorldEditVector next() {
-                return WE1_13Hook.transform(vectors.next());
+                return ModernWEHook.transform(vectors.next());
             }
         }; //Iterator#map when java ;-;
         return () -> weVecIterator;

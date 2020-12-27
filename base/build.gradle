@@ -1,0 +1,30 @@
+repositories {
+    maven { url = 'https://oss.sonatype.org/content/groups/public/' }
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'http://maven.sk89q.com/repo/' }
+    maven { url = 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/' }
+    maven { url = 'https://repo.aikar.co/content/groups/aikar/' }
+    maven { url = 'https://repo.citizensnpcs.co/' }
+}
+
+dependencies {
+    implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    compileOnly "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
+
+    compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
+    compileOnly files("lib/AutoSellAPI-1.2.0.jar")
+
+    testImplementation "junit:junit:4.12"
+
+}
+
+compileJava {
+    options.compilerArgs += ["-parameters"]
+    options.fork = true
+}
+
+
+

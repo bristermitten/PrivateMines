@@ -4,7 +4,6 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
@@ -20,7 +19,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
-public class WE1_13Hook implements WorldEditHook {
+public class ModernWEHook implements WorldEditHook {
 
     public static Region transform(WorldEditRegion region) {
         return new CuboidRegion(
@@ -43,18 +42,18 @@ public class WE1_13Hook implements WorldEditHook {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
             session.setFastMode(true);
 
-
             String name = block.toString().toLowerCase();
-            if(name.startsWith("legacy_")) {
+            if (name.startsWith("legacy_")) {
                 name = name.substring(7);
             }
+
             final BlockType blockType = BlockTypes.get(name);
-            System.out.println(blockType);
-            System.out.println(name);
+            if (blockType == null) {
+                throw new IllegalArgumentException("Unknown block type " + name);
+            }
             final BaseBlock baseBlock = blockType.getState(new HashMap<>()).toBaseBlock();
 
             final Region weRegion = transform(region);
-            System.out.println(weRegion);
             session.setBlocks(weRegion, baseBlock);
         } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
@@ -63,11 +62,11 @@ public class WE1_13Hook implements WorldEditHook {
 
     @Override
     public MineFactoryCompat<?> createMineFactoryCompat() {
-        return new WE1_13MineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
+        return new ModernMineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
     }
 
     @Override
     public MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
-        return new WE1_13MineSchematic(name, description, file, item);
+        return new ModernWEMineSchematic(name, description, file, item);
     }
 }

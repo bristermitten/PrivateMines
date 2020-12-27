@@ -2,11 +2,11 @@ package me.bristermitten.privatemines;
 
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-public class MineResetTask implements Runnable {
+public class MineResetTask extends BukkitRunnable {
     private final Plugin plugin;
     private final MineStorage storage;
     private BukkitTask bukkitTask;
@@ -17,8 +17,8 @@ public class MineResetTask implements Runnable {
     }
 
     public void start() {
-        if (bukkitTask != null) {
-            bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, this, 0L, 20L);
+        if (bukkitTask == null) {
+            bukkitTask = this.runTaskTimer(plugin, 0L, 20L);
         }
     }
 
@@ -26,7 +26,6 @@ public class MineResetTask implements Runnable {
         if (bukkitTask != null) {
             bukkitTask.cancel();
         }
-
     }
 
     @Override

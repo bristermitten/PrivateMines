@@ -1,17 +1,12 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package me.bristermitten.privatemines.data;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
-import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import net.citizensnpcs.api.CitizensAPI;
@@ -172,21 +167,20 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public void fill(Material type) {
-        //free any players who might be in the mine
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (locations.getRegion().contains(Util.toWEVector(player.getLocation().toVector()))) {
-                player.teleport(locations.getSpawnPoint());
-                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
-            }
-        }
-
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
                 Util.toWEVector(selection.getMinimumPoint()),
                 Util.toWEVector(selection.getMaximumPoint()),
                 mainRegion.getWorld()
-        ); //Could probably cache this but it's not very intensive
-
+        );
+        //Could probably cache this but it's not very intensive
+        //free any players who might be in the mine
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
+                player.teleport(locations.getSpawnPoint());
+                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
+            }
+        }
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, type);
 

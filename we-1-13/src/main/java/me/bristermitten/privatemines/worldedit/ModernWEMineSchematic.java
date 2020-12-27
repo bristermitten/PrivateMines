@@ -12,8 +12,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class WE1_13MineSchematic extends MineSchematic<Clipboard> {
-    protected WE1_13MineSchematic(String name, List<String> description, File file, ItemStack icon) {
+public class ModernWEMineSchematic extends MineSchematic<Clipboard> {
+    protected ModernWEMineSchematic(String name, List<String> description, File file, ItemStack icon) {
         super(name, description, file, icon);
     }
 

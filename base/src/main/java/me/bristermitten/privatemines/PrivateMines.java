@@ -7,6 +7,7 @@ import com.avaje.ebean.validation.NotNull;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
+import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.SellNPCTrait;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
@@ -34,7 +35,7 @@ public final class PrivateMines extends JavaPlugin {
     private MenuConfig menuConfig;
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
-    private MineFactory factory;
+    private MineFactory<MineSchematic<?>, ?> factory;
 
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
@@ -76,7 +77,8 @@ public final class PrivateMines extends JavaPlugin {
         mineManager = new MineWorldManager(mainConfig);
 
         loadWEHook();
-        factory = loadMineFactory(mainConfig, mineManager);
+        //noinspection unchecked oh no
+        factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 
 
         this.storage = new MineStorage(factory);
@@ -108,7 +110,6 @@ public final class PrivateMines extends JavaPlugin {
         }
 
         new MineResetTask(this, storage).start();
-
     }
 
     private void loadWEHook() {
@@ -228,7 +229,7 @@ public final class PrivateMines extends JavaPlugin {
         return manager;
     }
 
-    public MineFactory getFactory() {
+    public MineFactory<MineSchematic<?>, ?> getFactory() {
         return factory;
     }
 }
