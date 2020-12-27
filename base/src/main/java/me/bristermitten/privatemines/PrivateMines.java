@@ -116,10 +116,10 @@ public final class PrivateMines extends JavaPlugin {
         final String version = Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion();
         try {
             if (version.startsWith("6.")) {
-                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.WE1_8Hook")
+                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
                         .getConstructor().newInstance();
             } else if (version.startsWith("7.") || version.startsWith("1.1")) { //FAWE 1.13, 1.16, etc
-                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.WE1_13Hook")
+                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
                         .getConstructor().newInstance();
             }
             else {
