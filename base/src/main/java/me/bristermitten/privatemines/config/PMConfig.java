@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class PMConfig {
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
-    private Map<BlockType, Material> blockTypes = new HashMap<>();
+    private final Map<BlockType, Material> blockTypes = new EnumMap<>(BlockType.class);
     private Material defaultBlock = Material.STONE;
     private List<Material> blockOptions = new ArrayList<>();
     private String npcName = "Steve";
@@ -57,12 +57,12 @@ public class PMConfig {
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
 
-        ConfigurationSection colors = config.getConfigurationSection("Colors");
+        ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
-        for (String key : colors.getKeys(false)) {
+        for (String key : colorsSection.getKeys(false)) {
             try {
                 this.colors.put((MessageType) MessageType.class.getField(key).get(null),
-                        ChatColor.valueOf(colors.getString(key)));
+                        ChatColor.valueOf(colorsSection.getString(key)));
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
             }

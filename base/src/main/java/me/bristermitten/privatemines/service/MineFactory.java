@@ -56,7 +56,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), location);
 
-        Location spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
+        Location spawnLoc = null;
 
         Location npcLoc = null;
         WorldEditVector min = null;
@@ -116,7 +116,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (min == null || max == null || min.equals(max)) {
             throw new IllegalArgumentException("Mine schematic did not define 2 distinct corner blocks, mine cannot be formed");
         }
-
+        if(spawnLoc == null) {
+            spawnLoc= location.getWorld().getHighestBlockAt(location).getLocation();
+        }
         if (npcLoc == null) {
             npcLoc = spawnLoc;
         }
