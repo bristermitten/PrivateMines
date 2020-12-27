@@ -21,6 +21,8 @@ processResources {
 }
 
 shadowJar {
+    minimize()
+    relocate 'org.codemc.worldguardwrapper', 'me.bristermitten.libs.worldguardwrapper'
     relocate 'co.aikar.commands', 'me.bristermitten.libs.commands'
     relocate 'co.aikar.locales', 'me.bristermitten.libs.locales'
     archiveFileName = "PrivateMines-${project.version}.jar"
