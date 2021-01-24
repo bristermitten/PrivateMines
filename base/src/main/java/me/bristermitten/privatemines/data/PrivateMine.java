@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -38,7 +39,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private Material block;
+    private ItemStack block;
     private double taxPercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
@@ -46,7 +47,7 @@ public class PrivateMine implements ConfigurationSerializable {
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
                        boolean open,
-                       Material block,
+                       ItemStack block,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
@@ -71,7 +72,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         boolean open = (Boolean) map.get("Open");
 
-        Material block = Material.matchMaterial((String) map.get("Block"));
+        ItemStack block = ItemStack.deserialize((Map<String, Object>) map.get("Block"));
         WorldEditVector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
         WorldEditVector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
 
@@ -110,22 +111,20 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-    public Material getBlock() {
-        return block;
+    public ItemStack getBlock() {
+        return block.clone();
     }
 
-    public void setBlock(Material block) {
-        if (block.isBlock()) {
+    public void setBlock(ItemStack block) {
             this.block = block;
             this.fill(block);
-        }
     }
 
     public Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
         map.put("Open", this.open);
-        map.put("Block", this.block.name());
+        map.put("Block", this.block.serialize());
         map.put("Locations", this.locations.serialize());
         map.put("Corner1", Util.toBukkitVector(this.mainRegion.getMinimumPoint()).serialize());
         map.put("Corner2", Util.toBukkitVector(this.mainRegion.getMaximumPoint()).serialize());
@@ -166,7 +165,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.open = open;
     }
 
-    public void fill(Material type) {
+    public void fill(ItemStack type) {
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
                 Util.toWEVector(selection.getMinimumPoint()),
@@ -199,7 +198,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         removeAllPlayers();
 
-        fill(Material.AIR);
+        fill(new ItemStack(Material.AIR));
         removeRegion();
 
         if (PrivateMines.getPlugin().isCitizensEnabled()) {
@@ -234,7 +233,7 @@ public class PrivateMine implements ConfigurationSerializable {
       Sets the new mine schematic (Used when changing themes)
      */
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
-        fill(Material.AIR);
+        fill(new ItemStack(Material.AIR));
         boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();

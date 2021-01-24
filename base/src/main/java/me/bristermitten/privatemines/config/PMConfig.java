@@ -6,26 +6,29 @@
 package me.bristermitten.privatemines.config;
 
 import co.aikar.commands.MessageType;
+import com.google.common.base.Enums;
+import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.util.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class PMConfig {
+    private final Map<BlockType, ItemStack> blockTypes = new EnumMap<>(BlockType.class);
+    private final Map<MessageType, ChatColor> colors = new HashMap<>();
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
-    private final Map<BlockType, Material> blockTypes = new EnumMap<>(BlockType.class);
-    private Material defaultBlock = Material.STONE;
-    private List<Material> blockOptions = new ArrayList<>();
+    private ItemStack defaultBlock = new ItemStack(Material.STONE);
+    private List<ItemStack> blockOptions = new ArrayList<>();
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
     private double taxPercentage = 5;
-
-    private Map<MessageType, ChatColor> colors = new HashMap<>();
 
     public PMConfig(FileConfiguration configuration) {
         this.load(configuration);
@@ -41,17 +44,27 @@ public class PMConfig {
 
         ConfigurationSection blocks = config.getConfigurationSection("Blocks");
         for (String block : blocks.getKeys(false)) {
-            final Optional<XMaterial> value = XMaterial.matchXMaterial(blocks.getString(block));
-            if(!value.isPresent()) {
-                throw new IllegalArgumentException("Unknown block type for " + block + " " + blocks.getString(block));
+            final String blockType = blocks.getString(block);
+            final Optional<ItemStack> value = Util.parseItem(blockType);
+            if (!value.isPresent()) {
+                throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
             }
 
-            this.blockTypes.put(BlockType.fromName(block), value.get().parseMaterial());
+            this.blockTypes.put(BlockType.fromName(block), value.get());
         }
 
-        this.defaultBlock = Material.matchMaterial(config.getString("Default-Block"));
+        final String defaultBlockName = config.getString("Default-Block");
+        Optional<ItemStack> defaultBlock = Util.parseItem(defaultBlockName);
+        if (!defaultBlock.isPresent()) {
+            PrivateMines.getPlugin().getLogger().warning(() -> "Invalid default block " + defaultBlockName + ", stone will be used");
+        } else {
+            this.defaultBlock = defaultBlock.get();
+        }
         this.blockOptions = config.getStringList("Block-Options")
-                .stream().map(Material::matchMaterial)
+                .stream()
+                .map(Util::parseItem)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
@@ -85,7 +98,7 @@ public class PMConfig {
         return npcName;
     }
 
-    public Map<BlockType, Material> getBlockTypes() {
+    public Map<BlockType, ItemStack> getBlockTypes() {
         return blockTypes;
     }
 
@@ -98,11 +111,11 @@ public class PMConfig {
     }
 
 
-    public Material getDefaultBlock() {
+    public ItemStack getDefaultBlock() {
         return defaultBlock;
     }
 
-    public List<Material> getBlockOptions() {
+    public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
 }

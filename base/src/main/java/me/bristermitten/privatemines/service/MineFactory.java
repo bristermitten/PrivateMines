@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Directional;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
@@ -52,6 +53,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     /*
     Creates the private mine, pastes the schematic, sets the spawn location and fills the mine.
      */
+    @SuppressWarnings("deprecation")
     public PrivateMine create(Player owner, M mineSchematic, final Location location) {
 
         WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), location);
@@ -62,10 +64,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector min = null;
         WorldEditVector max = null;
 
-        Map<BlockType, Material> blockTypes = config.getBlockTypes();
-        Material spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
-        Material cornerMaterial = blockTypes.get(BlockType.CORNER);
-        Material npcMaterial = blockTypes.get(BlockType.NPC);
+        Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
+        ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
+        ItemStack cornerMaterial = blockTypes.get(BlockType.CORNER);
+        ItemStack npcMaterial = blockTypes.get(BlockType.NPC);
 
         /*
 	    Loops through all of the blocks to find the spawn location block, replaces it with air and sets the location
@@ -75,9 +77,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         for (WorldEditVector pt : compat.loop(region)) {
             final Block blockAt = world.getBlockAt((int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
             Material type = blockAt.getType();
+            int data = blockAt.getData();
             if (type == Material.AIR || type.name().equals("LEGACY_AIR")) continue;
 
-            if (spawnLoc == null && type == spawnMaterial) {
+            if (spawnLoc == null && type == spawnMaterial.getType() && data == spawnMaterial.getDurability()) {
                 spawnLoc = new Location(location.getWorld(), pt.getX() + 0.5, pt.getY() + 0.5, pt.getZ() + 0.5);
                 Block block = spawnLoc.getBlock();
                 if (block.getState().getData() instanceof Directional) {
@@ -90,7 +93,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             /*
 			Loops through all the blocks finding the corner block.
 			*/
-            if (type == cornerMaterial) {
+            if (type == cornerMaterial.getType() && data == cornerMaterial.getDurability()) {
                 if (min == null) {
                     min = pt.copy();
                     continue;
@@ -106,7 +109,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             /*
 			Loops through all the blocks finding the NPC block and sets the NPC location.
 			*/
-            if (type == npcMaterial) {
+            if (type == npcMaterial.getType() && data == npcMaterial.getDurability())  {
                 npcLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
                 npcLoc.add(npcLoc.getX() > 0 ? 0.5 : -0.5, 0.0, npcLoc.getZ() > 0 ? 0.5 : -0.5);
                 blockAt.setType(Material.AIR); //Clear the block

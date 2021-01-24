@@ -38,14 +38,13 @@ public class MinesMenu
                         .filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
 
-
         p.openInventory(spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
                     PrivateMine mine = storage.getOrCreate(pl);
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
-                            "%block%", prettify(mine.getBlock().name()),
+                            "%block%", prettify(mine.getBlock().getType().name()),
                             "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.");
                     i.setItemMeta(itemMeta);
                     return i;

@@ -1,5 +1,7 @@
 package me.bristermitten.privatemines.util;
 
+import com.google.common.base.Enums;
+import com.google.common.primitives.Ints;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
@@ -137,5 +139,20 @@ public final class Util {
             default:
                 return 0f;
         }
+    }
+
+    public static Optional<ItemStack> parseItem(String s){
+        if (s.contains("/")){
+            final String[] split = s.split("/");
+            String material = split[0];
+            int data = Optional.ofNullable(Ints.tryParse(split[1])).orElse(0);
+            return Optional.of( new ItemStack(Material.valueOf(material), 1, (short) data));
+        }
+        Optional<XMaterial> m = Optional.ofNullable(Enums.getIfPresent(XMaterial.class, s).orNull());
+        if(m.isPresent()) {
+            return m.map(XMaterial::parseItem);
+        }
+        return XMaterial.matchXMaterial(s)
+                .map(XMaterial::parseItem);
     }
 }

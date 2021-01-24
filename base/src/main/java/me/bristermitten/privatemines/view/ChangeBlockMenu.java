@@ -1,14 +1,14 @@
 package me.bristermitten.privatemines.view;
 
 import me.bristermitten.privatemines.PrivateMines;
-import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import org.bukkit.Material;
+import me.bristermitten.privatemines.util.Util;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
@@ -35,9 +35,10 @@ public class ChangeBlockMenu {
         spec.copyFrom(original);
         spec.register(plugin);
         PrivateMine mine = storage.getOrCreate(p);
-        Material[] blocks = config.getBlockOptions().toArray(new Material[]{});
+        ItemStack[] blocks = config.getBlockOptions().toArray(new ItemStack[]{});
         p.openInventory(spec.genMenu((block, i) -> {
-                    i.setType(block);
+                    i.setType(block.getType());
+                    i.setDurability(block.getDurability());
                     ItemMeta itemMeta = i.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%block%", Util.prettify(block.toString()));

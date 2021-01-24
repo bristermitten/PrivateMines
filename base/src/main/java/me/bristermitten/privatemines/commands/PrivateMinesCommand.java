@@ -110,14 +110,17 @@ public class PrivateMinesCommand extends BaseCommand
     @Description("Give a Player a PrivateMine")
     public void give(OnlinePlayer target)
     {
-        Player t = target.getPlayer();
-        if (storage.has(t))
-        {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
-            return;
+        try {
+            Player t = target.getPlayer();
+            if (storage.has(t)) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
+                return;
+            }
+            storage.getOrCreate(t).teleport();
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
+        }catch (Throwable t) {
+            t.printStackTrace();
         }
-        storage.getOrCreate(t).teleport();
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
     }
 
     @Subcommand("delete")
@@ -166,7 +169,7 @@ public class PrivateMinesCommand extends BaseCommand
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().name())));
+        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().getType().name())));
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))

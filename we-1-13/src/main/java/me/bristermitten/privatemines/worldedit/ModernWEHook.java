@@ -38,11 +38,11 @@ public class ModernWEHook implements WorldEditHook {
     }
 
     @Override
-    public void fill(WorldEditRegion region, Material block) {
+    public void fill(WorldEditRegion region, ItemStack block) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
             session.setFastMode(true);
 
-            String name = block.toString().toLowerCase();
+            String name = block.getType().toString().toLowerCase();
             if (name.startsWith("legacy_")) {
                 name = name.substring(7);
             }
