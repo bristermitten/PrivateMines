@@ -238,14 +238,29 @@ public class PrivateMinesCommand extends BaseCommand
     @CommandPermission("privatemines.reset")
     @CommandCompletion("@players")
     @Description("Allows you to reset your mine at anytime")
-    public void reset(Player p)
+    public void reset(Player p, OnlinePlayer target)
     {
+        Player targetPlayer = target.getPlayer();
+        PrivateMine mineTarget = storage.get(targetPlayer);
         PrivateMine mine = storage.get(p);
+
+        if (targetPlayer == null)
+        {
+            mine.fill(mine.getBlock());
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_NO_PLAYER);
+        } else if (mineTarget == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+        } else
+        {
+            target.getPlayer().sendMessage(String.valueOf(LangKeys.INFO_MINE_RESET));
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_MINE_RESET);
+            mineTarget.fill(mineTarget.getBlock());
+        }
+
         if (mine == null)
         {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.fill(mine.getBlock());
     }
 }

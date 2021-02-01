@@ -27,7 +27,11 @@ public enum LangKeys implements MessageKeyProvider {
     INFO_TAX_TAKEN,
     INFO_MINE_GIVEN,
     INFO_MINE_OPENED,
-    INFO_MINE_CLOSED;
+    INFO_MINE_CLOSED,
+
+    INFO_MINE_RESET,
+
+    INFO_NO_PLAYER;
 
     private final MessageKey key = MessageKey.of("privatemines." + name().toLowerCase());
 
