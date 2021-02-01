@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import jdk.jfr.Description;
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import static me.bristermitten.privatemines.util.Util.prettify;
@@ -230,5 +232,20 @@ public class PrivateMinesCommand extends BaseCommand
         {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_BANNED, "{player}", target.player.getName());
         }
+    }
+
+    @Subcommand("reset")
+    @CommandPermission("privatemines.reset")
+    @CommandCompletion("@players")
+    @Description("Allows you to reset your mine at anytime")
+    public void reset(Player p)
+    {
+        PrivateMine mine = storage.get(p);
+        if (mine == null)
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        mine.fill(mine.getBlock());
     }
 }
