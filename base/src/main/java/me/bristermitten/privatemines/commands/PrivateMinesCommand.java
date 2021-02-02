@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import jdk.jfr.Description;
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
@@ -15,6 +16,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import static me.bristermitten.privatemines.util.Util.prettify;
@@ -232,6 +234,36 @@ public class PrivateMinesCommand extends BaseCommand
         } else
         {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_BANNED, "{player}", target.player.getName());
+        }
+    }
+
+    @Subcommand("reset")
+    @CommandPermission("privatemines.reset")
+    @CommandCompletion("@players")
+    @Description("Allows you to reset your mine at anytime")
+    public void reset(Player p, OnlinePlayer target)
+    {
+        Player targetPlayer = target.getPlayer();
+        PrivateMine mineTarget = storage.get(targetPlayer);
+        PrivateMine mine = storage.get(p);
+
+        if (targetPlayer == null)
+        {
+            mine.fill(mine.getBlock());
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_NO_PLAYER);
+        } else if (mineTarget == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+        } else
+        {
+            target.getPlayer().sendMessage(String.valueOf(LangKeys.INFO_MINE_RESET));
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_MINE_RESET);
+            mineTarget.fill(mineTarget.getBlock());
+        }
+
+        if (mine == null)
+        {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
         }
     }
 }
