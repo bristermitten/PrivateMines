@@ -18,5 +18,7 @@ public class MaterialTests {
         assertEquals(new ItemStack(Material.NETHERRACK, 1, (short) 3), Util.parseItem("NETHERRACK/3").orElse(null));
         assertEquals(new ItemStack(Material.WOOL, 1, (short) 15), Util.parseItem("BLACK_WOOL").orElse(null));
         assertEquals(new ItemStack(Material.WOOL, 1, (short) 10), Util.parseItem("WOOL/10").orElse(null));
+        assertEquals(new ItemStack(Material.SIGN, 1), Util.parseItem("SIGN").orElse(null));
+        assertEquals(new ItemStack(Material.SIGN, 1), Util.parseItem("OAK_SIGN").orElse(null));
     }
 }
