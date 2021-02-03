@@ -1,9 +1,0 @@
-Schematics:
-  default:
-    Default: true
-    File: default.schematic
-    Icon:
-      type: COBBLESTONE
-    Description:
-      - "The default Mine Schematic"
-      - "Nothing special, but it does the job"
