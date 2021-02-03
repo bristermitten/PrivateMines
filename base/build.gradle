@@ -17,8 +17,10 @@ dependencies {
     compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
     compileOnly files("lib/AutoSellAPI-1.2.0.jar")
 
-    testImplementation "junit:junit:4.12"
-
+    testImplementation "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'com.github.knightzmc:MockBukkit:v1.8-SNAPSHOT'
 }
 
 compileJava {
@@ -26,5 +28,8 @@ compileJava {
     options.fork = true
 }
 
+test {
+    useJUnitPlatform()
+}
 
 
