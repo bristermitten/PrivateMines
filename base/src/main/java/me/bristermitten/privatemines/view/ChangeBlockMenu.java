@@ -41,10 +41,11 @@ public class ChangeBlockMenu {
                     i.setDurability(block.getDurability());
                     ItemMeta itemMeta = i.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
-                    String name = displayName.replace("%block%", Util.prettify(block.toString()));
+                    String name = displayName.replace("%block%",
+                            Util.getName(block).orElse("Unknown"));
                     itemMeta.setDisplayName(name);
                     List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%block%",
-                            Util.prettify(block.toString()))).collect(Collectors.toList());
+                            Util.getName(block).orElse("Unknown"))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
                     return i;
