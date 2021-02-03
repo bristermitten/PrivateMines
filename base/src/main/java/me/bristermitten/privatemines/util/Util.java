@@ -3,7 +3,6 @@ package me.bristermitten.privatemines.util;
 import com.google.common.base.Enums;
 import com.google.common.primitives.Ints;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -14,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,6 +30,7 @@ public final class Util {
     public static WorldEditVector toWEVector(Vector bukkitVector) {
         return new WorldEditVector(bukkitVector.getX(), bukkitVector.getY(), bukkitVector.getZ());
     }
+
     public static WorldEditVector toWEVector(Location bukkitVector) {
         return new WorldEditVector(bukkitVector.getX(), bukkitVector.getY(), bukkitVector.getZ());
     }
@@ -50,12 +51,12 @@ public final class Util {
         String type = (String) map.getOrDefault("Type", Material.STONE.name());
         type = replacements.getOrDefault(type, type);
         final Optional<XMaterial> materialOpt = XMaterial.matchXMaterial(type);
-        if(!materialOpt.isPresent()) {
+        if (!materialOpt.isPresent()) {
             throw new IllegalStateException("Unknown material " + type);
         }
         final XMaterial xMaterial = materialOpt.get();
         s.setType(xMaterial.parseMaterial());
-        if(map.containsKey("Data")) {
+        if (map.containsKey("Data")) {
             s.setDurability((short) (int) map.get("Data"));
         } else {
             s.setDurability(xMaterial.getData());
@@ -123,7 +124,20 @@ public final class Util {
     }
 
     public static String prettify(String s) {
-        return WordUtils.capitalize(s.toLowerCase().replace("_", " "));
+        return Arrays.stream(s.split("_"))
+                .map(String::toLowerCase)
+                .map(str -> str.substring(0, 1).toUpperCase() + str.substring(1))
+                .collect(Collectors.joining(" "));
+    }
+
+
+    public static Optional<String> getName(ItemStack s) {
+        try {
+            final XMaterial xMaterial = XMaterial.matchXMaterial(s);
+            return Optional.of(prettify(xMaterial.name()));
+        } catch (IllegalArgumentException ignored) {
+            return Optional.empty();
+        }
     }
 
     public static Float getYaw(BlockFace face) {
@@ -141,15 +155,15 @@ public final class Util {
         }
     }
 
-    public static Optional<ItemStack> parseItem(String s){
-        if (s.contains("/")){
+    public static Optional<ItemStack> parseItem(String s) {
+        if (s.contains("/")) {
             final String[] split = s.split("/");
             String material = split[0];
             int data = Optional.ofNullable(Ints.tryParse(split[1])).orElse(0);
-            return Optional.of( new ItemStack(Material.valueOf(material), 1, (short) data));
+            return Optional.of(new ItemStack(Material.valueOf(material), 1, (short) data));
         }
         Optional<XMaterial> m = Optional.ofNullable(Enums.getIfPresent(XMaterial.class, s).orNull());
-        if(m.isPresent()) {
+        if (m.isPresent()) {
             return m.map(XMaterial::parseItem);
         }
         return XMaterial.matchXMaterial(s)
