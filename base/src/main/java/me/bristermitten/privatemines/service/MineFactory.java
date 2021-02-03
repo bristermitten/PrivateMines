@@ -50,6 +50,13 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return create(owner, mineSchematic, manager.nextFreeLocation());
     }
 
+    private boolean dataMatches(byte data, short expectedData) {
+        if (data == 0) {
+            return expectedData == 0;
+        }
+        return expectedData % data == 0;
+    }
+
     /*
     Creates the private mine, pastes the schematic, sets the spawn location and fills the mine.
      */
@@ -77,10 +84,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         for (WorldEditVector pt : compat.loop(region)) {
             final Block blockAt = world.getBlockAt((int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
             Material type = blockAt.getType();
-            int data = blockAt.getData();
+            byte data = blockAt.getData();
             if (type == Material.AIR || type.name().equals("LEGACY_AIR")) continue;
 
-            if (spawnLoc == null && type == spawnMaterial.getType() && data == spawnMaterial.getDurability()) {
+            if (spawnLoc == null && type == spawnMaterial.getType() && dataMatches(data, spawnMaterial.getDurability())) {
                 spawnLoc = new Location(location.getWorld(), pt.getX() + 0.5, pt.getY() + 0.5, pt.getZ() + 0.5);
                 Block block = spawnLoc.getBlock();
                 if (block.getState().getData() instanceof Directional) {
@@ -93,7 +100,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             /*
 			Loops through all the blocks finding the corner block.
 			*/
-            if (type == cornerMaterial.getType() && data == cornerMaterial.getDurability()) {
+            if (type == cornerMaterial.getType() && dataMatches(data, cornerMaterial.getDurability())) {
                 if (min == null) {
                     min = pt.copy();
                     continue;
@@ -109,7 +116,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             /*
 			Loops through all the blocks finding the NPC block and sets the NPC location.
 			*/
-            if (type == npcMaterial.getType() && data == npcMaterial.getDurability())  {
+            if (type == npcMaterial.getType() && dataMatches(data, npcMaterial.getDurability())) {
                 npcLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
                 npcLoc.add(npcLoc.getX() > 0 ? 0.5 : -0.5, 0.0, npcLoc.getZ() > 0 ? 0.5 : -0.5);
                 blockAt.setType(Material.AIR); //Clear the block
@@ -119,11 +126,13 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (min == null || max == null || min.equals(max)) {
             throw new IllegalArgumentException("Mine schematic did not define 2 distinct corner blocks, mine cannot be formed");
         }
-        if(spawnLoc == null) {
-            spawnLoc= location.getWorld().getHighestBlockAt(location).getLocation();
+        if (spawnLoc == null) {
+            spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
+            plugin.getLogger().warning(() -> "No spawn block was defined, so the schematic root will be used. Searching for " + spawnMaterial);
         }
         if (npcLoc == null) {
             npcLoc = spawnLoc;
+            plugin.getLogger().warning(() -> "No npc spawnpoint was defined, so the schematic spawn will be used. Searching for " + npcMaterial);
         }
 
         WorldEditRegion mainRegion = new WorldEditRegion((region.getMinimumPoint()), region.getMaximumPoint(), location.getWorld());
@@ -210,7 +219,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 w.getFlag("mob-spawning", WrappedState.class)
         ).filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(flag -> region.setFlag(flag, WrappedState.ALLOW));
+                .forEach(flag -> region.setFlag(flag, WrappedState.DENY));
     }
 
     public MineWorldManager getManager() {
