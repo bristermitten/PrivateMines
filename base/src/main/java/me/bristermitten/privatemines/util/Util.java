@@ -155,13 +155,29 @@ public final class Util {
         }
     }
 
+    /**
+     * I hate this function with a passion
+     * Format:
+     * "materialName" => new ItemStack(valueOf(name))
+     * "materialName/durability" => new ItemStack(valueOf(name), 1, durability)
+     *
+     * @param s the material name (and optional id) to parse
+     * @return an Optional ItemStack based on the data, including Material and possibly durability
+     */
     public static Optional<ItemStack> parseItem(String s) {
+        String materialName = s;
+        short durability = 0;
         if (s.contains("/")) {
             final String[] split = s.split("/");
-            String material = split[0];
+            materialName = split[0];
+            //noinspection UnstableApiUsage
             int data = Optional.ofNullable(Ints.tryParse(split[1])).orElse(0);
-            return Optional.of(new ItemStack(Material.valueOf(material), 1, (short) data));
+            durability = (short) data;
         }
+        //Prioritise native material names
+        try {
+            return Optional.of(new ItemStack(Material.valueOf(materialName), 1, durability));
+        } catch (IllegalArgumentException ignored) { }
         Optional<XMaterial> m = Optional.ofNullable(Enums.getIfPresent(XMaterial.class, s).orNull());
         if (m.isPresent()) {
             return m.map(XMaterial::parseItem);

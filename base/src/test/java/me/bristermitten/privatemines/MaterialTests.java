@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class MaterialTests {
+class MaterialTests {
 
     @Test
     void test() {
@@ -20,5 +20,6 @@ public class MaterialTests {
         assertEquals(new ItemStack(Material.WOOL, 1, (short) 10), Util.parseItem("WOOL/10").orElse(null));
         assertEquals(new ItemStack(Material.SIGN, 1), Util.parseItem("SIGN").orElse(null));
         assertEquals(new ItemStack(Material.SIGN, 1), Util.parseItem("OAK_SIGN").orElse(null));
+        assertEquals(new ItemStack(Material.DIODE_BLOCK_OFF, 1), Util.parseItem("DIODE_BLOCK_OFF").orElse(null));
     }
 }
