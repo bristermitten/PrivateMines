@@ -6,10 +6,8 @@
 package me.bristermitten.privatemines.config;
 
 import co.aikar.commands.MessageType;
-import com.google.common.base.Enums;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.util.Util;
-import me.bristermitten.privatemines.util.XMaterial;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,6 +24,7 @@ public class PMConfig {
     private int minesDistance = 150;
     private ItemStack defaultBlock = new ItemStack(Material.STONE);
     private List<ItemStack> blockOptions = new ArrayList<>();
+    private boolean npcsEnabled = true;
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
     private double taxPercentage = 5;
@@ -66,6 +65,8 @@ public class PMConfig {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+
+        this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
@@ -110,6 +111,9 @@ public class PMConfig {
         return minesDistance;
     }
 
+    public boolean isNpcsEnabled() {
+        return npcsEnabled;
+    }
 
     public ItemStack getDefaultBlock() {
         return defaultBlock;

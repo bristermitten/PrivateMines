@@ -203,7 +203,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, new ItemStack(Material.AIR));
 
-        if (PrivateMines.getPlugin().isCitizensEnabled()) {
+        if (PrivateMines.getPlugin().isNpcsEnabled()) {
             NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
             if (npc != null) {
                 npc.destroy();

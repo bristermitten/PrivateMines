@@ -163,7 +163,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
     private UUID createMineNPC(Player owner, Location npcLoc) {
         UUID npcUUID;
-        if (plugin.isCitizensEnabled()) {
+        if (plugin.isNpcsEnabled()) {
             npcUUID = SellNPC.createSellNPC(
                     config.getNPCName(),
                     owner.getName(),

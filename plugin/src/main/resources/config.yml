@@ -21,6 +21,8 @@ Block-Options:
   - DIAMOND_BLOCK
   - GOLD_BLOCK
 
+#If NPCs should be enabled at all. Disable if not using Citizens or you just don't want them
+NPC-Enabled: true
 #Name for the Sell NPC
 NPC-Name: Merchant
 NPC-Skin: TraderNPC

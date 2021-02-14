@@ -40,7 +40,7 @@ public final class PrivateMines extends JavaPlugin {
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
     private boolean autoSellEnabled = false;
-    private boolean citizensEnabled = false;
+    private boolean npcsEnabled = false;
 
     public static PrivateMines getPlugin() {
         return JavaPlugin.getPlugin(PrivateMines.class);
@@ -58,8 +58,8 @@ public final class PrivateMines extends JavaPlugin {
         return autoSellEnabled;
     }
 
-    public boolean isCitizensEnabled() {
-        return citizensEnabled;
+    public boolean isNpcsEnabled() {
+        return npcsEnabled;
     }
 
     public WorldEditHook getWeHook() {
@@ -95,7 +95,7 @@ public final class PrivateMines extends JavaPlugin {
         loadCommands(mainConfig, menuFactory);
 
         if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-            citizensEnabled = true;
+            npcsEnabled = mainConfig.isNpcsEnabled();
             CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
         }
 
