@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - On legacy versions, block checking when pasting a mine should now work
 - Legacy material literals are now parsed correctly
 - Item names in the change block menu should now be prettier
+- A few subtle bugs in `PrivateMinesCommand`
 ### Changed
 - The entire mine is now removed upon deletion to avoid overlap
 - A few code things (update shadowJar, change nullity annotations, add some test cases for material parsing, etc)
