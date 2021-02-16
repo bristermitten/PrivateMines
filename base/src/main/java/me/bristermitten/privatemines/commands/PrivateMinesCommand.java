@@ -204,7 +204,6 @@ public class PrivateMinesCommand extends BaseCommand {
 
     @Subcommand("reset")
     @CommandPermission("privatemines.reset")
-    @CommandCompletion("@players")
     @Description("Force a mine reset")
     public void reset(Player p) {
         PrivateMine mine = storage.get(p);
