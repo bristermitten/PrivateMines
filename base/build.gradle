@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT'
 
     compileOnly "org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
