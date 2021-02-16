@@ -22,6 +22,7 @@ import static me.bristermitten.privatemines.util.Util.prettify;
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
 
+    private static final String PLAYER_KEY = "{player}";
     private final PrivateMines plugin;
     private final MenuFactory factory;
     private final MineStorage storage;
@@ -179,9 +180,9 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
         if (mine.ban(target.getPlayer())) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_BANNED, "{player}", target.player.getName());
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_BANNED, PLAYER_KEY, target.player.getName());
         } else {
-            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, "{player}", target.player.getName());
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, PLAYER_KEY, target.player.getName());
         }
     }
 
@@ -196,9 +197,9 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
         if (mine.unban(target.getPlayer())) {
-            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_UNBANNED, "{player}", target.player.getName());
+            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_UNBANNED, PLAYER_KEY, target.player.getName());
         } else {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_BANNED, "{player}", target.player.getName());
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_BANNED, PLAYER_KEY, target.player.getName());
         }
     }
 
@@ -229,6 +230,6 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         mine.fill(mine.getBlock());
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, "{player}", target.getPlayer().getName());
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }
 }
