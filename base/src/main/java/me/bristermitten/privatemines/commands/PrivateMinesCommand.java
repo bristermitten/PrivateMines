@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import jdk.jfr.Description;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
