@@ -29,8 +29,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class PrivateMine implements ConfigurationSerializable {
+
     //How far between a mine reset in milliseconds
-    public static final long RESET_THRESHOLD = TimeUnit.MINUTES.toMillis(2);
+    private final long RESET_THRESHOLD;
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
@@ -53,6 +54,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        IWrappedRegion wgRegion,
                        UUID npc,
                        double taxPercentage,
+                       int resetTime,
                        MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
@@ -64,10 +66,12 @@ public class PrivateMine implements ConfigurationSerializable {
         this.npcId = npc;
         this.taxPercentage = taxPercentage;
         this.mineSchematic = mineSchematic;
+        this.RESET_THRESHOLD = TimeUnit.MINUTES.toMillis(resetTime);
     }
 
     @SuppressWarnings("unchecked")
     public static PrivateMine deserialize(Map<String, Object> map) {
+
         UUID owner = UUID.fromString((String) map.get("Owner"));
 
         boolean open = (Boolean) map.get("Open");
@@ -84,6 +88,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         UUID npcId = UUID.fromString((String) map.get("NPC"));
         double taxPercentage = (Double) map.get("Tax");
+        int resetTime = (Integer) map.get("Reset-Delay");
 
         String schematicName = (String) map.get("Schematic");
         MineSchematic<?> schematic = SchematicStorage.getInstance().get(schematicName);
@@ -96,7 +101,7 @@ public class PrivateMine implements ConfigurationSerializable {
                 .map(bans -> bans.stream().map(UUID::fromString).collect(Collectors.toSet()))
                 .orElse(new HashSet<>());
 
-        return new PrivateMine(owner, bannedPlayers, open, block, mainRegion, locations, wgRegion, npcId, taxPercentage, schematic);
+        return new PrivateMine(owner, bannedPlayers, open, block, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, schematic);
     }
 
     public double getTaxPercentage() {
@@ -106,6 +111,8 @@ public class PrivateMine implements ConfigurationSerializable {
     public void setTaxPercentage(double amount) {
         this.taxPercentage = amount;
     }
+
+    public double getResetTime() { return this.RESET_THRESHOLD; }
 
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
@@ -130,6 +137,7 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("Corner2", Util.toBukkitVector(this.mainRegion.getMaximumPoint()).serialize());
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
+        map.put("Reset-Delay", this.RESET_THRESHOLD);
         map.put("Schematic", this.mineSchematic.getName());
         map.put("BannedPlayers", this.bannedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
         return map;
@@ -140,7 +148,6 @@ public class PrivateMine implements ConfigurationSerializable {
             BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
             BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
             manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_BANNED, PLAYER_PLACEHOLDER, Bukkit.getOfflinePlayer(owner).getName());
-
             return;
         }
 

@@ -71,6 +71,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector min = null;
         WorldEditVector max = null;
 
+        int resetTime = 0;
+
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
         ItemStack cornerMaterial = blockTypes.get(BlockType.CORNER);
@@ -155,6 +157,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 worldGuardRegion,
                 npcUUID,
                 config.getTaxPercentage(),
+                resetTime,
                 mineSchematic);
 
         privateMine.fill(privateMine.getBlock());

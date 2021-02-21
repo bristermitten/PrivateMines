@@ -32,6 +32,9 @@ Tax-Percentage: 5
 
 Default-Open: true
 
+#Default reset delay for the mines (global)
+Reset-Delay: 5
+
 #Color Customization for messages
 Colors:
   INFO: GOLD

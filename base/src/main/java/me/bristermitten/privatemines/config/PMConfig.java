@@ -28,6 +28,7 @@ public class PMConfig {
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
     private double taxPercentage = 5;
+    private long resetDelay = 30;
 
     public PMConfig(FileConfiguration configuration) {
         this.load(configuration);
@@ -70,6 +71,7 @@ public class PMConfig {
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
+        this.resetDelay = config.getLong("Reset-Delay");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
@@ -122,4 +124,6 @@ public class PMConfig {
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
+
+    public long getResetDelay() { return resetDelay; }
 }
