@@ -77,6 +77,7 @@ public final class PrivateMines extends JavaPlugin {
         mineManager = new MineWorldManager(mainConfig);
 
         loadWEHook();
+        setupEconomy();
         //noinspection unchecked oh no
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 

@@ -8,7 +8,7 @@ softdepend:
   - AutoSell
   - Citizens
   - FastAsyncWorldEdit
+  - Vault
 depend:
   - WorldEdit
-  - Vault
   - WorldGuard
