@@ -24,11 +24,13 @@ public class PMConfig {
     private int minesDistance = 150;
     private ItemStack defaultBlock = new ItemStack(Material.STONE);
     private List<ItemStack> blockOptions = new ArrayList<>();
+    private List<String> commands;
+
     private boolean npcsEnabled = true;
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
     private double taxPercentage = 5;
-    private long resetDelay = 30;
+    private int resetDelay = 30;
 
     public PMConfig(FileConfiguration configuration) {
         this.load(configuration);
@@ -71,7 +73,8 @@ public class PMConfig {
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
-        this.resetDelay = config.getLong("Reset-Delay");
+        this.resetDelay = config.getInt("Reset-Delay");
+        this.commands = config.getStringList("Commands");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
@@ -125,5 +128,7 @@ public class PMConfig {
         return blockOptions;
     }
 
-    public long getResetDelay() { return resetDelay; }
+    public List<String> getCommands() {return commands;}
+
+    public int getResetDelay() { return resetDelay; }
 }

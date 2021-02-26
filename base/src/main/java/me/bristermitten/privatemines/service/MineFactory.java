@@ -13,10 +13,12 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Directional;
@@ -24,10 +26,7 @@ import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class MineFactory<M extends MineSchematic<S>, S> {
@@ -71,9 +70,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector min = null;
         WorldEditVector max = null;
 
-        int resetTime = 0;
-
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
+        List<String> commands = this.config.getCommands();
+
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
         ItemStack cornerMaterial = blockTypes.get(BlockType.CORNER);
         ItemStack npcMaterial = blockTypes.get(BlockType.NPC);
@@ -150,6 +149,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),
                 new HashSet<>(),
+                commands,
                 plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
                 config.getDefaultBlock(),
                 mainRegion,
@@ -157,10 +157,18 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 worldGuardRegion,
                 npcUUID,
                 config.getTaxPercentage(),
-                resetTime,
+                config.getResetDelay(),
                 mineSchematic);
 
         privateMine.fill(privateMine.getBlock());
+        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+
+        for (String s : commands) {
+            s = s.replace("{name}", owner.getName());
+            s = s.replace("{displayname}", owner.getDisplayName());
+            s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
+            Bukkit.dispatchCommand(console, s);
+        }
         return privateMine;
     }
 

@@ -4,6 +4,10 @@
 #  |  __/| |  | |\ V / (_| | ||  __/ | |  | | | | | |  __/\__ \
 # |_|   |_|  |_| \_/ \__,_|\__\___| |_|  |_|_|_| |_|\___||___/
 
+# Permission List
+#
+# Per block permission example: privatemine.block.STONE
+# Get the name of the block from https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html
 
 #The name of the mines
 World-Name: privatemines
@@ -39,8 +43,18 @@ Tax-Percentage: 5
 
 Default-Open: true
 
-#Default reset delay for the mines (global)
+#Default reset delay for the mines in minutes (global)
 Reset-Delay: 5
+
+# Placeholders
+# {name} - Targets Username
+# {displayname} - Targets Display Name
+# {uuid} - Targets UUID
+
+Commands:
+  - "broadcast Created {name}'s Mine!"
+  - "broadcast Created {name}'s otherwise known as {displayname}'s Mine!"
+  - "broadcast Created {name}'s otherwise known as {displayname}'s but their UUID is {uuid}'s Mine!"
 
 #Color Customization for messages
 Colors:

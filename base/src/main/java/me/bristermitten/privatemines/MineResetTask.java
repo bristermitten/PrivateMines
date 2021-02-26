@@ -22,6 +22,7 @@ public class MineResetTask extends BukkitRunnable {
         }
     }
 
+    @Override
     public void cancel() {
         if (bukkitTask != null) {
             bukkitTask.cancel();

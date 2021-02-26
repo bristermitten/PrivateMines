@@ -50,6 +50,12 @@ public class ChangeBlockMenu {
                     i.setItemMeta(itemMeta);
                     return i;
                 },
-                block -> e -> mine.setBlock(block), blocks));
+                block -> e -> {
+                    if (p.hasPermission("privatemine.block." + block.getType().name())) {
+                        mine.setBlock(block);
+                    } else {
+                        p.sendMessage("No permission!");
+                    }
+                }, blocks));
     }
 }
