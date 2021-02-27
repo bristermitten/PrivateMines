@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class PrivateMine implements ConfigurationSerializable {
 
     //How far between a mine reset in milliseconds
-    private final long RESET_THRESHOLD;
+    private final int RESET_THRESHOLD;
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
@@ -69,7 +69,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.npcId = npc;
         this.taxPercentage = taxPercentage;
         this.mineSchematic = mineSchematic;
-        this.RESET_THRESHOLD = TimeUnit.MINUTES.toMillis(resetTime);
+        this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
     }
 
     @SuppressWarnings("unchecked")
@@ -118,7 +118,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.taxPercentage = amount;
     }
 
-    public double getResetTime() { return this.RESET_THRESHOLD; }
+    public int getResetTime() { return this.RESET_THRESHOLD; }
 
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));

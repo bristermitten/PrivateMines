@@ -56,6 +56,13 @@ Commands:
   - "broadcast Created {name}'s otherwise known as {displayname}'s Mine!"
   - "broadcast Created {name}'s otherwise known as {displayname}'s but their UUID is {uuid}'s Mine!"
 
+# Placeholders
+# {name} - Targets Username
+# {displayname} - Targets Display Name
+# {uuid} - Targets UUID
+
+mine-region-name: "mine-{uuid}"
+
 #Color Customization for messages
 Colors:
   INFO: GOLD

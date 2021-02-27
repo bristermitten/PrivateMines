@@ -20,6 +20,8 @@ public enum LangKeys implements MessageKeyProvider {
     ERR_YOU_WERE_UNBANNED,
     ERR_TAX_DISABLED,
 
+    ERR_NO_ACCESS_BLOCK,
+
     INFO_PLAYER_BANNED,
     INFO_PLAYER_UNBANNED,
     INFO_TAX_SET,

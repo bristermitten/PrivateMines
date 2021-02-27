@@ -29,6 +29,7 @@ public class PMConfig {
     private boolean npcsEnabled = true;
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
+    private String mineRegionNameFormat = "mine-{uuid}";
     private double taxPercentage = 5;
     private int resetDelay = 30;
 
@@ -43,6 +44,7 @@ public class PMConfig {
     public void load(FileConfiguration config) {
         this.worldName = config.getString("World-Name");
         this.minesDistance = config.getInt("Mine-Distance");
+        this.mineRegionNameFormat = config.getString("mine-region-name");
 
         ConfigurationSection blocks = config.getConfigurationSection("Blocks");
         for (String block : blocks.getKeys(false)) {
@@ -75,6 +77,7 @@ public class PMConfig {
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
         this.commands = config.getStringList("Commands");
+        this.mineRegionNameFormat = config.getString("mine-region-name");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
@@ -131,4 +134,6 @@ public class PMConfig {
     public List<String> getCommands() {return commands;}
 
     public int getResetDelay() { return resetDelay; }
+
+    public String getMineRegionNameFormat() {return mineRegionNameFormat;}
 }

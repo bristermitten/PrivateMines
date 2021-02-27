@@ -205,7 +205,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     @NotNull
     protected IWrappedRegion createMineWorldGuardRegion(Player owner, WorldEditRegion region, IWrappedRegion parent) {
         IWrappedRegion mineRegion = WorldGuardWrapper.getInstance().addCuboidRegion(
-                owner.getUniqueId().toString() + "-mine",
+
+                config.getMineRegionNameFormat().replace("{uuid}", owner.getUniqueId().toString()),
                 region.getMinimumLocation(),
                 region.getMaximumLocation())
                 .orElseThrow(() -> new RuntimeException("Could not create Mine WorldGuard region"));
