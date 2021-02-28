@@ -18,7 +18,7 @@ public class MineResetTask extends BukkitRunnable {
 
     public void start() {
         if (bukkitTask == null) {
-            bukkitTask = this.runTaskTimer(plugin, 0L, 20L);
+            bukkitTask = this.runTaskTimer(plugin, 0L, 5 * 20L); // Should fix the lag?
         }
     }
 

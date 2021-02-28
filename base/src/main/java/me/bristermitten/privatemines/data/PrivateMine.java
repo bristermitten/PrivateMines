@@ -35,19 +35,21 @@ public class PrivateMine implements ConfigurationSerializable {
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
+    private final Set<UUID> trustedPlayers;
     private final List<String> commands;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private ItemStack block;
+    private ItemStack blocks;
     private double taxPercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
+                       Set<UUID> trustedPlayers,
                        List<String> commands,
                        boolean open,
                        ItemStack block,
@@ -60,11 +62,12 @@ public class PrivateMine implements ConfigurationSerializable {
                        MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
+        this.trustedPlayers = trustedPlayers;
         this.commands = commands;
         this.open = open;
         this.mainRegion = mainRegion;
         this.locations = locations;
-        this.block = block;
+        this.blocks = block;
         this.wgRegion = wgRegion;
         this.npcId = npc;
         this.taxPercentage = taxPercentage;
@@ -107,7 +110,10 @@ public class PrivateMine implements ConfigurationSerializable {
                 .map(bans -> bans.stream().map(UUID::fromString).collect(Collectors.toSet()))
                 .orElse(new HashSet<>());
 
-        return new PrivateMine(owner, bannedPlayers, commands, open, block, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, schematic);
+        Set<UUID> trustedPlayers = Optional.ofNullable((List<String>) map.get("TrustedPlayers"))
+                .map(trusted -> trusted.stream().map(UUID::fromString).collect(Collectors.toSet())).orElse(new HashSet<>());
+
+        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, block, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, schematic);
     }
 
     public double getTaxPercentage() {
@@ -125,19 +131,23 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public ItemStack getBlock() {
-        return block.clone();
+        return blocks;
     }
 
-    public void setBlock(ItemStack block) {
-            this.block = block;
-            this.fill(block);
+    public Set<UUID> getBannedPlayers() {return bannedPlayers;}
+
+    public Set<UUID> getTrustedPlayers() { return trustedPlayers; }
+
+    public void setBlock(ItemStack types) {
+        this.blocks = types;
+        this.fill(blocks);
     }
 
     public Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
         map.put("Open", this.open);
-        map.put("Block", this.block.serialize());
+        map.put("Block", this.blocks);
         map.put("Locations", this.locations.serialize());
         map.put("Corner1", Util.toBukkitVector(this.mainRegion.getMinimumPoint()).serialize());
         map.put("Corner2", Util.toBukkitVector(this.mainRegion.getMaximumPoint()).serialize());
@@ -147,6 +157,7 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("Commands", this.commands);
         map.put("Schematic", this.mineSchematic.getName());
         map.put("BannedPlayers", this.bannedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
+        map.put("TrustedPlayers", this.trustedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
         return map;
     }
 
@@ -180,6 +191,7 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public void fill(ItemStack type) {
+
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
                 Util.toWEVector(selection.getMinimumPoint()),
@@ -211,11 +223,10 @@ public class PrivateMine implements ConfigurationSerializable {
     public void delete() {
 
         removeAllPlayers();
-
-        fill(new ItemStack(Material.AIR));
+        fill(blocks);
         removeRegion();
 
-        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, new ItemStack(Material.AIR));
+        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, blocks);
 
         if (PrivateMines.getPlugin().isNpcsEnabled()) {
             NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
@@ -249,7 +260,7 @@ public class PrivateMine implements ConfigurationSerializable {
       Sets the new mine schematic (Used when changing themes)
      */
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
-        fill(new ItemStack(Material.AIR));
+        fill(blocks);
         boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();

@@ -23,7 +23,10 @@ public class PMConfig {
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
     private ItemStack defaultBlock = new ItemStack(Material.STONE);
+    private List<ItemStack> defaultBlocks = new ArrayList<>();
     private List<ItemStack> blockOptions = new ArrayList<>();
+    private List<ItemStack> mineBlocks = new ArrayList<>();
+
     private List<String> commands;
 
     private boolean npcsEnabled = true;
@@ -78,6 +81,7 @@ public class PMConfig {
         this.resetDelay = config.getInt("Reset-Delay");
         this.commands = config.getStringList("Commands");
         this.mineRegionNameFormat = config.getString("mine-region-name");
+        this.mineBlocks = (List<ItemStack>) config.getList("blocks");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
@@ -130,6 +134,14 @@ public class PMConfig {
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
+
+    public List<ItemStack> getMineBlocks() {
+        return mineBlocks;
+    }
+
+//    public List<ItemStack> getDefaultBlocks() {
+//        return (List<ItemStack>) new ItemStack(Material.STONE);
+//    }
 
     public List<String> getCommands() {return commands;}
 

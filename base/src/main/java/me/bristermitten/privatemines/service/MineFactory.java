@@ -149,6 +149,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),
                 new HashSet<>(),
+                new HashSet<>(),
                 commands,
                 plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
                 config.getDefaultBlock(),

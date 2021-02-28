@@ -146,7 +146,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().getType().name())));
+        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().toString())));
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))
@@ -214,7 +214,6 @@ public class PrivateMinesCommand extends BaseCommand {
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
         mine.fill(mine.getBlock());
-
     }
 
     @Subcommand("reset")
@@ -230,5 +229,34 @@ public class PrivateMinesCommand extends BaseCommand {
         mine.fill(mine.getBlock());
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
+    }
+    @Subcommand("add")
+    @CommandPermission("privatemines.add")
+    @CommandCompletion("@players")
+    @Description("Add players to your Private Mine!")
+    public void add(Player p, OnlinePlayer target) {
+        PrivateMine mine = storage.get(p.getPlayer());
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
+    }
+
+    @Subcommand("remove")
+    @CommandPermission("privatemines.remove")
+    @CommandCompletion("@players")
+    @Description("Remove players to your Private Mine!")
+    public void remove(Player p, OnlinePlayer target) {
+        PrivateMine mine = storage.get(p);
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        mine.getTrustedPlayers().remove(target.getPlayer().getUniqueId());
+        plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
+        getCurrentCommandIssuer().sendInfo(LangKeys.ERR_YOU_WERE_REMOVED, PLAYER_KEY, target.getPlayer().getName());
+        target.getPlayer().performCommand("spawn");
     }
 }
