@@ -144,7 +144,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
 
-
         UUID npcUUID = createMineNPC(owner, npcLoc);
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),

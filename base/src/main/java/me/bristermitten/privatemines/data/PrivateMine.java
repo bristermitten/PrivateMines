@@ -223,10 +223,10 @@ public class PrivateMine implements ConfigurationSerializable {
     public void delete() {
 
         removeAllPlayers();
-        fill(blocks);
+        fill(new ItemStack(Material.AIR));
         removeRegion();
 
-        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, blocks);
+        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, new ItemStack(Material.AIR));
 
         if (PrivateMines.getPlugin().isNpcsEnabled()) {
             NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
