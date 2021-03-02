@@ -14,7 +14,11 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 import static me.bristermitten.privatemines.util.Util.prettify;
 
@@ -230,6 +234,7 @@ public class PrivateMinesCommand extends BaseCommand {
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }
+
     @Subcommand("add")
     @CommandPermission("privatemines.add")
     @CommandCompletion("@players")
@@ -240,8 +245,44 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
+
+        for (UUID s : mine.getTrustedPlayers()) {
+            if (s.equals(target.getPlayer().getUniqueId())) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_ADDED);
+                return;
+            }
+        }
+
         mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
+
+        for (UUID s : mine.getTrustedPlayers()) {
+            p.sendMessage(s.toString());
+        }
+    }
+
+    @Subcommand("trusted")
+    @CommandPermission("privatemines.trustedlist")
+    @CommandCompletion("@players")
+    @Description("Lists who's trusted in your Private Mine!")
+    public void trusted(Player p) {
+        PrivateMine mine = storage.get(p.getPlayer());
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+
+        if (mine.getTrustedPlayers().isEmpty()) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_NO_TRUSTED_PLAYERS);
+            return;
+        }
+
+        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+        for (UUID s : mine.getTrustedPlayers()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+            String lastKnownName = offlinePlayer.getName();
+            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+        }
     }
 
     @Subcommand("remove")
