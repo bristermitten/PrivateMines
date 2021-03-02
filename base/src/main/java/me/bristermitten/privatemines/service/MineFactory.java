@@ -197,7 +197,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         region.getOwners().addPlayer(owner.getUniqueId());
 
         setMainFlags(region);
-
         return region;
     }
 
@@ -232,6 +231,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         ).filter(Optional::isPresent)
                 .map(Optional::get)
                 .forEach(flag -> region.setFlag(flag, WrappedState.DENY));
+    }
+
+    public void addPlayerToRegion(UUID uuid, IWrappedRegion parent) {
+        parent.getMembers().addPlayer(uuid);
     }
 
     public MineWorldManager getManager() {
