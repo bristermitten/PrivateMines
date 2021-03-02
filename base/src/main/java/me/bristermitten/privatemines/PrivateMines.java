@@ -215,7 +215,6 @@ public final class PrivateMines extends JavaPlugin {
         getLogger().info("Saved mines.yml");
     }
 
-
     @Override
     public void onDisable() {
         try {

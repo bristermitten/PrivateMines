@@ -67,5 +67,4 @@ public class PrivateMineMenu {
 	                                 InventoryClickEvent e) {
 		new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
 	}
-
 }
