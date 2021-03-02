@@ -54,9 +54,9 @@ public class ChangeBlockMenu {
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
                         mine.setBlock(block);
-                        }, 20L);
+                        }, 10L);
 
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
