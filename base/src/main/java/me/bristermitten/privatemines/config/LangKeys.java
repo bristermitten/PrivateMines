@@ -17,6 +17,7 @@ public enum LangKeys implements MessageKeyProvider {
     ERR_PLAYER_NOT_BANNED,
 
     ERR_NO_TRUSTED_PLAYERS,
+    ERR_PLAYER_NOT_ON_TRUSTED_LIST,
 
     ERR_YOU_WERE_BANNED,
     ERR_YOU_WERE_UNBANNED,

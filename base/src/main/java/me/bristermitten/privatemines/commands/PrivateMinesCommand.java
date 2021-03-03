@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.util.Util;
@@ -16,7 +17,9 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.UUID;
 
@@ -29,11 +32,13 @@ public class PrivateMinesCommand extends BaseCommand {
     private final PrivateMines plugin;
     private final MenuFactory factory;
     private final MineStorage storage;
+    private final PMConfig config;
 
-    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage) {
+    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage, PMConfig config) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
+        this.config = config;
     }
 
     @Default
@@ -235,31 +240,7 @@ public class PrivateMinesCommand extends BaseCommand {
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }
 
-    @Subcommand("add")
-    @CommandPermission("privatemines.add")
-    @CommandCompletion("@players")
-    @Description("Add players to your Private Mine!")
-    public void add(Player p, OnlinePlayer target) {
-        PrivateMine mine = storage.get(p.getPlayer());
-        if (mine == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
-            return;
-        }
 
-        for (UUID s : mine.getTrustedPlayers()) {
-            if (s.equals(target.getPlayer().getUniqueId())) {
-                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_ADDED);
-                return;
-            }
-        }
-
-        mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
-
-        for (UUID s : mine.getTrustedPlayers()) {
-            p.sendMessage(s.toString());
-        }
-    }
 
     @Subcommand("trusted")
     @CommandPermission("privatemines.trustedlist")
@@ -285,6 +266,54 @@ public class PrivateMinesCommand extends BaseCommand {
         }
     }
 
+    @Subcommand("trust")
+    @CommandPermission("privatemines.trust")
+    @CommandCompletion("@players")
+    @Description("Trust players in your mine!")
+    public void add(Player p, OnlinePlayer target) {
+        PrivateMine mine = storage.get(p.getPlayer());
+        WorldGuardWrapper wrapper = WorldGuardWrapper.getInstance();
+        World w = Bukkit.getWorld(config.getWorldName());
+
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+
+        for (UUID s : mine.getTrustedPlayers()) {
+            if (s.equals(target.getPlayer().getUniqueId())) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_ADDED, PLAYER_KEY, target.getPlayer().getName());
+                return;
+            }
+        }
+
+        mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
+
+        for (UUID s : mine.getTrustedPlayers()) {
+            p.sendMessage(s.toString());
+        }
+    }
+
+    @Subcommand("untrust")
+    @CommandPermission("privatemines.untrust")
+    @CommandCompletion("@players")
+    @Description("Untrust a player from your Private Mine")
+    public void untrust(Player p, OnlinePlayer target) {
+        PrivateMine mine = storage.get(p.getPlayer());
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        if (!mine.getTrustedPlayers().contains(target.getPlayer().getUniqueId())) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_ON_TRUSTED_LIST);
+            return;
+        }
+        mine.getTrustedPlayers().remove(target.player.getUniqueId());
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
+    }
+
+
     @Subcommand("remove")
     @CommandPermission("privatemines.remove")
     @CommandCompletion("@players")
@@ -299,5 +328,6 @@ public class PrivateMinesCommand extends BaseCommand {
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         getCurrentCommandIssuer().sendInfo(LangKeys.ERR_YOU_WERE_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         target.getPlayer().performCommand("spawn");
+        WorldGuardWrapper.getInstance().getRegion(Bukkit.getWorld(""), "a");
     }
 }

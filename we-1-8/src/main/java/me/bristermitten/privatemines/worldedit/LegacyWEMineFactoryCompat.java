@@ -28,7 +28,6 @@ public class LegacyWEMineFactoryCompat implements MineFactoryCompat<Schematic> {
                 .fastmode(true).build();
     }
 
-
     @Override
     public WorldEditRegion pasteSchematic(Schematic schematic, Location location) {
 

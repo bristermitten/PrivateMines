@@ -145,7 +145,7 @@ public final class PrivateMines extends JavaPlugin {
         //noinspection deprecation
         manager.enableUnstableAPI("help");
 
-        manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage));
+        manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage, mainConfig));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
