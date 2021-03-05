@@ -133,7 +133,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @NotNull
     private MineFactory<?, ?> loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
-        return new MineFactory<>(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
+        return new MineFactory(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {

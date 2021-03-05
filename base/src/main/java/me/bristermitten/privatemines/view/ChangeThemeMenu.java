@@ -45,6 +45,8 @@ public class ChangeThemeMenu {
 				schematic -> e -> {
 					mine.setMineSchematic(schematic);
 					mine.teleport((Player) e.getWhoClicked());
+					//TODO Fix mine.upgradeDelete();
+					mine.teleport((Player) e.getWhoClicked());
 				},
 				schematics));
 	}

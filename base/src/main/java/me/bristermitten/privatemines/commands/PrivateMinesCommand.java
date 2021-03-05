@@ -270,7 +270,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.trust")
     @CommandCompletion("@players")
     @Description("Trust players in your mine!")
-    public void add(Player p, OnlinePlayer target) {
+    public void trust(Player p, OnlinePlayer target) {
         PrivateMine mine = storage.get(p.getPlayer());
         WorldGuardWrapper wrapper = WorldGuardWrapper.getInstance();
         World w = Bukkit.getWorld(config.getWorldName());
