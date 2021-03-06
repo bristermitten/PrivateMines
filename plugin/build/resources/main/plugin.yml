@@ -1,0 +1,14 @@
+name: PrivateMines
+version: 1.5
+main: me.bristermitten.privatemines.PrivateMines
+authors: [BristerMitten, UntouchedOdin0]
+website: github.com/knightzmc
+api-version: 1.13
+softdepend:
+  - AutoSell
+  - Citizens
+  - FastAsyncWorldEdit
+  - Vault
+depend:
+  - WorldEdit
+  - WorldGuard
