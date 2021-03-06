@@ -1,6 +1,5 @@
 package me.bristermitten.privatemines.service;
 
-import com.avaje.ebean.validation.NotNull;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.BlockType;
 import me.bristermitten.privatemines.config.PMConfig;
@@ -25,6 +24,7 @@ import org.bukkit.material.Directional;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.flag.WrappedState;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -199,7 +199,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         setMainFlags(region);
         return region;
     }
-
 
     @NotNull
     protected IWrappedRegion createMineWorldGuardRegion(Player owner, WorldEditRegion region, IWrappedRegion parent) {

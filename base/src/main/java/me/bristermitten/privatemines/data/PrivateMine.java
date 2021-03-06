@@ -23,6 +23,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +83,12 @@ public class PrivateMine implements ConfigurationSerializable {
 
         boolean open = (Boolean) map.get("Open");
 
-        ItemStack block = ItemStack.deserialize((Map<String, Object>) map.get("Block"));
+        ItemStack block;
+        try {
+            block = ItemStack.deserialize((Map<String, Object>) map.get("Block"));
+        } catch (Exception ignored) {
+            block = ((CraftItemStack) map.get("Block"));
+        }
         WorldEditVector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
         WorldEditVector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
 
