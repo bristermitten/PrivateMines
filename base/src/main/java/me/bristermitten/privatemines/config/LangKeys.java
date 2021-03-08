@@ -26,7 +26,10 @@ public enum LangKeys implements MessageKeyProvider {
 
     ERR_NO_ACCESS_BLOCK,
 
+    ERR_MINE_UPGRADE_ERROR,
+
     ERR_PLAYER_ALREADY_ADDED,
+
 
     INFO_PLAYER_ADDED,
     INFO_PLAYER_REMOVED,

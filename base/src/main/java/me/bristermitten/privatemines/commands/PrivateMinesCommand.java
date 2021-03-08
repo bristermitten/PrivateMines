@@ -7,8 +7,10 @@ import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.config.PMConfig;
+import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
@@ -16,9 +18,11 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.UUID;
@@ -240,8 +244,6 @@ public class PrivateMinesCommand extends BaseCommand {
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }
 
-
-
     @Subcommand("trusted")
     @CommandPermission("privatemines.trustedlist")
     @CommandCompletion("@players")
@@ -329,5 +331,31 @@ public class PrivateMinesCommand extends BaseCommand {
         getCurrentCommandIssuer().sendInfo(LangKeys.ERR_YOU_WERE_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         target.getPlayer().performCommand("spawn");
         WorldGuardWrapper.getInstance().getRegion(Bukkit.getWorld(""), "a");
+    }
+
+    @Subcommand("upgrade")
+    @CommandPermission("privatemines.upgrade")
+    @CommandCompletion("@players")
+    @Description("Attempt to upgrade private mine schematics")
+    public void upgrade(Player p) {
+        String upgradeSchematicS = "upgradeSchematic";
+
+        PrivateMine mine = storage.getOrCreate(p);
+
+        MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
+
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+
+        if (upgradeSchematic == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR);
+            return;
+        }
+
+        mine.fill(new ItemStack(Material.BEDROCK));
+        mine.setMineSchematic(upgradeSchematic);
+        mine.teleport(p);
     }
 }

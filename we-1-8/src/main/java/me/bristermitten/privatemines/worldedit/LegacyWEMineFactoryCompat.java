@@ -44,6 +44,7 @@ public class LegacyWEMineFactoryCompat implements MineFactoryCompat<Schematic> {
 
         Region region = clipboard.getRegion();
         region.setWorld(world);
+
         try {
             region.shift(centerVector.subtract(clipboard.getOrigin()));
         } catch (RegionOperationException e) {

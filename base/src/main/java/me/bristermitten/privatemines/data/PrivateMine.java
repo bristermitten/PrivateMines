@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -23,7 +24,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 
 public class PrivateMine implements ConfigurationSerializable {
 
+    public static final String PLAYER_PLACEHOLDER = "{player}";
     //How far between a mine reset in milliseconds
     private final int RESET_THRESHOLD;
-    public static final String PLAYER_PLACEHOLDER = "{player}";
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
@@ -130,7 +130,9 @@ public class PrivateMine implements ConfigurationSerializable {
         this.taxPercentage = amount;
     }
 
-    public int getResetTime() { return this.RESET_THRESHOLD; }
+    public int getResetTime() {
+        return this.RESET_THRESHOLD;
+    }
 
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
@@ -140,13 +142,17 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocks;
     }
 
-    public Set<UUID> getBannedPlayers() {return bannedPlayers;}
-
-    public Set<UUID> getTrustedPlayers() { return trustedPlayers; }
-
     public void setBlock(ItemStack types) {
         this.blocks = types;
         this.fill(blocks);
+    }
+
+    public Set<UUID> getBannedPlayers() {
+        return bannedPlayers;
+    }
+
+    public Set<UUID> getTrustedPlayers() {
+        return trustedPlayers;
     }
 
     public Map<String, Object> serialize() {
@@ -217,7 +223,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }
-
 
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
