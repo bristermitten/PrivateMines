@@ -340,7 +340,7 @@ public class PrivateMinesCommand extends BaseCommand {
     public void upgrade(Player p) {
         String upgradeSchematicS = "upgradeSchematic";
 
-        PrivateMine mine = storage.getOrCreate(p);
+        PrivateMine mine = storage.get(p);
 
         MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
 
