@@ -81,7 +81,6 @@ public final class PrivateMines extends JavaPlugin {
         //noinspection unchecked oh no
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 
-
         this.storage = new MineStorage(factory);
 
         try {

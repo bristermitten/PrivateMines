@@ -159,7 +159,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getTaxPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
-                mineSchematic);
+                mineSchematic,
+                plugin.getStorage());
 
         privateMine.fill(privateMine.getBlock());
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();

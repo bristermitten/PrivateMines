@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
+import me.bristermitten.privatemines.MineResetTask;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.config.PMConfig;
@@ -357,5 +358,22 @@ public class PrivateMinesCommand extends BaseCommand {
         mine.fill(new ItemStack(Material.BEDROCK));
         mine.setMineSchematic(upgradeSchematic);
         mine.teleport(p);
+    }
+
+    @Subcommand("fixreset")
+    @CommandPermission("privatemines.fixreset")
+    @CommandCompletion("@players")
+    @Description("Attempts to fix the mines reset times")
+    public void fixreset(Player p) {
+        p.sendMessage(ChatColor.RED + "Attempting to cancel the mine reset task!");
+        try {
+            new MineResetTask(PrivateMines.getPlugin(), storage).cancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+            p.sendMessage(ChatColor.RED + "An exception occurred!");
+            return;
+        }
+        p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
+        new MineResetTask(PrivateMines.getPlugin(), storage).start();
     }
 }
