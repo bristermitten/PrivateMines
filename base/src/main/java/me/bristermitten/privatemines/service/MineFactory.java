@@ -158,6 +158,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 npcUUID,
                 config.getTaxPercentage(),
                 config.getResetDelay(),
+                config.getMineTier(),
                 mineSchematic);
 
         privateMine.fill(privateMine.getBlock());

@@ -35,6 +35,7 @@ public class PMConfig {
     private String mineRegionNameFormat = "mine-{uuid}";
     private double taxPercentage = 5;
     private int resetDelay = 30;
+    private int mineTier = 1;
 
     public PMConfig(FileConfiguration configuration) {
         this.load(configuration);
@@ -79,6 +80,7 @@ public class PMConfig {
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
+        this.mineTier = config.getInt("Tier");
         this.commands = config.getStringList("Commands");
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
@@ -146,6 +148,8 @@ public class PMConfig {
     public List<String> getCommands() {return commands;}
 
     public int getResetDelay() { return resetDelay; }
+
+    public int getMineTier() { return mineTier; }
 
     public String getMineRegionNameFormat() {return mineRegionNameFormat;}
 }
