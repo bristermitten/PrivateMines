@@ -36,7 +36,6 @@ public class PrivateMine implements ConfigurationSerializable {
     public static final String PLAYER_PLACEHOLDER = "{player}";
     //How far between a mine reset in milliseconds
     private final int RESET_THRESHOLD;
-    private final int MINE_TIER;
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
@@ -52,6 +51,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
     private final MineStorage mineStorage;
+    private int MINE_TIER;
 
 
     public PrivateMine(UUID owner,
@@ -145,6 +145,8 @@ public class PrivateMine implements ConfigurationSerializable {
     public void setTaxPercentage(double amount) {
         this.taxPercentage = amount;
     }
+
+    public void setMineTier(int tier) {this.MINE_TIER = tier; }
 
     public int getResetTime() {
         return this.RESET_THRESHOLD;

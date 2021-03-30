@@ -63,6 +63,11 @@ Commands:
 
 mine-region-name: "mine-{uuid}"
 
+Tier-Schematics:
+  1: "tier1.schematic"
+  2: "tier2.schematic"
+  3: "tier3.schematic"
+
 #Color Customization for messages
 Colors:
   INFO: GOLD

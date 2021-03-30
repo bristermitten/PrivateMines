@@ -339,9 +339,12 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Attempt to upgrade private mine schematics")
     public void upgrade(Player p) {
-        String upgradeSchematicS = "upgradeSchematic";
 
         PrivateMine mine = storage.get(p);
+        int tier = mine.getMineTier();
+        int newTier = tier + 1;
+        p.sendMessage("tier-" + newTier);
+        String upgradeSchematicS = "tier-" + newTier;
 
         MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
 
@@ -355,8 +358,13 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
 
-        mine.fill(new ItemStack(Material.BEDROCK));
+        if (newTier == 0) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR);
+        }
+
         mine.setMineSchematic(upgradeSchematic);
+        mine.setMineTier(newTier);
+        mine.fill(mine.getBlock());
         mine.teleport(p);
     }
 
