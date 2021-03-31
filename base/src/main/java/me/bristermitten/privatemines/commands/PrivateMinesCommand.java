@@ -341,25 +341,29 @@ public class PrivateMinesCommand extends BaseCommand {
     public void upgrade(Player p) {
 
         PrivateMine mine = storage.get(p);
-        int tier = mine.getMineTier();
-        int newTier = tier + 1;
-        p.sendMessage("tier-" + newTier);
-        String upgradeSchematicS = "tier-" + newTier;
-
-        MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
 
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
 
+        int tier = mine.getMineTier();
+        int newTier = tier + 1;
+
+        p.sendMessage("tier-" + newTier);
+        String upgradeSchematicS = "tier-" + newTier;
+
+        MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
+
+
+
         if (upgradeSchematic == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR);
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_SCHEMATIC);
             return;
         }
 
         if (newTier == 0) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR);
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_TIER);
         }
 
         mine.setMineSchematic(upgradeSchematic);

@@ -106,7 +106,6 @@ public class SellNPCTrait extends Trait
         double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
         process(privateMine, tax, e.getPlayer());
-
     }
 
     private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player)
