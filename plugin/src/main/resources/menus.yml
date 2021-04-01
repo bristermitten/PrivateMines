@@ -1,7 +1,7 @@
 Menus:
   Main:
     Title: "Personal Mines"
-    Size: 9
+    Size: 18
     Background:
       Type: STAINED_GLASS_PANE
       Data: 15

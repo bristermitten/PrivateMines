@@ -19,11 +19,9 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.UUID;
@@ -354,8 +352,6 @@ public class PrivateMinesCommand extends BaseCommand {
         String upgradeSchematicS = "tier-" + newTier;
 
         MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
-
-
 
         if (upgradeSchematic == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_SCHEMATIC);

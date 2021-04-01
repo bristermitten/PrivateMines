@@ -67,8 +67,9 @@ public final class PrivateMines extends JavaPlugin {
     }
 
     /*
-           Used when the plugin is enabled at the start, loads all the services.
-         */
+        Used when the plugin is enabled at the start, loads all the services.
+    */
+
     @Override
     public void onEnable() {
         saveDefaultConfig();
@@ -109,6 +110,14 @@ public final class PrivateMines extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
         }
 
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            Bukkit.getLogger().info("Found PlaceholderAPI, you can use those placeholders!");
+        } else {
+            Bukkit.getLogger().info("Couldn't find PlaceholderAPI. But you can still use the plugin,");
+            Bukkit.getLogger().info("you can download the plugin from the spigot website at:");
+            Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
+        }
+
         new MineResetTask(this, storage).start();
     }
 
@@ -121,8 +130,7 @@ public final class PrivateMines extends JavaPlugin {
             } else if (version.startsWith("7.") || version.startsWith("1.1")) { //FAWE 1.13, 1.16, etc
                 this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
                         .getConstructor().newInstance();
-            }
-            else {
+            } else {
                 throw new IllegalStateException("Unsupported WorldEdit version: " + version);
             }
         } catch (ReflectiveOperationException ex) {

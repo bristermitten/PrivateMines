@@ -5,7 +5,6 @@ import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
-import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
@@ -94,11 +93,13 @@ public class PrivateMine implements ConfigurationSerializable {
         boolean open = (Boolean) map.get("Open");
 
         ItemStack block;
+
         try {
             block = ItemStack.deserialize((Map<String, Object>) map.get("Block"));
         } catch (Exception ignored) {
             block = ((CraftItemStack) map.get("Block"));
         }
+
         WorldEditVector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
         WorldEditVector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
 
@@ -223,7 +224,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.open = open;
     }
 
-    public void fill(ItemStack type) {
+    public void fill(ItemStack types) {
 
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
@@ -240,7 +241,7 @@ public class PrivateMine implements ConfigurationSerializable {
             }
         }
 
-        PrivateMines.getPlugin().getWeHook().fill(miningRegion, type);
+        PrivateMines.getPlugin().getWeHook().fill(miningRegion, types);
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }
@@ -305,7 +306,7 @@ public class PrivateMine implements ConfigurationSerializable {
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
                 Bukkit.getPlayer(owner),
                 mineSchematic,
-                Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()));
+                Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()), false);
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;

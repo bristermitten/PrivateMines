@@ -68,7 +68,7 @@ public class MineStorage {
                 throw new IllegalStateException("No Default Schematic found");
             }
 
-            mine = factory.create(p, defaultSchematic);
+            mine = factory.create(p, defaultSchematic, true);
             mines.put(p.getUniqueId(), mine);
         }
 

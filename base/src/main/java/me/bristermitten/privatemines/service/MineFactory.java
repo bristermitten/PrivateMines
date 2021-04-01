@@ -12,10 +12,7 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -45,8 +42,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         this.compat = compat;
     }
 
-    public PrivateMine create(Player owner, M mineSchematic) {
-        return create(owner, mineSchematic, manager.nextFreeLocation());
+    public PrivateMine create(Player owner, M mineSchematic, boolean isNew) {
+        return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
     }
 
     private boolean dataMatches(byte data, short expectedData) {
@@ -60,7 +57,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     Creates the private mine, pastes the schematic, sets the spawn location and fills the mine.
      */
     @SuppressWarnings("deprecation")
-    public PrivateMine create(Player owner, M mineSchematic, final Location location) {
+    public PrivateMine create(Player owner, M mineSchematic, final Location location, boolean isNew) {
 
         WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), location);
 
@@ -165,14 +162,19 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         privateMine.fill(privateMine.getBlock());
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
-        for (String s : commands) {
-            s = s.replace("{name}", owner.getName());
-            s = s.replace("{displayname}", owner.getDisplayName());
-            s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
-            Bukkit.dispatchCommand(console, s);
+        if (isNew) {
+            owner.sendMessage(ChatColor.GREEN + "Your mine is new");
+            for (String s : commands) {
+                s = s.replace("{name}", owner.getName());
+                s = s.replace("{displayname}", owner.getDisplayName());
+                s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
+                Bukkit.dispatchCommand(console, s);
+            }
+        } else {
+            owner.sendMessage(ChatColor.RED + "Your Mine isn't new!");
         }
         return privateMine;
-    }
+}
 
     private UUID createMineNPC(Player owner, Location npcLoc) {
         UUID npcUUID;
