@@ -384,4 +384,11 @@ public class PrivateMinesCommand extends BaseCommand {
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
         new MineResetTask(PrivateMines.getPlugin(), storage).start();
     }
+
+    @Subcommand("reload")
+    @CommandPermission("privatemines.reload")
+    @Description("Reloads the plugin!")
+    public void reload(Player p) {
+        p.sendMessage(ChatColor.RED + "Missing reload context, pls add here sometime");
+    }
 }
