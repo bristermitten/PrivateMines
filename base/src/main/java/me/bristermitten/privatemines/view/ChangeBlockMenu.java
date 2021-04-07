@@ -53,7 +53,6 @@ public class ChangeBlockMenu {
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        p.sendRawMessage("FILLED WITH PRESET BLOCKS NOT CHOSEN ONES!");
                         mine.fillWE();
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
