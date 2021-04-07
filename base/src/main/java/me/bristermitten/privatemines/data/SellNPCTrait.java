@@ -14,6 +14,7 @@ import me.bristermitten.privatemines.service.MineStorage;
 import me.clip.autosell.events.AutoSellEvent;
 import me.clip.autosell.events.SellAllEvent;
 import me.clip.autosell.events.SignSellEvent;
+import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
@@ -21,6 +22,7 @@ import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
@@ -46,11 +48,21 @@ public class SellNPCTrait extends Trait
         this.owner = owner;
     }
 
+    @EventHandler
+    public void onLeftClick(NPCLeftClickEvent e) {
+        if (!e.getNPC().equals(npc))
+        {
+            return;
+        }
+        Player p = e.getClicker();
+        p.sendMessage(ChatColor.GREEN + "Debug: SellNPCTrait Line 58, Open the gui for the sell prices! =)");
+    }
+
     /*
       Used when a player right clicks the npc
      */
     @EventHandler
-    public void onClick(NPCRightClickEvent e)
+    public void onRightClick(NPCRightClickEvent e)
     {
         if (!e.getNPC().equals(npc))
         {

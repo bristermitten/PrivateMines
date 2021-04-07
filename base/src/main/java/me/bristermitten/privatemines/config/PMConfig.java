@@ -21,7 +21,6 @@ public class PMConfig {
     private final Map<MessageType, ChatColor> colors = new HashMap<>();
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
-//    private ItemStack[] defaultBlock = new ItemStack();
     private List<ItemStack> blockOptions = new ArrayList<>();
     private List<ItemStack> mineBlocks = new ArrayList<>();
 
@@ -35,6 +34,7 @@ public class PMConfig {
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
     private String mineRegionNameFormat = "mine-{uuid}";
+    private String sellCommand = "sellall";
     private double taxPercentage = 5;
     private int resetDelay = 30;
     private int mineTier = 1;
@@ -91,6 +91,7 @@ public class PMConfig {
         this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
+        this.sellCommand = config.getString("sellCommand");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 

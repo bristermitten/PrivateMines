@@ -242,6 +242,7 @@ public class PrivateMinesCommand extends BaseCommand {
         String resetStyle = mine.getResetStyle();
         p.sendMessage(resetStyle);
         mine.fillWE();
+
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }

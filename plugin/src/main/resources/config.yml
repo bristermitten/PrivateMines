@@ -91,3 +91,6 @@ Reset-Styles:
 # The default reset style for when a mine gets created.
 
 Default-Reset-Style: "FAST"
+
+# The command used for when the player right clicks the sell npc.
+Sell-Command: "sellall"

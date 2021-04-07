@@ -41,6 +41,7 @@ public class LegacyWEHook implements WorldEditHook {
                 .build();
 
         List<BlockChance> blockChance = new ArrayList<>();
+
         BlockChance ironOre = new BlockChance(new BaseBlock(15), 33.33);
         BlockChance coalOre = new BlockChance(new BaseBlock(16), 33.33);
         BlockChance stone = new BlockChance(new BaseBlock(1), 33.33);

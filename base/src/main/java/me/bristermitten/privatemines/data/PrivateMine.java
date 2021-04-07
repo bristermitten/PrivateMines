@@ -278,7 +278,7 @@ public class PrivateMine implements ConfigurationSerializable {
         List<ItemStack> blocks = new ArrayList();
         blocks.add(new ItemStack(Material.AIR));
 
-        removeAllPlayers();
+//        removeAllPlayers();
         removeRegion();
 
         if (PrivateMines.getPlugin().isNpcsEnabled()) {
