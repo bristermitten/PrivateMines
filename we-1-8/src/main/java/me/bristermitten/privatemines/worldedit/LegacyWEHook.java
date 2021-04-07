@@ -51,11 +51,6 @@ public class LegacyWEHook implements WorldEditHook {
         blockChance.add(coalOre);
         blockChance.add(stone);
 
-        for (BlockChance chance : blockChance) {
-            Bukkit.broadcastMessage(String.valueOf(chance.getBlock().getId()));
-            Bukkit.broadcastMessage("" + IdMappings.getById(String.valueOf(chance.getBlock().getId())));
-        }
-
         RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
 
         //noinspection deprecation
