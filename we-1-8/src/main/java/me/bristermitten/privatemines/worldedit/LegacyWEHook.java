@@ -5,13 +5,18 @@ import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.patterns.BlockChance;
+import com.sk89q.worldedit.patterns.RandomFillPattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.data.MineSchematic;
+import me.bristermitten.privatemines.util.IdMappings;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class LegacyWEHook implements WorldEditHook {
@@ -32,15 +37,31 @@ public class LegacyWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, ItemStack block) {
+    public void fill(WorldEditRegion region) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
                 .fastmode(true)
                 .build();
 
+        List<BlockChance> blockChance = new ArrayList<>();
+        BlockChance ironOre = new BlockChance(new BaseBlock(15), 33.33);
+        BlockChance coalOre = new BlockChance(new BaseBlock(16), 33.33);
+        BlockChance stone = new BlockChance(new BaseBlock(1), 33.33);
+
+        blockChance.add(ironOre);
+        blockChance.add(coalOre);
+        blockChance.add(stone);
+
+        for (BlockChance chance : blockChance) {
+            Bukkit.broadcastMessage(String.valueOf(chance.getBlock().getId()));
+            Bukkit.broadcastMessage("" + IdMappings.getById(String.valueOf(chance.getBlock().getId())));
+        }
+
+        RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
+
         //noinspection deprecation
-        session.setBlocks(transform(region), new BaseBlock(block.getType().getId(), block.getDurability()));
-        session.flushQueue();
-    }
+            session.setBlocks(transform(region), randomFillPattern);
+            session.flushQueue();
+        }
 
     @Override
     public MineFactoryCompat<?> createMineFactoryCompat() {

@@ -12,14 +12,12 @@ import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -44,21 +42,21 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private ItemStack blocks;
+    private List<ItemStack> blocks;
     private double taxPercentage;
     private double minePercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
     private final MineStorage mineStorage;
-    private int MINE_TIER;
-
+    private int mineTier;
+    private String resetStyle;
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
                        Set<UUID> trustedPlayers,
                        List<String> commands,
                        boolean open,
-                       ItemStack block,
+                       List<ItemStack> blocks,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
@@ -75,13 +73,13 @@ public class PrivateMine implements ConfigurationSerializable {
         this.open = open;
         this.mainRegion = mainRegion;
         this.locations = locations;
-        this.blocks = block;
+        this.blocks = blocks;
         this.wgRegion = wgRegion;
         this.npcId = npc;
         this.taxPercentage = taxPercentage;
         this.mineSchematic = mineSchematic;
         this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
-        this.MINE_TIER = mineTier;
+        this.mineTier = mineTier + 1;
         this.mineStorage = storage;
     }
 
@@ -92,13 +90,15 @@ public class PrivateMine implements ConfigurationSerializable {
 
         boolean open = (Boolean) map.get("Open");
 
-        ItemStack block;
+        ItemStack block = (ItemStack) map.get("blocks");
 
-        try {
-            block = ItemStack.deserialize((Map<String, Object>) map.get("Block"));
-        } catch (Exception ignored) {
-            block = ((CraftItemStack) map.get("Block"));
-        }
+        List<ItemStack> blocks = new ArrayList<>();
+
+//        try {
+//            blocks = ItemStack.deserialize((Map)map.get("Blocks"));
+//        } catch (Exception ignored) {
+//            blocks = ItemStack.deserialize((Map<String, Object>) map.get("Blocks"));
+//        }
 
         WorldEditVector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
         WorldEditVector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
@@ -132,7 +132,7 @@ public class PrivateMine implements ConfigurationSerializable {
         Set<UUID> trustedPlayers = Optional.ofNullable((List<String>) map.get("TrustedPlayers"))
                 .map(trusted -> trusted.stream().map(UUID::fromString).collect(Collectors.toSet())).orElse(new HashSet<>());
 
-        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, block, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
+        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
     }
 
     public double getTaxPercentage() {
@@ -147,25 +147,33 @@ public class PrivateMine implements ConfigurationSerializable {
         this.taxPercentage = amount;
     }
 
-    public void setMineTier(int tier) {this.MINE_TIER = tier; }
+    public void setMineTier(int tier) {this.mineTier = tier; }
+
+    public int getMineTier() {return this.mineTier; }
 
     public int getResetTime() {
         return this.RESET_THRESHOLD;
     }
 
-    public int getMineTier() {return this.MINE_TIER; }
-
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-    public ItemStack getBlock() {
-        return blocks;
+//    public ItemStack getBlocks() {
+//        return (ItemStack) blocks;
+//    }
+
+//    public void setBlocks(ItemStack types) {
+//        blocks = (List<ItemStack>) types;
+//        fillWE((ItemStack) blocks);
+//    }
+
+    public void setResetStyle(String style) {
+        this.resetStyle = style;
     }
 
-    public void setBlock(ItemStack types) {
-        this.blocks = types;
-        this.fill(blocks);
+    public String getResetStyle() {
+        return resetStyle;
     }
 
     public Set<UUID> getBannedPlayers() {
@@ -187,7 +195,8 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
         map.put("Reset-Delay", this.RESET_THRESHOLD);
-        map.put("Mine-Tier", this.MINE_TIER);
+        map.put("Reset-Style", this.resetStyle);
+        map.put("Mine-Tier", this.mineTier);
         map.put("Commands", this.commands);
         map.put("Schematic", this.mineSchematic.getName());
         map.put("BannedPlayers", this.bannedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
@@ -224,7 +233,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.open = open;
     }
 
-    public void fill(ItemStack types) {
+    public void fillWE() {
 
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
@@ -241,11 +250,18 @@ public class PrivateMine implements ConfigurationSerializable {
             }
         }
 
-        PrivateMines.getPlugin().getWeHook().fill(miningRegion, types);
+        PrivateMines.getPlugin().getWeHook().fill(miningRegion);
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }
 
+    private void setBlock(Block block, MaterialData blockdata) {
+        block.setType(blockdata.getItemType());
+    }
+
+    private Block getBlock(World world, int x, int y, int z) {
+        return (new Location(world, x, y, z)).getBlock();
+    }
 
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
@@ -259,12 +275,12 @@ public class PrivateMine implements ConfigurationSerializable {
       Delete the mine.
      */
     public void delete() {
+        List<ItemStack> blocks = new ArrayList();
+        blocks.add(new ItemStack(Material.AIR));
 
         removeAllPlayers();
-        fill(new ItemStack(Material.AIR));
         removeRegion();
-
-        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, new ItemStack(Material.AIR));
+//        PrivateMines.getPlugin().getWeHook().fill(this.mainRegion, new ItemStack(Material.AIR));
 
         if (PrivateMines.getPlugin().isNpcsEnabled()) {
             NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcId);
@@ -298,7 +314,8 @@ public class PrivateMine implements ConfigurationSerializable {
       Sets the new mine schematic (Used when changing themes)
      */
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
-        fill(blocks);
+        fillWE();
+//        fillWE(new ItemStack(Material.AIR));
         boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();

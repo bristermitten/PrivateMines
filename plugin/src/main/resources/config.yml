@@ -51,10 +51,13 @@ Reset-Delay: 5
 # {displayname} - Targets Display Name
 # {uuid} - Targets UUID
 
-Commands:
+FirstTimeCommands:
   - "broadcast Created {name}'s Mine!"
   - "broadcast Created {name}'s otherwise known as {displayname}'s Mine!"
   - "broadcast Created {name}'s otherwise known as {displayname}'s but their UUID is {uuid}'s Mine!"
+
+Commands:
+  - "broadcast {name}'s Mine has been upgraded!"
 
 # Placeholders
 # {name} - Targets Username
@@ -63,14 +66,28 @@ Commands:
 
 mine-region-name: "mine-{uuid}"
 
-Tier-Schematics:
-  1: "tier1.schematic"
-  2: "tier2.schematic"
-  3: "tier3.schematic"
-
 #Color Customization for messages
 Colors:
   INFO: GOLD
   SYNTAX: AQUA
   ERROR: RED
   HELP: BLUE
+
+Effects:
+  - FLAME
+
+# Here's a list of all the different styles a plyaer can use in their Private Mine.
+
+Reset-Styles:
+  - "SLOW"
+  - "FAST"
+  - "UP_DOWN"
+  - "DOWN_UP"
+  - "LEFT_RIGHT"
+  - "RIGHT_LEFT"
+  - "FRONT_BACK"
+  - "BACK_FRONT"
+
+# The default reset style for when a mine gets created.
+
+Default-Reset-Style: "FAST"

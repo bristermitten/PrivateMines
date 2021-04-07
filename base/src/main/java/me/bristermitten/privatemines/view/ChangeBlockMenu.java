@@ -7,7 +7,6 @@ import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.util.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -54,10 +53,8 @@ public class ChangeBlockMenu {
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        mine.setBlock(block);
-                        }, 10L);
-
+                        p.sendRawMessage("FILLED WITH PRESET BLOCKS NOT CHOSEN ONES!");
+                        mine.fillWE();
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
                     }

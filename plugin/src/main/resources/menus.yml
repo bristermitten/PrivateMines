@@ -23,6 +23,14 @@ Menus:
         Action: 'change-schematic'
         Type: FENCE
         Name: "&6&lChange your Mine Schematic"
+      '11':
+        Action: 'change-reset-style'
+        Type: BEACON
+        Name: "&6&lChange how your mine resets"
+      '13':
+        Action: 'change-reset-effect'
+        Type: REDSTONE
+        Name: "&6&lAdd mine reset effects!"
   Mines:
     Title: "&6&lMines"
     Size: 54
@@ -37,6 +45,7 @@ Menus:
         Lore:
           - "&7Tax: &6%tax%%"
           - "&7Block Type: &6%block%"
+          - "&7Tier: &6%tier%"
   Blocks:
     Title: "&6&lChange Block"
     Size: 9
@@ -62,3 +71,29 @@ Menus:
         Type: STONE #this will be replaced with the schematic block icon
         Name: "&6%name%"
         #No lore, this is just the schematic description
+  Effects:
+    Title: "&6&lChange reset Effects"
+    Size: 9
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
+    Items:
+      Every:
+        Type: STONE #this will be replaced with the actual block
+        Name: "&6%effect%"
+        Lore:
+          - "&7Click to change your mine reset effect to &6%effect%"
+  Styles:
+    Title: "&6&lChange reset Styles"
+    Size: 9
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
+    Items:
+      Every:
+        Type: STONE #this will be replaced with the actual block
+        Name: "&6%style%"
+        Lore:
+          - "&7Click to change your mine reset style to &6%style%"

@@ -33,7 +33,7 @@ public class MineResetTask extends BukkitRunnable {
     public void run() {
         for (PrivateMine mine : storage.getAll()) {
             if (mine.shouldReset()) {
-                mine.fill(mine.getBlock());
+                mine.fillWE();
             }
         }
     }

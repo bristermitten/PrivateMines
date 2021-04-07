@@ -34,4 +34,8 @@ public class MenuFactory {
 	public void createAndOpenThemeMenu(Player p) {
 		new ChangeThemeMenu(p, plugin, config, storage);
 	}
+
+	public void createAndOpenEffectsMenu(Player p) {
+		new ChangeEffectsMenu(p, plugin, pmConfig, config, storage);
+	}
 }

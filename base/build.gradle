@@ -11,12 +11,19 @@ repositories {
 dependencies {
     implementation "co.aikar:acf-paper:0.5.0-SNAPSHOT"
     implementation 'org.codemc.worldguardwrapper:worldguardwrapper:1.2.0-SNAPSHOT'
+    implementation 'xyz.xenondevs:particle:1.5.1'
 
     compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT' // The full Spigot server with no shadowing. Requires mavenLocal.
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 
     compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
     compileOnly 'me.clip:placeholderapi:2.10.9'
+
+    compileOnly "com.boydti:fawe-api:latest"
+
+    compileOnly("com.sk89q.worldedit:worldedit-bukkit:6.1.4-SNAPSHOT") {
+        exclude group: 'org.bukkit'
+    }
 
     compileOnly files("lib/AutoSellAPI-1.2.0.jar")
 
@@ -34,5 +41,4 @@ compileJava {
 test {
     useJUnitPlatform()
 }
-
 

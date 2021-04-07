@@ -158,7 +158,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlock().toString())));
+//        p.sendMessage(Util.color("&7Block Type: &6" + prettify(mine.getBlocks().toString())));
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))
@@ -225,7 +225,9 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
-        mine.fill(mine.getBlock());
+        mine.fillWE();
+        String resetStyle = mine.getResetStyle();
+        p.sendMessage(resetStyle);
     }
 
     @Subcommand("reset")
@@ -238,7 +240,9 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.fill(mine.getBlock());
+        String resetStyle = mine.getResetStyle();
+        p.sendMessage(resetStyle);
+        mine.fillWE();
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
     }
@@ -329,7 +333,6 @@ public class PrivateMinesCommand extends BaseCommand {
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         getCurrentCommandIssuer().sendInfo(LangKeys.ERR_YOU_WERE_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         target.getPlayer().performCommand("spawn");
-        WorldGuardWrapper.getInstance().getRegion(Bukkit.getWorld(""), "a");
     }
 
     @Subcommand("upgrade")
@@ -348,7 +351,6 @@ public class PrivateMinesCommand extends BaseCommand {
         int tier = mine.getMineTier();
         int newTier = tier + 1;
 
-        p.sendMessage("tier-" + newTier);
         String upgradeSchematicS = "tier-" + newTier;
 
         MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
@@ -364,7 +366,7 @@ public class PrivateMinesCommand extends BaseCommand {
 
         mine.setMineSchematic(upgradeSchematic);
         mine.setMineTier(newTier);
-        mine.fill(mine.getBlock());
+        mine.fillWE();
         mine.teleport(p);
     }
 
@@ -383,12 +385,5 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
         new MineResetTask(PrivateMines.getPlugin(), storage).start();
-    }
-
-    @Subcommand("reload")
-    @CommandPermission("privatemines.reload")
-    @Description("Reloads the plugin!")
-    public void reload(Player p) {
-        p.sendMessage(ChatColor.RED + "Missing reload context, pls add here sometime");
     }
 }

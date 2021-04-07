@@ -37,12 +37,16 @@ public class PrivateMineMenu {
 					e -> openChangeBlockMenu(plugin, config, storage, pmConfig, e));
 			original.addAction("change-schematic",
 					e -> factory.createAndOpenThemeMenu((Player) e.getWhoClicked()));
+			original.addAction("change-reset-effect",
+					e -> openChangeEffectsMenu(plugin, config, storage, pmConfig, e));
+			original.addAction("change-reset-style",
+					e -> openResetStyleMenu(plugin, config, storage, pmConfig, e));
 		}
 
 		PrivateMine mine = storage.get(p);
-		Material type = mine != null ? Material.valueOf(String.valueOf(mine.getBlock().getType())) : Material.STONE;
+//		Material type = mine != null ? Material.valueOf(String.valueOf(mine.getBlocks())) : Material.STONE;
 
-		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", type.name());
+		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", "PREFILLED");
 
 		MenuSpec menuSpec = new MenuSpec();
 
@@ -66,5 +70,15 @@ public class PrivateMineMenu {
 	private void openChangeBlockMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
 	                                 InventoryClickEvent e) {
 		new ChangeBlockMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
+	}
+
+	private void openResetStyleMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
+									   InventoryClickEvent e) {
+		new ChangeResetStyleMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
+	}
+
+	private void openChangeEffectsMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
+									 InventoryClickEvent e) {
+		new ChangeEffectsMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
 	}
 }

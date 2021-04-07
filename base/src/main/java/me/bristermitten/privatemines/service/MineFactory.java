@@ -68,6 +68,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector max = null;
 
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
+        List<String> firstTimeCommands = this.config.getFirstTimeCommands();
         List<String> commands = this.config.getCommands();
 
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
@@ -159,19 +160,23 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 mineSchematic,
                 plugin.getStorage());
 
-        privateMine.fill(privateMine.getBlock());
+        privateMine.fillWE();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
         if (isNew) {
-            owner.sendMessage(ChatColor.GREEN + "Your mine is new");
-            for (String s : commands) {
+            for (String s : firstTimeCommands) {
                 s = s.replace("{name}", owner.getName());
                 s = s.replace("{displayname}", owner.getDisplayName());
                 s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
                 Bukkit.dispatchCommand(console, s);
             }
         } else {
-            owner.sendMessage(ChatColor.RED + "Your Mine isn't new!");
+            for (String s : commands) {
+                s = s.replace("{name}", owner.getName());
+                s = s.replace("{displayname}", owner.getDisplayName());
+                s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
+                Bukkit.dispatchCommand(console, s);
+            }
         }
         return privateMine;
 }

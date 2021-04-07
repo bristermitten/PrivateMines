@@ -6,13 +6,12 @@
 package me.bristermitten.privatemines.config;
 
 import co.aikar.commands.MessageType;
-import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.util.Util;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
+import xyz.xenondevs.particle.ParticleEffect;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,12 +21,15 @@ public class PMConfig {
     private final Map<MessageType, ChatColor> colors = new HashMap<>();
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
-    private ItemStack defaultBlock = new ItemStack(Material.STONE);
-    private List<ItemStack> defaultBlocks = new ArrayList<>();
+//    private ItemStack[] defaultBlock = new ItemStack();
     private List<ItemStack> blockOptions = new ArrayList<>();
     private List<ItemStack> mineBlocks = new ArrayList<>();
 
+    private List<String> firstTimeCommands;
     private List<String> commands;
+    private List<String> resetStyles;
+
+    private List<ParticleEffect> effects;
 
     private boolean npcsEnabled = true;
     private String npcName = "Steve";
@@ -45,6 +47,7 @@ public class PMConfig {
        Load up all the configuration files and details.
      */
 
+
     public void load(FileConfiguration config) {
         this.worldName = config.getString("World-Name");
         this.minesDistance = config.getInt("Mine-Distance");
@@ -60,14 +63,15 @@ public class PMConfig {
 
             this.blockTypes.put(BlockType.fromName(block), value.get());
         }
+//
+//        final String defaultBlockName = config.getString("Default-Block");
+//        Optional defaultBlock = Util.parseItem(defaultBlockName);
+//        if (!defaultBlock.isPresent()) {
+//            PrivateMines.getPlugin().getLogger().warning(() -> "Invalid default block " + defaultBlockName + ", stone will be used");
+//        } else {
+//            this.defaultBlock = defaultBlock.get();
+//        }
 
-        final String defaultBlockName = config.getString("Default-Block");
-        Optional<ItemStack> defaultBlock = Util.parseItem(defaultBlockName);
-        if (!defaultBlock.isPresent()) {
-            PrivateMines.getPlugin().getLogger().warning(() -> "Invalid default block " + defaultBlockName + ", stone will be used");
-        } else {
-            this.defaultBlock = defaultBlock.get();
-        }
         this.blockOptions = config.getStringList("Block-Options")
                 .stream()
                 .map(Util::parseItem)
@@ -81,7 +85,10 @@ public class PMConfig {
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
         this.mineTier = config.getInt("Tier");
+        this.firstTimeCommands = config.getStringList("FirstTimeCommands");
         this.commands = config.getStringList("Commands");
+        this.resetStyles = config.getStringList("Reset-Styles");
+        this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
 
@@ -95,7 +102,9 @@ public class PMConfig {
                 e.printStackTrace();
             }
         }
+
     }
+
 
     public Map<MessageType, ChatColor> getColors() {
         return colors;
@@ -129,8 +138,8 @@ public class PMConfig {
         return npcsEnabled;
     }
 
-    public ItemStack getDefaultBlock() {
-        return defaultBlock;
+    public List<ItemStack> getDefaultBlock() {
+        return mineBlocks;
     }
 
     public List<ItemStack> getBlockOptions() {
@@ -141,11 +150,11 @@ public class PMConfig {
         return mineBlocks;
     }
 
-//    public List<ItemStack> getDefaultBlocks() {
-//        return (List<ItemStack>) new ItemStack(Material.STONE);
-//    }
-
+    public List<String> getFirstTimeCommands() { return firstTimeCommands; }
     public List<String> getCommands() {return commands;}
+    public List<String> getResetStyles() {return resetStyles; }
+
+    public List<ParticleEffect> getParticleEffects() {return effects; }
 
     public int getResetDelay() { return resetDelay; }
 

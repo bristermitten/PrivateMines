@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.List;
 
 public interface WorldEditHook {
-    void fill(WorldEditRegion region, ItemStack blocks);
+    void fill(WorldEditRegion region);
 
     MineFactoryCompat<?> createMineFactoryCompat();
 

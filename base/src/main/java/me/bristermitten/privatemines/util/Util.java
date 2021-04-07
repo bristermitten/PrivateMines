@@ -185,4 +185,26 @@ public final class Util {
         return XMaterial.matchXMaterial(s)
                 .map(XMaterial::parseItem);
     }
+
+    public static String parseStyle(String s) {
+        switch (s) {
+            case "SLOW":
+                return "Slow";
+            case "FAST":
+                return "Fast";
+            case "UP_DOWN":
+                return "Up down";
+            case "DOWN_UP":
+                return "Down up";
+            case "LEFT_RIGHT":
+                return "Left to Right";
+            case "RIGHT_LEFT":
+                return "Right to Left";
+            case "FRONT_BACK":
+                return "Front to Back";
+            case "BACK_FRONT":
+                return "Back to Front";
+        }
+        return "Unknown reset Style!";
+    }
 }
