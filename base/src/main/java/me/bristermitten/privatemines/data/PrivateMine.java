@@ -3,6 +3,14 @@ package me.bristermitten.privatemines.data;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
+import com.boydti.fawe.FaweAPI;
+import com.boydti.fawe.util.EditSessionBuilder;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.patterns.BlockChance;
+import com.sk89q.worldedit.patterns.RandomFillPattern;
+import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
@@ -275,10 +283,20 @@ public class PrivateMine implements ConfigurationSerializable {
       Delete the mine.
      */
     public void delete() {
-        List<ItemStack> blocks = new ArrayList();
-        blocks.add(new ItemStack(Material.AIR));
 
-//        removeAllPlayers();
+        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+        final WorldEditRegion miningRegion = new WorldEditRegion(
+                Util.toWEVector(selection.getMinimumPoint()),
+                Util.toWEVector(selection.getMaximumPoint()),
+                mainRegion.getWorld()
+        );
+
+        /*
+            Removes mine blocks + shell also
+         */
+        PrivateMines.getPlugin().getWeHook().fillAir(mainRegion);
+        PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
+        removeAllPlayers();
         removeRegion();
 
         if (PrivateMines.getPlugin().isNpcsEnabled()) {
@@ -297,6 +315,7 @@ public class PrivateMine implements ConfigurationSerializable {
         WorldGuardWrapper.getInstance().removeRegion(world, wgRegion.getId());
         WorldGuardWrapper.getInstance().removeRegion(world, locations.getWgRegion().getId());
     }
+
 
     /*
       Teleport all the players back to spawn.

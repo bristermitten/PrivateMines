@@ -69,6 +69,24 @@ public class ModernWEHook implements WorldEditHook {
         }
     }
 
+    public void fillAir(WorldEditRegion region) {
+        try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
+            session.setFastMode(true);
+            RandomPattern pat = new RandomPattern(); // Create the random pattern
+
+            Pattern air = (Pattern) BukkitAdapter.adapt(Material.AIR.createBlockData());
+
+            pat.add(air, 1.0);
+
+            final Region weRegion = transform(region);
+            session.setBlocks(weRegion, pat);
+            Bukkit.broadcastMessage("filled with modern (air)");
+            session.flushSession();
+        } catch (MaxChangedBlocksException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public MineFactoryCompat<?> createMineFactoryCompat() {

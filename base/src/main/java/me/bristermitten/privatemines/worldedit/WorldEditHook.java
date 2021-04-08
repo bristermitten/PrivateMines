@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface WorldEditHook {
     void fill(WorldEditRegion region);
+    void fillAir(WorldEditRegion region);
 
     MineFactoryCompat<?> createMineFactoryCompat();
 

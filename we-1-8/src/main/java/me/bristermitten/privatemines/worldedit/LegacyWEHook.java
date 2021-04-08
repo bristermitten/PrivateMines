@@ -57,6 +57,22 @@ public class LegacyWEHook implements WorldEditHook {
             session.flushQueue();
         }
 
+    public void fillAir(WorldEditRegion region) {
+        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
+                .fastmode(true)
+                .build();
+
+        List<BlockChance> blockChance = new ArrayList<>();
+
+        BlockChance air = new BlockChance(new BaseBlock(0), 100);
+        blockChance.add(air);
+        RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
+
+        //noinspection deprecation
+        session.setBlocks(transform(region), randomFillPattern);
+        session.flushQueue();
+    }
+
     @Override
     public MineFactoryCompat<?> createMineFactoryCompat() {
         return new LegacyWEMineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
