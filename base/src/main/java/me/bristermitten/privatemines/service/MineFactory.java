@@ -7,6 +7,7 @@ import me.bristermitten.privatemines.data.MineLocations;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.data.SellNPC;
+import me.bristermitten.privatemines.util.Shop;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
@@ -34,6 +35,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     private final MineWorldManager manager;
     private final MineFactoryCompat<S> compat;
 
+    // List the placeholders here for re-use.
+    private final String namePlaceholder = "{name}";
+    private final String displayNamePlaceholder = "{displayname}";
+    private final String uuidPlaceholder = "{uuid}";
 
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, MineFactoryCompat<S> compat) {
         this.plugin = plugin;
@@ -143,6 +148,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
 
         UUID npcUUID = createMineNPC(owner, npcLoc);
+        UUID ownerUUID = owner.getUniqueId();
+        Shop shop = new Shop(ownerUUID, config.getDefaultBlock(), 5.0);
+
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),
                 new HashSet<>(),
@@ -158,23 +166,26 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getResetDelay(),
                 config.getMineTier(),
                 mineSchematic,
-                plugin.getStorage());
+                plugin.getStorage(),
+                shop);
 
         privateMine.fillWE();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
+
         if (isNew) {
             for (String s : firstTimeCommands) {
-                s = s.replace("{name}", owner.getName());
-                s = s.replace("{displayname}", owner.getDisplayName());
-                s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
+                s = s.replace(namePlaceholder, owner.getName());
+                s = s.replace(displayNamePlaceholder, owner.getDisplayName());
+                s = s.replace(uuidPlaceholder, owner.getPlayer().getUniqueId().toString());
                 Bukkit.dispatchCommand(console, s);
             }
+            createShop(owner, config.getTaxPercentage());
         } else {
             for (String s : commands) {
-                s = s.replace("{name}", owner.getName());
-                s = s.replace("{displayname}", owner.getDisplayName());
-                s = s.replace("{uuid}", owner.getPlayer().getUniqueId().toString());
+                s = s.replace(namePlaceholder, owner.getName());
+                s = s.replace(displayNamePlaceholder, owner.getDisplayName());
+                s = s.replace(uuidPlaceholder, owner.getPlayer().getUniqueId().toString());
                 Bukkit.dispatchCommand(console, s);
             }
         }
@@ -213,7 +224,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     protected IWrappedRegion createMineWorldGuardRegion(Player owner, WorldEditRegion region, IWrappedRegion parent) {
         IWrappedRegion mineRegion = WorldGuardWrapper.getInstance().addCuboidRegion(
 
-                config.getMineRegionNameFormat().replace("{uuid}", owner.getUniqueId().toString()),
+                config.getMineRegionNameFormat().replace(uuidPlaceholder, owner.getUniqueId().toString()),
                 region.getMinimumLocation(),
                 region.getMaximumLocation())
                 .orElseThrow(() -> new RuntimeException("Could not create Mine WorldGuard region"));
@@ -241,8 +252,20 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 .forEach(flag -> region.setFlag(flag, WrappedState.DENY));
     }
 
-    public void addPlayerToRegion(UUID uuid, IWrappedRegion parent) {
-        parent.getMembers().addPlayer(uuid);
+    public void createShop(Player player, Double defaultTax) {
+
+        Map<ItemStack, Double> prices = new HashMap<>();
+        prices.put(new ItemStack(Material.STONE), 1.0);
+
+        Shop shop = new Shop(player.getUniqueId(), config.getDefaultBlock(), defaultTax);
+        shop.setItems(config.getBlockOptions());
+        shop.setBlockPrices(prices);
+        player.sendMessage("-----[SHOP DEBUG TIME]-----");
+        player.sendMessage("Name: " + shop.getName());
+        player.sendMessage("ItemStacks: " + shop.getItemStacks());
+        player.sendMessage("BlockPrices: " + shop.getBlockPrices());
+        player.sendMessage("ItemCount: " + shop.getItemCount());
+        player.sendMessage("Tax: " + shop.getTax());
     }
 
     public MineWorldManager getManager() {

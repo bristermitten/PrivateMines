@@ -11,6 +11,7 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.util.Shop;
 import me.clip.autosell.events.AutoSellEvent;
 import me.clip.autosell.events.SellAllEvent;
 import me.clip.autosell.events.SignSellEvent;
@@ -37,6 +38,7 @@ public class SellNPCTrait extends Trait
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
+    private Shop shop;
 
     public SellNPCTrait()
     {
@@ -54,6 +56,7 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
+
         Player p = e.getClicker();
         p.sendMessage(ChatColor.GREEN + "Debug: SellNPCTrait Line 58, Open the gui for the sell prices! =)");
     }
@@ -68,7 +71,7 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
-        e.getClicker().performCommand("sellall");
+        e.getClicker().performCommand("sellall " + "test1");
     }
 
 

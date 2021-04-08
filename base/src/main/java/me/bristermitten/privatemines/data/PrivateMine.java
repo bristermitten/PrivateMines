@@ -3,24 +3,20 @@ package me.bristermitten.privatemines.data;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.util.EditSessionBuilder;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.patterns.BlockChance;
-import com.sk89q.worldedit.patterns.RandomFillPattern;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.Shop;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -58,6 +54,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private final MineStorage mineStorage;
     private int mineTier;
     private String resetStyle;
+    private Shop shop;
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -73,7 +70,8 @@ public class PrivateMine implements ConfigurationSerializable {
                        int resetTime,
                        int mineTier,
                        MineSchematic<?> mineSchematic,
-                       MineStorage storage) {
+                       MineStorage storage,
+                       Shop shop) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
         this.trustedPlayers = trustedPlayers;
@@ -89,6 +87,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
         this.mineTier = mineTier + 1;
         this.mineStorage = storage;
+        this.shop = shop;
     }
 
     @SuppressWarnings("unchecked")
@@ -140,7 +139,9 @@ public class PrivateMine implements ConfigurationSerializable {
         Set<UUID> trustedPlayers = Optional.ofNullable((List<String>) map.get("TrustedPlayers"))
                 .map(trusted -> trusted.stream().map(UUID::fromString).collect(Collectors.toSet())).orElse(new HashSet<>());
 
-        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations, wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
+        Shop shop = new Shop(owner, blocks, 5.0);
+        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
+                                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage, shop);
     }
 
     public double getTaxPercentage() {
@@ -166,15 +167,6 @@ public class PrivateMine implements ConfigurationSerializable {
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
-
-//    public ItemStack getBlocks() {
-//        return (ItemStack) blocks;
-//    }
-
-//    public void setBlocks(ItemStack types) {
-//        blocks = (List<ItemStack>) types;
-//        fillWE((ItemStack) blocks);
-//    }
 
     public void setResetStyle(String style) {
         this.resetStyle = style;
