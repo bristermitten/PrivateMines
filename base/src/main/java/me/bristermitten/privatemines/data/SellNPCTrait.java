@@ -71,7 +71,7 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
-        e.getClicker().performCommand("sellall " + "test1");
+        e.getClicker().performCommand("sellall " + owner.toString());
     }
 
 
