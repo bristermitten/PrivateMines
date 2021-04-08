@@ -36,6 +36,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     private final MineFactoryCompat<S> compat;
 
     // List the placeholders here for re-use.
+
     private final String namePlaceholder = "{name}";
     private final String displayNamePlaceholder = "{displayname}";
     private final String uuidPlaceholder = "{uuid}";
