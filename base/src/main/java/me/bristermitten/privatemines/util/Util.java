@@ -3,15 +3,18 @@ package me.bristermitten.privatemines.util;
 import com.google.common.base.Enums;
 import com.google.common.primitives.Ints;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -177,7 +180,8 @@ public final class Util {
         //Prioritise native material names
         try {
             return Optional.of(new ItemStack(Material.valueOf(materialName), 1, durability));
-        } catch (IllegalArgumentException ignored) { }
+        } catch (IllegalArgumentException ignored) {
+        }
         Optional<XMaterial> m = Optional.ofNullable(Enums.getIfPresent(XMaterial.class, s).orNull());
         if (m.isPresent()) {
             return m.map(XMaterial::parseItem);
@@ -206,5 +210,36 @@ public final class Util {
                 return "Back to Front";
         }
         return "Unknown reset Style!";
+    }
+
+    private static String readAll(BufferedReader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
+        }
+        return sb.toString();
+    }
+
+
+    public static String getLatestGithubVersion() throws IOException {
+        String url = "https://api.github.com/repos/knightzmc/PrivateMines/commits/master";
+        String ver = "";
+
+        InputStream is = new URL(url).openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            Object object = new JSONParser().parse(new FileReader("https://api.github.com/repos/knightzmc/PrivateMines/commits/master"));
+            JSONObject skr = (JSONObject) object;
+
+            String version = (String) skr.get("sha");
+            Bukkit.broadcastMessage(version);
+            ver = version;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            is.close();
+        }
+        return ver;
     }
 }

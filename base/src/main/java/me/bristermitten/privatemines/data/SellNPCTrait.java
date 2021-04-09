@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package me.bristermitten.privatemines.data;
 
 import co.aikar.commands.BukkitCommandIssuer;
@@ -11,7 +6,6 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
-import me.bristermitten.privatemines.util.Shop;
 import me.clip.autosell.events.AutoSellEvent;
 import me.clip.autosell.events.SellAllEvent;
 import me.clip.autosell.events.SignSellEvent;
@@ -38,7 +32,6 @@ public class SellNPCTrait extends Trait
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
-    private Shop shop;
 
     public SellNPCTrait()
     {
@@ -71,7 +64,7 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
-        e.getClicker().performCommand("sellall " + owner.toString());
+        e.getClicker().performCommand("sellall " + "shop-" + owner.toString());
     }
 
 

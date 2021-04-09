@@ -12,7 +12,6 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -25,8 +24,6 @@ import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.UUID;
-
-import static me.bristermitten.privatemines.util.Util.prettify;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
@@ -385,5 +382,12 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
         new MineResetTask(PrivateMines.getPlugin(), storage).start();
+    }
+
+    @Subcommand("version")
+    @CommandPermission("privatemines.version")
+    @Description("Gets the current version of Private Mines")
+    public void version(Player p) {
+
     }
 }

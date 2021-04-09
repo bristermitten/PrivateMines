@@ -7,10 +7,11 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.util.Shop;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
+import me.clip.autosell.SellHandler;
+import me.clip.autosell.objects.Shop;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -70,8 +71,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        int resetTime,
                        int mineTier,
                        MineSchematic<?> mineSchematic,
-                       MineStorage storage,
-                       Shop shop) {
+                       MineStorage storage) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
         this.trustedPlayers = trustedPlayers;
@@ -139,9 +139,12 @@ public class PrivateMine implements ConfigurationSerializable {
         Set<UUID> trustedPlayers = Optional.ofNullable((List<String>) map.get("TrustedPlayers"))
                 .map(trusted -> trusted.stream().map(UUID::fromString).collect(Collectors.toSet())).orElse(new HashSet<>());
 
-        Shop shop = new Shop(owner, blocks, 5.0);
+        String shopName = "shop-" + owner.toString();
+        Shop shop = new Shop(shopName);
+        SellHandler.addShop(shop);
+
         return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
-                                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage, shop);
+                                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
     }
 
     public double getTaxPercentage() {

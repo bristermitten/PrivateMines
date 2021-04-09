@@ -22,8 +22,14 @@ Blocks:
   Mine-Corner: POWERED_RAIL
   Sell-NPC: WOOL
 
-#The default block for mines
-Default-Block: REDSTONE_BLOCK
+##The default block for mines
+#Default-Block: REDSTONE_BLOCK
+
+blocks:
+  - REDSTONE_BLOCK
+  - EMERALD_BLOCK
+  - DIAMOND_BLOCK
+  - GOLD_BLOCK
 
 #Options for types of block a mine can be made of
 Block-Options:
@@ -37,6 +43,9 @@ NPC-Enabled: true
 #Name for the Sell NPC
 NPC-Name: Merchant
 NPC-Skin: TraderNPC
+
+#Default block price for each block in the shops
+Default-Price: 5
 
 #Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
@@ -75,6 +84,7 @@ Colors:
 
 Effects:
   - FLAME
+
 
 # Here's a list of all the different styles a plyaer can use in their Private Mine.
 
