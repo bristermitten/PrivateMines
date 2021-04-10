@@ -44,9 +44,9 @@ public class PrivateMineMenu {
 		}
 
 		PrivateMine mine = storage.get(p);
-//		Material type = mine != null ? Material.valueOf(String.valueOf(mine.getBlocks())) : Material.STONE;
+		Material type = mine != null ? Material.valueOf(String.valueOf(mine.getMineBlocks().get(0))) : Material.STONE;
 
-		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", "PREFILLED");
+		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", type);
 
 		MenuSpec menuSpec = new MenuSpec();
 

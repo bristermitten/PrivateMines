@@ -155,6 +155,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.minePercentage;
     }
 
+    public List<ItemStack> getMineBlocks() {
+        return blocks;
+    }
+
     public void setTaxPercentage(double amount) {
         this.taxPercentage = amount;
     }
