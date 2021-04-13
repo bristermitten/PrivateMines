@@ -41,6 +41,8 @@ public class PrivateMineMenu {
 					e -> openChangeEffectsMenu(plugin, config, storage, pmConfig, e));
 			original.addAction("change-reset-style",
 					e -> openResetStyleMenu(plugin, config, storage, pmConfig, e));
+			original.addAction("Reset-Percents",
+					e -> openChangeResetPercentMenu(plugin, config, storage, pmConfig, e));
 		}
 
 		PrivateMine mine = storage.get(p);
@@ -80,5 +82,10 @@ public class PrivateMineMenu {
 	private void openChangeEffectsMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
 									 InventoryClickEvent e) {
 		new ChangeEffectsMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
+	}
+
+	private void openChangeResetPercentMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
+											InventoryClickEvent e) {
+		new ChangeMineResetPercentMenu((Player) e.getWhoClicked(), plugin, pmConfig, config, storage);
 	}
 }

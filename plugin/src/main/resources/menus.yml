@@ -31,6 +31,10 @@ Menus:
         Action: 'change-reset-effect'
         Type: REDSTONE
         Name: "&6&lAdd mine reset effects!"
+      '15':
+        Action: 'change-reset-percent'
+        Type: HOPPER
+        Name: "&6&lChange mine reset percentage!"
   Mines:
     Title: "&6&lMines"
     Size: 54
@@ -97,3 +101,16 @@ Menus:
         Name: "&6%style%"
         Lore:
           - "&7Click to change your mine reset style to &6%style%"
+  Reset-Percents:
+    Title: "&6&lChange reset Percentage"
+    Size: 9
+    Background:
+      Type: STAINED_GLASS_PANE
+      Data: 15
+      Name: " "
+    Items:
+      Every:
+        Type: STONE #this will be replaced with the actual block
+        Name: "&6%percent%"
+        Lore:
+          - "&7Click to change your mine reset percent to &6%percent%"

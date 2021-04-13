@@ -38,4 +38,9 @@ public class MenuFactory {
 	public void createAndOpenEffectsMenu(Player p) {
 		new ChangeEffectsMenu(p, plugin, pmConfig, config, storage);
 	}
+
+	public void createAndOpenResetPercentMenu(Player p) {
+		new ChangeEffectsMenu(p, plugin, pmConfig, config, storage);
+	}
+
 }

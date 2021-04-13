@@ -25,6 +25,8 @@ public class PMConfig {
 
     private List<ParticleEffect> effects;
 
+    private List<Integer> resetPercentages;
+
     private boolean npcsEnabled = true;
     private String npcName = "Steve";
     private String npcSkin = "TraderNPC";
@@ -60,14 +62,6 @@ public class PMConfig {
 
             this.blockTypes.put(BlockType.fromName(block), value.get());
         }
-//
-//        final String defaultBlockName = config.getString("Default-Block");
-//        Optional defaultBlock = Util.parseItem(defaultBlockName);
-//        if (!defaultBlock.isPresent()) {
-//            PrivateMines.getPlugin().getLogger().warning(() -> "Invalid default block " + defaultBlockName + ", stone will be used");
-//        } else {
-//            this.defaultBlock = defaultBlock.get();
-//        }
 
         this.blockOptions = config.getStringList("Block-Options")
                 .stream()
@@ -90,6 +84,7 @@ public class PMConfig {
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
         this.sellCommand = config.getString("sellCommand");
+        this.resetPercentages = config.getIntegerList("Reset-Percentages");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
@@ -152,6 +147,8 @@ public class PMConfig {
     public List<String> getFirstTimeCommands() { return firstTimeCommands; }
     public List<String> getCommands() {return commands;}
     public List<String> getResetStyles() {return resetStyles; }
+
+    public List<Integer> getResetPercentages() {return resetPercentages; }
 
     public List<ParticleEffect> getParticleEffects() {return effects; }
 
