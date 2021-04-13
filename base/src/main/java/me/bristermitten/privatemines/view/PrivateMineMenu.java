@@ -41,7 +41,7 @@ public class PrivateMineMenu {
 					e -> openChangeEffectsMenu(plugin, config, storage, pmConfig, e));
 			original.addAction("change-reset-style",
 					e -> openResetStyleMenu(plugin, config, storage, pmConfig, e));
-			original.addAction("Reset-Percents",
+			original.addAction("change-reset-percent",
 					e -> openChangeResetPercentMenu(plugin, config, storage, pmConfig, e));
 		}
 

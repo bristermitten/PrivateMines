@@ -33,24 +33,29 @@ public class ChangeMineResetPercentMenu {
         spec.copyFrom(original);
         spec.register(plugin);
         PrivateMine mine = storage.getOrCreate(p);
-        String[] resetPercentages = config.getResetPercentages().toArray(new String[]{});
+        Integer[] resetPercentage = config.getResetPercentages().toArray(new Integer[]{});
 
         p.openInventory(spec.genMenu((percent, i) -> {
                     i.setType(Material.REDSTONE);
                     ItemMeta itemMeta = i.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%percent%",
-                            Util.parseStyle(percent));
+                            Util.parseStyle(resetPercentage.toString()));
 
                     itemMeta.setDisplayName(name);
                     List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
-                            percent)).collect(Collectors.toList());
+                            String.valueOf(resetPercentage))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
                     return i;
                 },
                 percent -> e -> {
-                        p.sendMessage("Changed reset percentage to " + percent);
-                }, resetPercentages));
+                    if (p.hasPermission("privatemine.percent." + percent)) {
+                        p.sendMessage("Changed reset percent to  " + percent);
+                        // set the percent
+                    } else {
+                        p.sendMessage(ChatColor.RED + "No access to this percent!");
+                    }
+                }, resetPercentage));
     }
 }
