@@ -8,6 +8,7 @@ import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.SellNPCTrait;
+import me.bristermitten.privatemines.listeners.BlockBreak;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
@@ -81,6 +82,7 @@ public final class PrivateMines extends JavaPlugin {
 
         loadWEHook();
         setupEconomy();
+
         //noinspection unchecked oh no
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 
@@ -119,6 +121,8 @@ public final class PrivateMines extends JavaPlugin {
             Bukkit.getLogger().info("you can download the plugin from the spigot website at:");
             Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
         }
+
+        Bukkit.getPluginManager().registerEvents(new BlockBreak(storage), this);
 
         new MineResetTask(this, storage).start();
     }

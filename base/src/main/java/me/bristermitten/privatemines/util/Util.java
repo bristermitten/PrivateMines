@@ -2,6 +2,8 @@ package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
 import com.google.common.primitives.Ints;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -40,6 +42,14 @@ public final class Util {
 
     public static Location toLocation(WorldEditVector weVector, World world) {
         return new Location(world, weVector.getX(), weVector.getY(), weVector.getZ());
+    }
+
+    public static BlockVector3 toWGLocation(Location location) {
+        return BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+    }
+
+    public static com.sk89q.worldedit.world.World toWEWorld(org.bukkit.World world) {
+        return BukkitAdapter.adapt(world);
     }
 
     public static WorldEditVector deserializeWorldEditVector(Map<String, Object> map) {

@@ -1,7 +1,9 @@
 package me.bristermitten.privatemines;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -14,6 +16,10 @@ public class MineResetTask extends BukkitRunnable {
     public MineResetTask(Plugin plugin, MineStorage storage) {
         this.plugin = plugin;
         this.storage = storage;
+    }
+
+    public static com.sk89q.worldedit.world.World toWEWorld(org.bukkit.World world) {
+        return BukkitAdapter.adapt(world);
     }
 
     public void start() {
@@ -31,8 +37,14 @@ public class MineResetTask extends BukkitRunnable {
 
     @Override
     public void run() {
+
         for (PrivateMine mine : storage.getAll()) {
-            if (mine.shouldReset()) {
+            int total = mine.getTotalBlocks();
+            int air = mine.getAirBlocks();
+            int percent = air * 100 / total;
+
+            Bukkit.broadcastMessage("Percentage: " + percent);
+            if (mine.shouldReset() || percent >= 50) {
                 mine.fillWE();
             }
         }

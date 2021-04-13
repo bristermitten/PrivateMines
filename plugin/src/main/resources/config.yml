@@ -52,8 +52,11 @@ Tax-Percentage: 5
 
 Default-Open: true
 
-#Default reset delay for the mines in minutes (global)
+#Default reset delay for the mines in minutes
 Reset-Delay: 5
+
+#Default reset percentage for the mines to reset at
+Reset-Percentage: 50
 
 # Placeholders
 # {name} - Targets Username

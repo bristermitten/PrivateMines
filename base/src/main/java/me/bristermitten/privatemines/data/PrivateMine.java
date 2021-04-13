@@ -3,6 +3,11 @@ package me.bristermitten.privatemines.data;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
+import com.boydti.fawe.FaweAPI;
+import com.boydti.fawe.util.EditSessionBuilder;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.MineStorage;
@@ -42,6 +47,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
     private final List<String> commands;
+    private final MineStorage mineStorage;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
@@ -52,10 +58,8 @@ public class PrivateMine implements ConfigurationSerializable {
     private double minePercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
-    private final MineStorage mineStorage;
     private int mineTier;
     private String resetStyle;
-    private Shop shop;
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -87,7 +91,6 @@ public class PrivateMine implements ConfigurationSerializable {
         this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
         this.mineTier = mineTier + 1;
         this.mineStorage = storage;
-        this.shop = shop;
     }
 
     @SuppressWarnings("unchecked")
@@ -144,11 +147,15 @@ public class PrivateMine implements ConfigurationSerializable {
         SellHandler.addShop(shop);
 
         return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
-                                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
+                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
     }
 
     public double getTaxPercentage() {
         return this.taxPercentage;
+    }
+
+    public void setTaxPercentage(double amount) {
+        this.taxPercentage = amount;
     }
 
     public double getMinePercentage() {
@@ -159,13 +166,13 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocks;
     }
 
-    public void setTaxPercentage(double amount) {
-        this.taxPercentage = amount;
+    public int getMineTier() {
+        return this.mineTier;
     }
 
-    public void setMineTier(int tier) {this.mineTier = tier; }
-
-    public int getMineTier() {return this.mineTier; }
+    public void setMineTier(int tier) {
+        this.mineTier = tier;
+    }
 
     public int getResetTime() {
         return this.RESET_THRESHOLD;
@@ -175,12 +182,12 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-    public void setResetStyle(String style) {
-        this.resetStyle = style;
-    }
-
     public String getResetStyle() {
         return resetStyle;
+    }
+
+    public void setResetStyle(String style) {
+        this.resetStyle = style;
     }
 
     public Set<UUID> getBannedPlayers() {
@@ -189,6 +196,10 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public Set<UUID> getTrustedPlayers() {
         return trustedPlayers;
+    }
+
+    public MineLocations getLocations() {
+        return locations;
     }
 
     public Map<String, Object> serialize() {
@@ -270,11 +281,67 @@ public class PrivateMine implements ConfigurationSerializable {
         return (new Location(world, x, y, z)).getBlock();
     }
 
+
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
     }
 
-    public double getMinePercents(Player player) {
+    public int getTotalBlocks() {
+
+        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+
+        final WorldEditRegion miningRegion = new WorldEditRegion(
+                Util.toWEVector(selection.getMinimumPoint()),
+                Util.toWEVector(selection.getMaximumPoint()),
+                mainRegion.getWorld()
+        );
+
+        Vector min1 = new Vector(
+                miningRegion.getMinimumLocation().getBlockX(),
+                miningRegion.getMinimumLocation().getBlockY(),
+                miningRegion.getMinimumLocation().getBlockZ());
+
+        Vector max1 = new Vector(
+                miningRegion.getMaximumLocation().getBlockX(),
+                miningRegion.getMaximumLocation().getBlockY(),
+                miningRegion.getMaximumLocation().getBlockZ());
+
+        CuboidRegion region = new CuboidRegion(min1, max1);
+        return region.getArea();
+    }
+
+    public int getAirBlocks() {
+
+        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(locations.getRegion().getWorld().getName()))
+                .fastmode(true)
+                .build();
+
+        final WorldEditRegion miningRegion = new WorldEditRegion(
+                Util.toWEVector(selection.getMinimumPoint()),
+                Util.toWEVector(selection.getMaximumPoint()),
+                mainRegion.getWorld()
+        );
+
+        Vector min1 = new Vector(
+                miningRegion.getMinimumLocation().getBlockX(),
+                miningRegion.getMinimumLocation().getBlockY(),
+                miningRegion.getMinimumLocation().getBlockZ());
+
+        Vector max1 = new Vector(
+                miningRegion.getMaximumLocation().getBlockX(),
+                miningRegion.getMaximumLocation().getBlockY(),
+                miningRegion.getMaximumLocation().getBlockZ());
+
+        CuboidRegion region = new CuboidRegion(min1, max1);
+
+        Set<Integer> airBlocks = new HashSet<>();
+        airBlocks.add(0);
+
+        return session.countBlock(region, airBlocks) + 1;
+    }
+
+    public double getMineTaxPercents(Player player) {
         return mineStorage.get(player).getTaxPercentage();
     }
 

@@ -32,6 +32,8 @@ public class PMConfig {
     private String sellCommand = "sellall";
     private double taxPercentage = 5;
     private int resetDelay = 30;
+    private int resetPercentage = 50;
+
     private int mineTier = 1;
 
     public PMConfig(FileConfiguration configuration) {
@@ -79,6 +81,7 @@ public class PMConfig {
         this.npcSkin = config.getString("NPC-Skin");
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
+        this.resetPercentage = config.getInt("Reset-Percentage");
         this.mineTier = config.getInt("Tier");
         this.firstTimeCommands = config.getStringList("FirstTimeCommands");
         this.commands = config.getStringList("Commands");
@@ -153,6 +156,8 @@ public class PMConfig {
     public List<ParticleEffect> getParticleEffects() {return effects; }
 
     public int getResetDelay() { return resetDelay; }
+
+    public int getResetPercentage() { return resetPercentage; }
 
     public int getMineTier() { return mineTier; }
 

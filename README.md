@@ -37,7 +37,8 @@ PrivateMines allows your players to make private mines similar to a prison serve
   <li>Every mine gets an NPC that users can right click on to AutoSell their items</li>
   <li>Fully customisable GUIs!</li>
   <li>Full WorldGuard support - every mine has 2 protected regions automatically generated!</li>
-  <li>Upgradle mines as seen on popular servers!</li>
+  <li>Upgradable mines as seen on popular servers!</li>
+  <li>Mine reset percentage system!</li>
 </ul>
 
 <img src="https://i.imgur.com/CSzIlsu.png">
