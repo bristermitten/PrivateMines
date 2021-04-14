@@ -20,7 +20,7 @@ public class ChangeMineResetPercentMenu {
     private static MenuSpec original;
 
     /*
-        Loads the configuration for the change effects menu
+        Loads the configuration for the change resets menu
      */
 
     public ChangeMineResetPercentMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
@@ -40,19 +40,21 @@ public class ChangeMineResetPercentMenu {
                     ItemMeta itemMeta = i.getItemMeta();
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%percent%",
-                            Util.parseStyle(resetPercentage.toString()));
+                            Util.parsePercent(percent));
 
                     itemMeta.setDisplayName(name);
                     List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
-                            String.valueOf(resetPercentage))).collect(Collectors.toList());
+                            String.valueOf(percent))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
                     return i;
                 },
-                percent -> e -> {
-                    if (p.hasPermission("privatemine.percent." + percent)) {
-                        p.sendMessage("Changed reset percent to  " + percent);
-                        // set the percent
+                decreasepercent -> e -> {
+                    if (p.hasPermission("privatemine.percent." + decreasepercent)) {
+                        p.sendMessage(ChatColor.GREEN + "Decreased reset percent by  " + decreasepercent + "%");
+
+                        mine.decreaseResetPercentage(decreasepercent);
+                        p.sendMessage("Mine reset percent now = " + mine.getResetPercentage());
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this percent!");
                     }

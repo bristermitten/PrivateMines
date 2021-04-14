@@ -9,6 +9,7 @@ softdepend:
   - Citizens
   - FastAsyncWorldEdit
   - Vault
+  - PlaceholderAPI
 depend:
   - WorldEdit
   - WorldGuard

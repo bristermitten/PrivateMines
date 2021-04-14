@@ -21,13 +21,10 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
@@ -56,6 +53,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private List<ItemStack> blocks;
     private double taxPercentage;
     private double minePercentage;
+    private double resetPercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
     private int mineTier;
@@ -72,6 +70,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        IWrappedRegion wgRegion,
                        UUID npc,
                        double taxPercentage,
+                       double resetPercent,
                        int resetTime,
                        int mineTier,
                        MineSchematic<?> mineSchematic,
@@ -87,6 +86,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.wgRegion = wgRegion;
         this.npcId = npc;
         this.taxPercentage = taxPercentage;
+        this.resetPercentage = resetPercent;
         this.mineSchematic = mineSchematic;
         this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
         this.mineTier = mineTier + 1;
@@ -121,6 +121,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         UUID npcId = UUID.fromString((String) map.get("NPC"));
         double taxPercentage = (Double) map.get("Tax");
+        double resetPercentage = (Double) map.get("Reset-Percentage");
         int resetTime = (Integer) map.get("Reset-Delay");
         int mineTier = (Integer) map.get("Tier");
 
@@ -147,7 +148,7 @@ public class PrivateMine implements ConfigurationSerializable {
         SellHandler.addShop(shop);
 
         return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
-                wgRegion, npcId, taxPercentage, resetTime, mineTier, schematic, storage);
+                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, schematic, storage);
     }
 
     public double getTaxPercentage() {
@@ -160,6 +161,30 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public double getMinePercentage() {
         return this.minePercentage;
+    }
+
+    public double getResetPercentage() {
+        return resetPercentage;
+    }
+
+    public void setResetPercentage(double amount) {
+        this.resetPercentage = amount;
+    }
+
+    public void increaseResetPercentage(double amount) {
+        if (this.resetPercentage + amount > 100) {
+            this.resetPercentage = 100;
+        } else {
+            this.resetPercentage = this.resetPercentage + amount;
+        }
+    }
+
+    public void decreaseResetPercentage(double amount) {
+        if (this.resetPercentage - amount < 1) {
+            this.resetPercentage = 1;
+        } else {
+            this.resetPercentage = this.resetPercentage - amount;
+        }
     }
 
     public List<ItemStack> getMineBlocks() {
@@ -212,6 +237,7 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("Corner2", Util.toBukkitVector(this.mainRegion.getMaximumPoint()).serialize());
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
+        map.put("Reset-Percentage", this.resetPercentage);
         map.put("Reset-Delay", this.RESET_THRESHOLD);
         map.put("Reset-Style", this.resetStyle);
         map.put("Mine-Tier", this.mineTier);
@@ -273,21 +299,11 @@ public class PrivateMine implements ConfigurationSerializable {
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }
 
-    private void setBlock(Block block, MaterialData blockdata) {
-        block.setType(blockdata.getItemType());
-    }
-
-    private Block getBlock(World world, int x, int y, int z) {
-        return (new Location(world, x, y, z)).getBlock();
-    }
-
-
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
     }
 
     public int getTotalBlocks() {
-
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
 
         final WorldEditRegion miningRegion = new WorldEditRegion(
@@ -339,10 +355,6 @@ public class PrivateMine implements ConfigurationSerializable {
         airBlocks.add(0);
 
         return session.countBlock(region, airBlocks) + 1;
-    }
-
-    public double getMineTaxPercents(Player player) {
-        return mineStorage.get(player).getTaxPercentage();
     }
 
     /*

@@ -8,6 +8,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.text.DecimalFormat;
+
 public class MineResetTask extends BukkitRunnable {
     private final Plugin plugin;
     private final MineStorage storage;
@@ -39,11 +41,19 @@ public class MineResetTask extends BukkitRunnable {
     public void run() {
 
         for (PrivateMine mine : storage.getAll()) {
-            int total = mine.getTotalBlocks();
-            int air = mine.getAirBlocks();
-            int percent = air * 100 / total;
+            double total = mine.getTotalBlocks();
+            double air = mine.getAirBlocks();
+            double percent = air * 100 / total;
+            double blocksLeft = 100.00 - percent;
 
-            Bukkit.broadcastMessage("Percentage: " + percent);
+            if (percent <= 0) {
+                return;
+            }
+
+            DecimalFormat format = new DecimalFormat("##.##");
+
+            Bukkit.broadcastMessage("Mine Percentage (task): " + format.format(percent));
+            Bukkit.broadcastMessage("Blocks Left Percent: " + format.format(blocksLeft));
             if (mine.shouldReset() || percent >= 50) {
                 mine.fillWE();
             }

@@ -169,6 +169,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 worldGuardRegion,
                 npcUUID,
                 config.getTaxPercentage(),
+                config.getResetPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
                 mineSchematic,

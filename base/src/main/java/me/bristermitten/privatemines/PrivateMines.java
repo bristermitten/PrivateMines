@@ -34,7 +34,6 @@ public final class PrivateMines extends JavaPlugin {
     public static final String MINES_FILE_NAME = "mines.yml";
     private Economy econ;
     private MineStorage storage;
-    private Util utils;
     private MenuConfig menuConfig;
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;

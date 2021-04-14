@@ -17,6 +17,7 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -220,6 +221,11 @@ public final class Util {
                 return "Back to Front";
         }
         return "Unknown reset Style!";
+    }
+
+    public static String parsePercent(Integer integer) {
+        DecimalFormat format = new DecimalFormat("##.##");
+        return format.format(integer);
     }
 
     private static String readAll(BufferedReader rd) throws IOException {

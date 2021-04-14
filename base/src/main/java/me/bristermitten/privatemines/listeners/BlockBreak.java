@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import java.text.DecimalFormat;
+
 public class BlockBreak implements Listener {
 
     private final MineStorage storage;
@@ -32,10 +34,10 @@ public class BlockBreak implements Listener {
         player.sendMessage("Total blocks: " + total);
         player.sendMessage("Air Blocks: " + air);
 
-        int percent = air * 100 / total;
-        String percentS = String.format("%d", percent);
+        double percent = air * 100.0 / total;
+        DecimalFormat format = new DecimalFormat("##.##");
 
         player.sendMessage("Blocks mined: " + air);
-        player.sendMessage("Percentage mined: " + percentS + "%");
+        player.sendMessage("Percentage mined: " + format.format(percent) + "%");
     }
 }

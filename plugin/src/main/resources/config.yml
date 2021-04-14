@@ -89,7 +89,7 @@ Effects:
   - FLAME
 
 
-# Here's a list of all the different styles a plyaer can use in their Private Mine.
+# Here's a list of all the different styles a player can use in their Private Mine.
 
 Reset-Styles:
   - "SLOW"
@@ -100,6 +100,8 @@ Reset-Styles:
   - "RIGHT_LEFT"
   - "FRONT_BACK"
   - "BACK_FRONT"
+
+#Reset percentages
 
 Reset-Percentages:
   - 10
