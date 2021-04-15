@@ -10,7 +10,7 @@ import static me.bristermitten.privatemines.world.MineWorldManager.Direction.NOR
 
 public class MineWorldManager {
     private final World minesWorld;
-    private final Location DEFAULT_LOCATION;
+    private final Location defaultLocation;
     private final int borderDistance;
     private int distance = 0;
     private Direction direction;
@@ -23,7 +23,7 @@ public class MineWorldManager {
 
         this.borderDistance = config.getMinesDistance();
         this.direction = NORTH;
-        DEFAULT_LOCATION = new Location(minesWorld, 0, 0, 0);
+        defaultLocation = new Location(minesWorld, 0, 0, 0);
     }
 
     public World getMinesWorld() {
@@ -45,11 +45,11 @@ public class MineWorldManager {
     public synchronized Location nextFreeLocation() {
         if (distance == 0) {
             distance++;
-            return DEFAULT_LOCATION;
+            return defaultLocation;
         }
 
         if (direction == null) direction = NORTH;
-        Location loc = direction.addTo(DEFAULT_LOCATION, distance * borderDistance);
+        Location loc = direction.addTo(defaultLocation, distance * borderDistance);
         direction = direction.next();
         if (direction == NORTH) distance++;
         return loc;

@@ -23,7 +23,7 @@ public class ChangeMineResetPercentMenu {
         Loads the configuration for the change resets menu
      */
 
-    public ChangeMineResetPercentMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
+    ChangeMineResetPercentMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();
             original.loadFrom(menuConfig.configurationForName("Reset-Percents"));

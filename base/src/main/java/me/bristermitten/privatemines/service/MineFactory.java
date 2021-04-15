@@ -12,9 +12,10 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import me.clip.autosell.SellHandler;
-import me.clip.autosell.objects.Shop;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -38,9 +39,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
     // List the placeholders here for re-use.
 
-    private final String namePlaceholder = "{name}";
-    private final String displayNamePlaceholder = "{displayname}";
-    private final String uuidPlaceholder = "{uuid}";
+    private static final String NAME_PLACEHOLDER = "{name}";
+    private static final String DISPLAYNAME_PLACEHOLDER = "{displayname}";
+    private static final String UUID_PLACEHOLDER = "{uuid}";
 
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, MineFactoryCompat<S> compat) {
         this.plugin = plugin;
@@ -150,12 +151,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
 
         UUID npcUUID = createMineNPC(owner, npcLoc);
-        UUID ownerUUID = owner.getUniqueId();
-//        Shop shop = new Shop(ownerUUID, config.getDefaultBlock(), 5.0);
 
-        String shopName = "shop-" + owner.toString();
-        Shop shop = new Shop(shopName);
-
+        //TODO Make shop system somehow?
 
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),
@@ -182,9 +179,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         if (isNew) {
             for (String s : firstTimeCommands) {
-                s = s.replace(namePlaceholder, owner.getName());
-                s = s.replace(displayNamePlaceholder, owner.getDisplayName());
-                s = s.replace(uuidPlaceholder, owner.getPlayer().getUniqueId().toString());
+                s = s.replace(NAME_PLACEHOLDER, owner.getName());
+                s = s.replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName());
+                s = s.replace(UUID_PLACEHOLDER, owner.getPlayer().getUniqueId().toString());
                 Bukkit.dispatchCommand(console, s);
             }
 
@@ -193,9 +190,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             }
         } else {
             for (String s : commands) {
-                s = s.replace(namePlaceholder, owner.getName());
-                s = s.replace(displayNamePlaceholder, owner.getDisplayName());
-                s = s.replace(uuidPlaceholder, owner.getPlayer().getUniqueId().toString());
+                s = s.replace(NAME_PLACEHOLDER, owner.getName());
+                s = s.replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName());
+                s = s.replace(UUID_PLACEHOLDER, owner.getPlayer().getUniqueId().toString());
                 Bukkit.dispatchCommand(console, s);
             }
         }
@@ -234,7 +231,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     protected IWrappedRegion createMineWorldGuardRegion(Player owner, WorldEditRegion region, IWrappedRegion parent) {
         IWrappedRegion mineRegion = WorldGuardWrapper.getInstance().addCuboidRegion(
 
-                config.getMineRegionNameFormat().replace(uuidPlaceholder, owner.getUniqueId().toString()),
+                config.getMineRegionNameFormat().replace(UUID_PLACEHOLDER, owner.getUniqueId().toString()),
                 region.getMinimumLocation(),
                 region.getMaximumLocation())
                 .orElseThrow(() -> new RuntimeException("Could not create Mine WorldGuard region"));

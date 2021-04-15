@@ -10,6 +10,11 @@ public interface WorldEditHook {
     void fill(WorldEditRegion region);
     void fillAir(WorldEditRegion region);
 
+    /*
+        SonarLint errors up here on both of these methods saying
+        Remove usage of generic wildcard type. Any clue on a fix?
+     */
+
     MineFactoryCompat<?> createMineFactoryCompat();
 
     MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item);

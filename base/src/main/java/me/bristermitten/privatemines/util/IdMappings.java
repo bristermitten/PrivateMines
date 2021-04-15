@@ -24,6 +24,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/*
+    what a fucking mess this is.... gotta rework sometime 48 fucking errors and 38 typos?! WHAT THE FUCK?!
+ */
+
 public class IdMappings {
     public static final Mapping[] MAPPINGS = {
             new Mapping(0, "air"),

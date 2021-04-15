@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
+import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -257,5 +258,13 @@ public final class Util {
             is.close();
         }
         return ver;
+    }
+
+    public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
+        float percent = (float) current / max;
+        int progressBars = (int) (totalBars * percent);
+
+        return Strings.repeat("" + completeColor + symbol, progressBars)
+                + Strings.repeat("" + nonCompletedColor + symbol, totalBars - progressBars);
     }
 }

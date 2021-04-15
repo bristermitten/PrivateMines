@@ -1,16 +1,14 @@
 package me.bristermitten.privatemines.view;
 
 import me.bristermitten.privatemines.PrivateMines;
-import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import static me.bristermitten.privatemines.util.Util.prettify;
 
 /**
  * Menu for viewing all open Private Mines
@@ -20,7 +18,7 @@ public class MinesMenu
 
     private static MenuSpec original;
 
-    public MinesMenu(Player p, MenuConfig config, PrivateMines plugin, MineStorage storage)
+    MinesMenu(Player p, MenuConfig config, PrivateMines plugin, MineStorage storage)
     {
 
         if (original == null)

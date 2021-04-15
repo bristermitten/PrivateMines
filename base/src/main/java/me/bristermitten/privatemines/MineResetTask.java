@@ -1,9 +1,12 @@
 package me.bristermitten.privatemines;
 
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.util.Util;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -20,9 +23,9 @@ public class MineResetTask extends BukkitRunnable {
         this.storage = storage;
     }
 
-    public static com.sk89q.worldedit.world.World toWEWorld(org.bukkit.World world) {
-        return BukkitAdapter.adapt(world);
-    }
+    /*
+    I've made this synchronized because it can stop memory errors.
+    */
 
     public void start() {
         if (bukkitTask == null) {
@@ -30,8 +33,12 @@ public class MineResetTask extends BukkitRunnable {
         }
     }
 
+    /*
+        I've made this synchronized because it can stop memory errors.
+     */
+
     @Override
-    public void cancel() {
+    public synchronized void cancel() {
         if (bukkitTask != null) {
             bukkitTask.cancel();
         }
@@ -49,13 +56,18 @@ public class MineResetTask extends BukkitRunnable {
             if (percent <= 0) {
                 return;
             }
-
             DecimalFormat format = new DecimalFormat("##.##");
 
             Bukkit.broadcastMessage("Mine Percentage (task): " + format.format(percent));
             Bukkit.broadcastMessage("Blocks Left Percent: " + format.format(blocksLeft));
+
+            Bukkit.broadcastMessage(Util.parsePercent((int) percent));
             if (mine.shouldReset() || percent >= 50) {
                 mine.fillWE();
+            }
+
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("ACTION_BAR"));
             }
         }
     }

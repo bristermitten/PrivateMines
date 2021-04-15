@@ -4,7 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 public class WorldEditRegion {
-    private final WorldEditVector min, max;
+    private final WorldEditVector min;
+    private final WorldEditVector max;
     private final WorldEditVector center;
     private final World world;
 

@@ -19,15 +19,21 @@ import java.util.Objects;
 
 public class MineLocations implements ConfigurationSerializable {
     private Location spawnPoint;
-    private WorldEditRegion region;
-    private IWrappedRegion wgRegion;
+    private final WorldEditRegion region;
+    private final IWrappedRegion wgRegion;
+
+    private static final String spawnPointString = "SpawnPoint";
+    private static final String MIN_STRING = "Min";
+    private static final String MAX_STRING = "Max";
+    private static final String REGION_STRING = "Region";
+    private static final String worldGuardRegionString = "WorldGuardRegion";
 
     /*
        Gets the mine locations, e.g. Spawn point and mine region.
      */
     public MineLocations(Location spawnPoint, WorldEditVector mineAreaMin, WorldEditVector mineAreaMax, IWrappedRegion wgRegion) {
-        Objects.requireNonNull(spawnPoint, "SpawnPoint");
-        Objects.requireNonNull(wgRegion, "WorldGuardRegion");
+        Objects.requireNonNull(spawnPoint, spawnPointString);
+        Objects.requireNonNull(wgRegion, worldGuardRegionString);
         this.spawnPoint = spawnPoint;
         this.region = new WorldEditRegion(mineAreaMin, mineAreaMax, spawnPoint.getWorld());
         this.wgRegion = wgRegion;
@@ -35,21 +41,21 @@ public class MineLocations implements ConfigurationSerializable {
 
     @SuppressWarnings("unchecked")
     public static MineLocations deserialize(Map<String, Object> map) {
-        Location spawnPoint = Location.deserialize((Map<String, Object>) map.get("SpawnPoint"));
-        WorldEditVector min = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Min")));
-        WorldEditVector max = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get("Max")));
-        IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(spawnPoint.getWorld(), (String) map.get("Region"))
-                .orElseThrow(() -> new IllegalArgumentException("No Region " + map.get("Region")));
+        Location spawnPoint = Location.deserialize((Map<String, Object>) map.get(spawnPointString));
+        WorldEditVector min = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get(MIN_STRING)));
+        WorldEditVector max = Util.toWEVector(org.bukkit.util.Vector.deserialize((Map<String, Object>) map.get(MAX_STRING)));
+        IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(spawnPoint.getWorld(), (String) map.get(REGION_STRING))
+                .orElseThrow(() -> new IllegalArgumentException("No Region " + map.get(REGION_STRING)));
 
         return new MineLocations(spawnPoint, min, max, wgRegion);
     }
 
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("SpawnPoint", this.spawnPoint.serialize());
-        map.put("Min", Util.toBukkitVector(this.region.getMinimumPoint()).serialize());
-        map.put("Max", Util.toBukkitVector(this.region.getMaximumPoint()).serialize());
-        map.put("Region", this.wgRegion.getId());
+        map.put(spawnPointString, this.spawnPoint.serialize());
+        map.put(MIN_STRING, Util.toBukkitVector(this.region.getMinimumPoint()).serialize());
+        map.put(MAX_STRING, Util.toBukkitVector(this.region.getMaximumPoint()).serialize());
+        map.put(REGION_STRING, this.wgRegion.getId());
         return map;
     }
 

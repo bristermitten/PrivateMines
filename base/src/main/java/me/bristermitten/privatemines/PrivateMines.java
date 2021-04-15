@@ -12,7 +12,6 @@ import me.bristermitten.privatemines.listeners.BlockBreak;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;

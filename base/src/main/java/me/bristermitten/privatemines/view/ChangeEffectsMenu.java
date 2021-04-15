@@ -23,7 +23,7 @@ public class ChangeEffectsMenu {
         Loads the configuration for the change effects menu
      */
 
-    public ChangeEffectsMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
+    ChangeEffectsMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();
             original.loadFrom(menuConfig.configurationForName("Effects"));

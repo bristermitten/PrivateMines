@@ -23,7 +23,7 @@ public class ChangeResetStyleMenu {
         Loads the configuration for the change effects menu
      */
 
-    public ChangeResetStyleMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
+    ChangeResetStyleMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
         if (original == null) {
             original = new MenuSpec();
             original.loadFrom(menuConfig.configurationForName("Styles"));

@@ -1,7 +1,9 @@
 package me.bristermitten.privatemines.worldedit;
 
 public class WorldEditVector {
-    private final double x, y, z;
+    private final double x;
+    private final double y;
+    private final double z;
 
     public WorldEditVector(double x, double y, double z) {
         this.x = x;
