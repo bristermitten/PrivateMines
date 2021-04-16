@@ -40,6 +40,10 @@ public class LegacyWEHook implements WorldEditHook {
                 .fastmode(true)
                 .build();
 
+        /*
+            Please help me rework this... I'm gonna destroy something soon.
+         */
+
         List<BlockChance> blockChance = new ArrayList<>();
 
         BlockChance ironOre = new BlockChance(new BaseBlock(15), 33.33);
