@@ -225,6 +225,7 @@ public final class Util {
         return "Unknown reset Style!";
     }
 
+
     public static String parsePercent(Integer integer) {
         DecimalFormat format = new DecimalFormat("##.##");
         return format.format(integer);

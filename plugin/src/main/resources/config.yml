@@ -25,18 +25,20 @@ Blocks:
 ##The default block for mines
 #Default-Block: REDSTONE_BLOCK
 
-blocks:
-  - REDSTONE_BLOCK
-  - EMERALD_BLOCK
-  - DIAMOND_BLOCK
-  - GOLD_BLOCK
-
 #Options for types of block a mine can be made of
 Block-Options:
   - REDSTONE_BLOCK
   - EMERALD_BLOCK
   - DIAMOND_BLOCK
   - GOLD_BLOCK
+
+Block-Styles:
+  Basic:
+    - STONE
+    - COBBLESTONE
+  Powerful:
+    - DIAMOND_BLOCK
+    - EMERALD_BLOCK
 
 #If NPCs should be enabled at all. Disable if not using Citizens or you just don't want them
 NPC-Enabled: true
@@ -121,3 +123,4 @@ Default-Reset-Style: "FAST"
 
 # The command used for when the player right clicks the sell npc.
 Sell-Command: "sellall"
+

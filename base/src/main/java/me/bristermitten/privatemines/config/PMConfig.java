@@ -2,6 +2,7 @@ package me.bristermitten.privatemines.config;
 
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.util.Util;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -15,14 +16,17 @@ import java.util.stream.Collectors;
 public class PMConfig {
     private final Map<BlockType, ItemStack> blockTypes = new EnumMap<>(BlockType.class);
     private final Map<MessageType, ChatColor> colors = new HashMap<>();
+
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
     private List<ItemStack> blockOptions = new ArrayList<>();
     private List<ItemStack> mineBlocks = new ArrayList<>();
 
+
     private List<String> firstTimeCommands;
     private List<String> commands;
     private List<String> resetStyles;
+    private List<String> blockStyles;
 
     private List<ParticleEffect> effects;
 
@@ -64,12 +68,19 @@ public class PMConfig {
             this.blockTypes.put(BlockType.fromName(block), value.get());
         }
 
-        this.blockOptions = config.getStringList("Block-Options")
-                .stream()
-                .map(Util::parseItem)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        for (String entry : config.getConfigurationSection("Block-Styles").getKeys(true)) {
+            Bukkit.getLogger().info("[DEBUG] Block-Styles: ");
+            Bukkit.getLogger().info(entry);
+            Bukkit.getLogger().info("[DEBUG] Block-Styles Blocks?: ");
+            Bukkit.getLogger().info("" + config.getList("Block-Styles." + entry));
+        }
+
+//        this.blockOptions = config.getStringList("Block-Options")
+//                .stream()
+//                .map(Util::parseItem)
+//                .filter(Optional::isPresent)
+//                .map(Optional::get)
+//                .collect(Collectors.toList());
 
         this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
