@@ -325,7 +325,13 @@ public class PrivateMinesCommand extends BaseCommand {
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
+        } else {
+            if (target.getPlayer() == p) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_CAN_NOT_REMOVE_FROM_OWN_MINE);
+                return;
+            }
         }
+
         mine.getTrustedPlayers().remove(target.getPlayer().getUniqueId());
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
         getCurrentCommandIssuer().sendInfo(LangKeys.ERR_YOU_WERE_REMOVED, PLAYER_KEY, target.getPlayer().getName());
