@@ -9,7 +9,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
     compileOnly "net.citizensnpcs:citizens:2.0.25-SNAPSHOT"
 
-    compileOnly "com.sk89q.worldedit:worldedit-bukkit:7.0.0"
+    compileOnly "com.sk89q.worldedit:worldedit-bukkit:latest"
     compileOnly "com.sk89q.worldguard:worldguard-bukkit:7.0.0"
 
     compileOnly project(':base')

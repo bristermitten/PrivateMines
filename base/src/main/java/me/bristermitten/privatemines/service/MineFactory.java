@@ -160,7 +160,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 new HashSet<>(),
                 commands,
                 plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
-                config.getDefaultBlock(),
+                config.getMineBlocks(),
                 mainRegion,
                 locations,
                 worldGuardRegion,

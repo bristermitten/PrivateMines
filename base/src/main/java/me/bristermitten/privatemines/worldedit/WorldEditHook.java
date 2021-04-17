@@ -1,13 +1,14 @@
 package me.bristermitten.privatemines.worldedit;
 
 import me.bristermitten.privatemines.data.MineSchematic;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.List;
 
 public interface WorldEditHook {
-    void fill(WorldEditRegion region);
+    void fill(WorldEditRegion region, List<Material> blocks);
     void fillAir(WorldEditRegion region);
 
     /*

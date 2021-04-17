@@ -5,12 +5,14 @@ import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.patterns.BlockChance;
 import com.sk89q.worldedit.patterns.RandomFillPattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.data.MineSchematic;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -35,7 +37,7 @@ public class LegacyWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region) {
+    public void fill(WorldEditRegion region, List<Material> blocks) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
                 .fastmode(true)
                 .build();
@@ -44,15 +46,10 @@ public class LegacyWEHook implements WorldEditHook {
             Please help me rework this... I'm gonna destroy something soon.
          */
 
+        final RandomPattern pattern = new RandomPattern();
+
         List<BlockChance> blockChance = new ArrayList<>();
 
-        BlockChance ironOre = new BlockChance(new BaseBlock(15), 33.33);
-        BlockChance coalOre = new BlockChance(new BaseBlock(16), 33.33);
-        BlockChance stone = new BlockChance(new BaseBlock(1), 33.33);
-
-        blockChance.add(ironOre);
-        blockChance.add(coalOre);
-        blockChance.add(stone);
 
         RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
 

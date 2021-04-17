@@ -35,7 +35,7 @@ public class ModernMineFactoryCompat implements MineFactoryCompat<Clipboard> {
             final Operation operation = new ClipboardHolder(clipboard)
                     .createPaste(editSession)
                     .to(centerVector)
-                    .ignoreAirBlocks(false)
+                    .ignoreAirBlocks(true) // lets see if this makes it quicker at all.
                     .build();
 
             try {

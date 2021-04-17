@@ -36,34 +36,27 @@ public class ModernWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region) {
+    public void fill(WorldEditRegion region, List<Material> blocks) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
             session.setFastMode(true);
 
-////            for (ItemStack block : blocks) {
-////                String name = block.getType().toString().toLowerCase();
-////                if (name.startsWith("legacy_")) {
-////                    name = name.substring(7);
-////                }
-//
-//                final BlockType blockType = BlockTypes.get(name);
-//                if (blockType == null) {
-//                    throw new IllegalArgumentException("Unknown block type " + name);
-//                }
+            final RandomPattern pattern = new RandomPattern();
+            final Region weRegion = transform(region);
 
-                RandomPattern pat = new RandomPattern(); // Create the random pattern
-//
-//                final BaseBlock baseBlock = blockType.getState(new HashMap<>()).toBaseBlock();
-                Pattern stone = (Pattern) BukkitAdapter.adapt(Material.STONE.createBlockData());
-                Pattern emeraldblock = (Pattern) BukkitAdapter.adapt(Material.EMERALD_BLOCK.createBlockData());
+            Pattern stone = (Pattern) BukkitAdapter.adapt(Material.STONE.createBlockData());
+            Pattern emeraldblock = (Pattern) BukkitAdapter.adapt(Material.EMERALD_BLOCK.createBlockData());
+            Pattern goldblock = (Pattern) BukkitAdapter.adapt(Material.GOLD_BLOCK.createBlockData());
+            Pattern diamondblock = (Pattern) BukkitAdapter.adapt(Material.DIAMOND_BLOCK.createBlockData());
 
-                pat.add(stone, 0.5);
-                pat.add(emeraldblock, 0.5);
+            pattern.add(stone, 1.0);
+            pattern.add(emeraldblock, 1.0);
+            pattern.add(goldblock, 1.0);
+            pattern.add(diamondblock, 1.0);
 
-                final Region weRegion = transform(region);
-                session.setBlocks(weRegion, pat);
-                Bukkit.broadcastMessage("filled with modern");
-                session.flushSession();
+
+            session.setBlocks(weRegion, pattern);
+            Bukkit.broadcastMessage("filled with modern");
+            session.flushSession();
         } catch (MaxChangedBlocksException e) {
             e.printStackTrace();
         }

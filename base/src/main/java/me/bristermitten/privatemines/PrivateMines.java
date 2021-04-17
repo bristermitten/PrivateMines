@@ -19,6 +19,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -73,6 +74,8 @@ public final class PrivateMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        long startTime = System.currentTimeMillis();
+
         saveDefaultConfig();
 
         PMConfig mainConfig = new PMConfig(getConfig());
@@ -123,6 +126,11 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockBreak(storage), this);
 
         new MineResetTask(this, storage).start();
+
+        long loaded = System.currentTimeMillis();
+        Bukkit.getLogger().info(String.format(ChatColor.GREEN +
+                        "Successfully loaded PrivateMines (Took %dms)",
+                loaded - startTime));
     }
 
     private void loadWEHook() {

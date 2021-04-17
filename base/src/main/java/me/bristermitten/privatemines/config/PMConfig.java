@@ -3,6 +3,7 @@ package me.bristermitten.privatemines.config;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.util.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +18,7 @@ public class PMConfig {
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
     private List<ItemStack> blockOptions = new ArrayList<>();
-    private List<ItemStack> mineBlocks = new ArrayList<>();
+    private List<Material> mineBlocks = new ArrayList<>();
 
     private List<String> firstTimeCommands;
     private List<String> commands;
@@ -82,7 +83,7 @@ public class PMConfig {
         this.resetStyles = config.getStringList("Reset-Styles");
         this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
-        this.mineBlocks = (List<ItemStack>) config.getList("blocks");
+        this.mineBlocks = (List<Material>) config.getList("blocks");
         this.sellCommand = config.getString("sellCommand");
         this.resetPercentages = config.getIntegerList("Reset-Percentages");
 
@@ -132,7 +133,7 @@ public class PMConfig {
         return npcsEnabled;
     }
 
-    public List<ItemStack> getDefaultBlock() {
+    public List<Material> getDefaultBlock() {
         return mineBlocks;
     }
 
@@ -140,7 +141,7 @@ public class PMConfig {
         return blockOptions;
     }
 
-    public List<ItemStack> getMineBlocks() {
+    public List<Material> getMineBlocks() {
         return mineBlocks;
     }
 

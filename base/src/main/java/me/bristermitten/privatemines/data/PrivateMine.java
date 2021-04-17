@@ -21,6 +21,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private List<ItemStack> blocks;
+    private List<Material> blocks;
     private double taxPercentage;
     private double minePercentage;
     private double resetPercentage;
@@ -64,7 +65,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        Set<UUID> trustedPlayers,
                        List<String> commands,
                        boolean open,
-                       List<ItemStack> blocks,
+                       List<Material> blocks,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
@@ -102,7 +103,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         ItemStack block = (ItemStack) map.get("blocks");
 
-        List<ItemStack> blocks = new ArrayList<>();
+        List<Material> blocks = new ArrayList<>();
 
 //        try {
 //            blocks = ItemStack.deserialize((Map)map.get("Blocks"));
@@ -187,8 +188,12 @@ public class PrivateMine implements ConfigurationSerializable {
         }
     }
 
-    public List<ItemStack> getMineBlocks() {
+    public List<Material> getMineBlocks() {
         return blocks;
+    }
+
+    public List<Material> getMineMaterials() {
+        return new ArrayList<>(getMineBlocks());
     }
 
     public int getMineTier() {
@@ -294,7 +299,7 @@ public class PrivateMine implements ConfigurationSerializable {
             }
         }
 
-        PrivateMines.getPlugin().getWeHook().fill(miningRegion);
+        PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks());
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }
