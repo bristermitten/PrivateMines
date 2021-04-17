@@ -202,6 +202,7 @@ public final class Util {
                 .map(XMaterial::parseItem);
     }
 
+
     public static String parseStyle(String s) {
         switch (s) {
             case "SLOW":

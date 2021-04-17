@@ -36,25 +36,19 @@ public class ModernWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, List<Material> blocks) {
+    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
             session.setFastMode(true);
 
             final RandomPattern pattern = new RandomPattern();
             final Region weRegion = transform(region);
 
-            Pattern stone = (Pattern) BukkitAdapter.adapt(Material.STONE.createBlockData());
-            Pattern emeraldblock = (Pattern) BukkitAdapter.adapt(Material.EMERALD_BLOCK.createBlockData());
-            Pattern goldblock = (Pattern) BukkitAdapter.adapt(Material.GOLD_BLOCK.createBlockData());
-            Pattern diamondblock = (Pattern) BukkitAdapter.adapt(Material.DIAMOND_BLOCK.createBlockData());
-
-            pattern.add(stone, 1.0);
-            pattern.add(emeraldblock, 1.0);
-            pattern.add(goldblock, 1.0);
-            pattern.add(diamondblock, 1.0);
-
-
+            for (ItemStack itemStack : blocks) {
+                Pattern pat = (Pattern) BukkitAdapter.adapt(itemStack.getType().createBlockData());
+                pattern.add(pat, 1.0);
+            }
             session.setBlocks(weRegion, pattern);
+
             Bukkit.broadcastMessage("filled with modern");
             session.flushSession();
         } catch (MaxChangedBlocksException e) {

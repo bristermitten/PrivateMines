@@ -37,7 +37,7 @@ public class LegacyWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, List<Material> blocks) {
+    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
                 .fastmode(true)
                 .build();

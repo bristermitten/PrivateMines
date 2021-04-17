@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.List;
 
 public interface WorldEditHook {
-    void fill(WorldEditRegion region, List<Material> blocks);
+    void fill(WorldEditRegion region, List<ItemStack> blocks);
     void fillAir(WorldEditRegion region);
 
     /*

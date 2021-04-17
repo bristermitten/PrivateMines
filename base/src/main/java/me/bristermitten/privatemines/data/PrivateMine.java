@@ -51,7 +51,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private List<Material> blocks;
+    private List<ItemStack> blocks;
     private double taxPercentage;
     private double minePercentage;
     private double resetPercentage;
@@ -65,7 +65,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        Set<UUID> trustedPlayers,
                        List<String> commands,
                        boolean open,
-                       List<Material> blocks,
+                       List<ItemStack> blocks,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
@@ -103,7 +103,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         ItemStack block = (ItemStack) map.get("blocks");
 
-        List<Material> blocks = new ArrayList<>();
+        List<ItemStack> blocks = new ArrayList<>();
 
 //        try {
 //            blocks = ItemStack.deserialize((Map)map.get("Blocks"));
@@ -188,11 +188,11 @@ public class PrivateMine implements ConfigurationSerializable {
         }
     }
 
-    public List<Material> getMineBlocks() {
+    public List<ItemStack> getMineBlocks() {
         return blocks;
     }
 
-    public List<Material> getMineMaterials() {
+    public List<ItemStack> getMineMaterials() {
         return new ArrayList<>(getMineBlocks());
     }
 

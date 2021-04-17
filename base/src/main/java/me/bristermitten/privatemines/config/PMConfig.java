@@ -18,7 +18,7 @@ public class PMConfig {
     private String worldName = "me/bristermitten/privatemines";
     private int minesDistance = 150;
     private List<ItemStack> blockOptions = new ArrayList<>();
-    private List<Material> mineBlocks = new ArrayList<>();
+    private List<ItemStack> mineBlocks = new ArrayList<>();
 
     private List<String> firstTimeCommands;
     private List<String> commands;
@@ -83,7 +83,15 @@ public class PMConfig {
         this.resetStyles = config.getStringList("Reset-Styles");
         this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
-        this.mineBlocks = (List<Material>) config.getList("blocks");
+        this.mineBlocks = (List<ItemStack>) config.getList("blocks");
+
+        this.mineBlocks = config.getStringList("blocks")
+                .stream()
+                .map(Util::parseItem)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
         this.sellCommand = config.getString("sellCommand");
         this.resetPercentages = config.getIntegerList("Reset-Percentages");
 
@@ -133,7 +141,7 @@ public class PMConfig {
         return npcsEnabled;
     }
 
-    public List<Material> getDefaultBlock() {
+    public List<ItemStack> getDefaultBlock() {
         return mineBlocks;
     }
 
@@ -141,7 +149,7 @@ public class PMConfig {
         return blockOptions;
     }
 
-    public List<Material> getMineBlocks() {
+    public List<ItemStack> getMineBlocks() {
         return mineBlocks;
     }
 
