@@ -12,6 +12,7 @@ import me.bristermitten.privatemines.listeners.BlockBreak;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;
@@ -38,11 +39,14 @@ public final class PrivateMines extends JavaPlugin {
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
     private MineFactory<MineSchematic<?>, ?> factory;
+    private UpdateCheck updateCheck;
 
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
     private boolean autoSellEnabled = false;
     private boolean npcsEnabled = false;
+
+    private static int resourceID = 90890;
 
     public static PrivateMines getPlugin() {
         return JavaPlugin.getPlugin(PrivateMines.class);
@@ -123,9 +127,27 @@ public final class PrivateMines extends JavaPlugin {
             Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
         }
 
-        Bukkit.getPluginManager().registerEvents(new BlockBreak(storage), this);
+        Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
 
         new MineResetTask(this, storage).start();
+
+        Bukkit.getLogger().info("Checking for updates...");
+        UpdateCheck.of(this)
+                .resourceId(resourceID)
+                .handleResponse(((versionResponse, s) -> {
+                    switch (versionResponse) {
+                        case FOUND_NEW:
+                            Bukkit.getLogger().info("There's a new version for Private Mines v" + s);
+                            Bukkit.getLogger().info("You're currently running v" +
+                                    getPlugin().getDescription().getVersion());
+                            break;
+                        case LATEST:
+                            Bukkit.getLogger().info("You're running the latest version of Private Mines!");
+                            break;
+                        case UNAVAILABLE:
+                            Bukkit.getLogger().info("Unable to perform an update check.");
+                    }
+                })).checkUpdate();
 
         long loaded = System.currentTimeMillis();
         Bukkit.getLogger().info(String.format(ChatColor.GREEN +
@@ -164,7 +186,8 @@ public final class PrivateMines extends JavaPlugin {
         //noinspection deprecation
         manager.enableUnstableAPI("help");
 
-        manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage, mainConfig));
+        manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage,
+                mainConfig, updateCheck));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {

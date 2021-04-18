@@ -122,5 +122,8 @@ Reset-Percentages:
 Default-Reset-Style: "FAST"
 
 # The command used for when the player right clicks the sell npc.
+# Make sure the shop where the player will sell to will have the
+# LOWEST priority value or it won't work.
+
 Sell-Command: "sellall"
 

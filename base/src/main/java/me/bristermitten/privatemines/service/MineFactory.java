@@ -176,7 +176,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         privateMine.fillWE();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
-
         if (isNew) {
             for (String s : firstTimeCommands) {
                 s = s.replace(NAME_PLACEHOLDER, owner.getName());

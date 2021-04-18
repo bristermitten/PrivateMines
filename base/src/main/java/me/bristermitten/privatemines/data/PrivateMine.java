@@ -21,7 +21,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -104,12 +103,6 @@ public class PrivateMine implements ConfigurationSerializable {
         ItemStack block = (ItemStack) map.get("blocks");
 
         List<ItemStack> blocks = new ArrayList<>();
-
-//        try {
-//            blocks = ItemStack.deserialize((Map)map.get("Blocks"));
-//        } catch (Exception ignored) {
-//            blocks = ItemStack.deserialize((Map<String, Object>) map.get("Blocks"));
-//        }
 
         WorldEditVector corner1 = Util.deserializeWorldEditVector((Map<String, Object>) map.get("Corner1"));
         WorldEditVector corner2 = Util.deserializeWorldEditVector(((Map<String, Object>) map.get("Corner2")));
@@ -416,7 +409,6 @@ public class PrivateMine implements ConfigurationSerializable {
      */
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
         fillWE();
-//        fillWE(new ItemStack(Material.AIR));
         boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();

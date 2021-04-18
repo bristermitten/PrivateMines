@@ -1,26 +1,32 @@
 package me.bristermitten.privatemines.listeners;
 
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.text.DecimalFormat;
-
 public class BlockBreak implements Listener {
 
-    private final MineStorage storage;
+    //TODO FIX THIS UP...
 
-    public BlockBreak(MineStorage storage) {
+    private final MineStorage storage;
+    private final PMConfig config;
+
+    public BlockBreak(MineStorage storage, PMConfig configuration) {
         this.storage = storage;
+        this.config = configuration;
     }
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         PrivateMine mine = storage.get(player);
+
+
         int total;
         int air;
 
@@ -28,16 +34,9 @@ public class BlockBreak implements Listener {
             player.sendMessage("Mine is null..");
             return;
         } else {
-            total = mine.getTotalBlocks();
-            air = mine.getAirBlocks();
+            /*
+                TODO Need to this to do percents.
+             */
         }
-        player.sendMessage("Total blocks: " + total);
-        player.sendMessage("Air Blocks: " + air);
-
-        double percent = air * 100.0 / total;
-        DecimalFormat format = new DecimalFormat("##.##");
-
-        player.sendMessage("Blocks mined: " + air);
-        player.sendMessage("Percentage mined: " + format.format(percent) + "%");
     }
 }

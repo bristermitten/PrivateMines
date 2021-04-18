@@ -6,18 +6,17 @@ import com.google.common.primitives.Ints;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -239,29 +238,6 @@ public final class Util {
         }
         return sb.toString();
     }
-
-
-    public static String getLatestGithubVersion() throws IOException {
-        String url = "https://api.github.com/repos/knightzmc/PrivateMines/commits/master";
-        String ver = "";
-
-        InputStream is = new URL(url).openStream();
-        try {
-            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            Object object = new JSONParser().parse(new FileReader("https://api.github.com/repos/knightzmc/PrivateMines/commits/master"));
-            JSONObject skr = (JSONObject) object;
-
-            String version = (String) skr.get("sha");
-            Bukkit.broadcastMessage(version);
-            ver = version;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } finally {
-            is.close();
-        }
-        return ver;
-    }
-
     public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
         float percent = (float) current / max;
         int progressBars = (int) (totalBars * percent);

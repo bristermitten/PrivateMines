@@ -46,33 +46,14 @@ public class MineResetTask extends BukkitRunnable {
 
     @Override
     public void run() {
-
         /*
-            TODO Recode this, throws errors smh.
+            TODO Implement a decent percent system.
          */
 
-//        for (PrivateMine mine : storage.getAll()) {
-//            double total = mine.getTotalBlocks();
-//            double air = mine.getAirBlocks();
-//            double percent = air * 100 / total;
-//            double blocksLeft = 100.00 - percent;
-//
-//            if (percent <= 0) {
-//                return;
-//            }
-//            DecimalFormat format = new DecimalFormat("##.##");
-//
-//            Bukkit.broadcastMessage("Mine Percentage (task): " + format.format(percent));
-//            Bukkit.broadcastMessage("Blocks Left Percent: " + format.format(blocksLeft));
-//
-//            Bukkit.broadcastMessage(Util.parsePercent((int) percent));
-//            if (mine.shouldReset() || percent >= 50) {
-//                mine.fillWE();
-//            }
-//
-//            for (Player player : Bukkit.getOnlinePlayers()) {
-//                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("ACTION_BAR"));
-//            }
-//        }
+        for (PrivateMine mine : storage.getAll()) {
+            if (mine.shouldReset()) {
+                mine.fillWE();
+            }
+        }
     }
 }

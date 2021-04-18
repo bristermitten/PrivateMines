@@ -17,7 +17,6 @@ import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
@@ -49,9 +48,6 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
-
-        Player p = e.getClicker();
-        p.sendMessage(ChatColor.GREEN + "Debug: SellNPCTrait Line 58, Open the gui for the sell prices! =)");
     }
 
     /*
@@ -64,7 +60,7 @@ public class SellNPCTrait extends Trait
         {
             return;
         }
-        e.getClicker().performCommand("sellall " + "shop-" + owner.toString());
+        e.getClicker().performCommand("sellall");
     }
 
 

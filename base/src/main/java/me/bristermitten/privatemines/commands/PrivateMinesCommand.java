@@ -12,6 +12,7 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -33,12 +34,14 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
+    private final UpdateCheck check;
 
-    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage, PMConfig config) {
+    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage, PMConfig config, UpdateCheck check) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
+        this.check = check;
     }
 
     @Default
@@ -394,6 +397,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.version")
     @Description("Gets the current version of Private Mines")
     public void version(Player p) {
-
+        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
+        p.sendMessage(ChatColor.GREEN + "Latest Spigot version: v" + check.getSpigotVersion());
     }
 }

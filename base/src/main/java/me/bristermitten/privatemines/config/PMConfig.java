@@ -85,6 +85,7 @@ public class PMConfig {
         this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
+        this.sellCommand = config.getString("Sell-Command");
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
         this.resetPercentage = config.getInt("Reset-Percentage");
@@ -128,20 +129,24 @@ public class PMConfig {
         return npcSkin;
     }
 
-    public double getTaxPercentage() {
-        return taxPercentage;
-    }
-
     public String getNPCName() {
         return npcName;
     }
 
-    public Map<BlockType, ItemStack> getBlockTypes() {
-        return blockTypes;
-    }
-
     public String getWorldName() {
         return worldName;
+    }
+
+    public String getMineRegionNameFormat() {return mineRegionNameFormat;}
+
+    public String getSellCommand() {return sellCommand; }
+
+    public double getTaxPercentage() {
+        return taxPercentage;
+    }
+
+    public Map<BlockType, ItemStack> getBlockTypes() {
+        return blockTypes;
     }
 
     public int getMinesDistance() {
@@ -178,5 +183,4 @@ public class PMConfig {
 
     public int getMineTier() { return mineTier; }
 
-    public String getMineRegionNameFormat() {return mineRegionNameFormat;}
 }
