@@ -46,7 +46,7 @@ public class MinesMenu
                     PrivateMine mine = storage.getOrCreate(pl);
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
-//                            "%blocks%", prettify(mine.getBlocks().toString()),
+                            "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
                             "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.",
                             "%tier%", mine.getMineTier());
                     i.setItemMeta(itemMeta);

@@ -24,7 +24,11 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
+import java.util.Set;
 import java.util.UUID;
+
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
@@ -77,7 +81,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         final PrivateMine mine = storage.getOrCreate(p);
         if (taxPercentage == null) {
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", String.valueOf(mine.getTaxPercentage()));
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
             return;
         }
         mine.setTaxPercentage(taxPercentage);
@@ -108,7 +112,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.give")
     @CommandCompletion("@players")
     @Description("Give a Player a PrivateMine")
-    public void give(OnlinePlayer target) {
+    public void give(OfflinePlayer target) {
         Player t = target.getPlayer();
         if (storage.has(t)) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
@@ -145,6 +149,25 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         mine.delete();
         storage.remove(sender);
+    }
+
+    @Subcommand("purge")
+    @Description("Purge all the Private Mines on the server")
+    @CommandPermission("privatemines.purge")
+    public void purge(Player player) {
+        Set<PrivateMine> mineSet = storage.getAll();
+        if (mineSet.isEmpty()) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_NO_MINES);
+            return;
+        }
+        player.sendMessage("Deleting mines...");
+
+        int total = mineSet.size();
+
+        for (PrivateMine mine : mineSet) {
+            mine.delete();
+        }
+        player.sendMessage(format(ChatColor.GREEN + "Deleted a total of %d mines!", total));
     }
 
     @Subcommand("status")
@@ -240,7 +263,6 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
         String resetStyle = mine.getResetStyle();
-        p.sendMessage(resetStyle);
         mine.fillWE();
 
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
@@ -399,5 +421,30 @@ public class PrivateMinesCommand extends BaseCommand {
     public void version(Player p) {
         p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
         p.sendMessage(ChatColor.GREEN + "Latest Spigot version: v" + check.getSpigotVersion());
+    }
+
+    @Subcommand("setblockstyle")
+    @CommandPermission("privatemines.setblockstyle")
+    @Description("Set the blocks styles")
+    public void setstyle(Player player, OnlinePlayer target, String style) {
+
+        PrivateMine mine = storage.get(target.player);
+        style = style.toLowerCase();
+
+        if (mine == null) {
+            player.sendMessage("That player doesn't have a mine!");
+            return;
+        } else {
+            if (style == null) {
+                player.sendMessage("You didn't specify a style!");
+            }
+        }
+        player.sendMessage("Setting " + target.player + "'s block style to " + style + "!");
+        target.player.sendMessage(player.getName() + " has set your block style to " + style + "!");
+
+        /*
+            Somehow get the style from Block-Styles in config, and get the block list and set the mine blocks.
+         */
+
     }
 }

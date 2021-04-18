@@ -32,6 +32,7 @@ import java.util.stream.Stream;
 public class MineFactory<M extends MineSchematic<S>, S> {
 
     public static final String DEFAULT_MINE_OPEN_KEY = "Default-Open";
+    private static final String DEFAULT_MINE_FAST_MODE_KEY = "Default-Fast-Mode";
     protected final PMConfig config;
     protected final PrivateMines plugin;
     private final MineWorldManager manager;
@@ -160,7 +161,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 new HashSet<>(),
                 commands,
                 plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
-                config.getMineBlocks(),
+                plugin.getConfig().getBoolean(DEFAULT_MINE_FAST_MODE_KEY, true),
+                config.getDefaultMineBlocks(),
                 mainRegion,
                 locations,
                 worldGuardRegion,

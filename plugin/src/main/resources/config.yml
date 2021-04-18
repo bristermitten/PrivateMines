@@ -20,7 +20,7 @@ Blocks:
   Spawnpoint: CHEST
   #Defines a corner of the mining area. Place this at both corners. They will be replaced with air and the mine will be filled
   Mine-Corner: POWERED_RAIL
-  Sell-NPC: WOOL
+  Sell-NPC: WHITE_WOOL
 
 ##The default block for mines
 #Default-Block: REDSTONE_BLOCK
@@ -33,7 +33,7 @@ Block-Options:
   - GOLD_BLOCK
 
 Block-Styles:
-  Basic:
+  Default:
     - STONE
     - COBBLESTONE
   Powerful:
@@ -52,7 +52,11 @@ Default-Price: 5
 #Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
 
+# Is mine open by default?
 Default-Open: true
+
+# Does the mine reset using fast mode?
+Default-Fast-Mode: true
 
 #Default reset delay for the mines in minutes
 Reset-Delay: 5
@@ -96,12 +100,6 @@ Effects:
 Reset-Styles:
   - "SLOW"
   - "FAST"
-  - "UP_DOWN"
-  - "DOWN_UP"
-  - "LEFT_RIGHT"
-  - "RIGHT_LEFT"
-  - "FRONT_BACK"
-  - "BACK_FRONT"
 
 #Reset percentages
 

@@ -39,9 +39,9 @@ public class ModernWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
+    public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
-            session.setFastMode(true);
+            session.setFastMode(fastMode);
 
             final RandomPattern pattern = new RandomPattern();
             final Region weRegion = transform(region);

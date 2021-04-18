@@ -50,6 +50,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
+    private boolean fastMode;
     private List<ItemStack> blocks;
     private double taxPercentage;
     private double minePercentage;
@@ -64,6 +65,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        Set<UUID> trustedPlayers,
                        List<String> commands,
                        boolean open,
+                       boolean fastMode,
                        List<ItemStack> blocks,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
@@ -80,6 +82,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.trustedPlayers = trustedPlayers;
         this.commands = commands;
         this.open = open;
+        this.fastMode = fastMode;
         this.mainRegion = mainRegion;
         this.locations = locations;
         this.blocks = blocks;
@@ -99,8 +102,7 @@ public class PrivateMine implements ConfigurationSerializable {
         UUID owner = UUID.fromString((String) map.get("Owner"));
 
         boolean open = (Boolean) map.get("Open");
-
-        ItemStack block = (ItemStack) map.get("blocks");
+        boolean fastMode = (Boolean) map.get("FastMode");
 
         List<ItemStack> blocks = new ArrayList<>();
 
@@ -141,7 +143,7 @@ public class PrivateMine implements ConfigurationSerializable {
         Shop shop = new Shop(shopName);
         SellHandler.addShop(shop);
 
-        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
+        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, fastMode, blocks, mainRegion, locations,
                 wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, schematic, storage);
     }
 
@@ -185,6 +187,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocks;
     }
 
+    public void setMineBlocks(List<ItemStack> itemStack) {
+        this.blocks = itemStack;
+    }
+
     public List<ItemStack> getMineMaterials() {
         return new ArrayList<>(getMineBlocks());
     }
@@ -203,6 +209,10 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
+    }
+
+    public boolean fastMode() {
+        return fastMode;
     }
 
     public String getResetStyle() {
@@ -224,6 +234,7 @@ public class PrivateMine implements ConfigurationSerializable {
     public MineLocations getLocations() {
         return locations;
     }
+
 
     public Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
@@ -271,8 +282,14 @@ public class PrivateMine implements ConfigurationSerializable {
         return open;
     }
 
+    public boolean isFastMode() { return fastMode; }
+
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public void setFastMode(boolean fastMode) {
+        this.fastMode = fastMode;
     }
 
     public void fillWE() {
@@ -283,8 +300,10 @@ public class PrivateMine implements ConfigurationSerializable {
                 Util.toWEVector(selection.getMaximumPoint()),
                 mainRegion.getWorld()
         );
+
         //Could probably cache this but it's not very intensive
         //free any players who might be in the mine
+
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
                 player.teleport(locations.getSpawnPoint());
@@ -292,7 +311,7 @@ public class PrivateMine implements ConfigurationSerializable {
             }
         }
 
-        PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks());
+        PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }

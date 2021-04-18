@@ -4,7 +4,6 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -21,12 +20,11 @@ public class PMConfig {
     private int minesDistance = 150;
     private List<ItemStack> blockOptions = new ArrayList<>();
     private List<ItemStack> mineBlocks = new ArrayList<>();
-
+    private List<ItemStack> defaultMineBlocks = new ArrayList<>();
 
     private List<String> firstTimeCommands;
     private List<String> commands;
     private List<String> resetStyles;
-    private List<String> blockStyles;
 
     private List<ParticleEffect> effects;
 
@@ -75,13 +73,6 @@ public class PMConfig {
             Bukkit.getLogger().info("" + config.getList("Block-Styles." + entry));
         }
 
-//        this.blockOptions = config.getStringList("Block-Options")
-//                .stream()
-//                .map(Util::parseItem)
-//                .filter(Optional::isPresent)
-//                .map(Optional::get)
-//                .collect(Collectors.toList());
-
         this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
@@ -96,6 +87,13 @@ public class PMConfig {
         this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
+
+        this.defaultMineBlocks = config.getStringList("Block-Styles.Default")
+                .stream()
+                .map(Util::parseItem)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
 
         this.mineBlocks = config.getStringList("blocks")
                 .stream()
@@ -119,7 +117,6 @@ public class PMConfig {
         }
 
     }
-
 
     public Map<MessageType, ChatColor> getColors() {
         return colors;
@@ -145,6 +142,10 @@ public class PMConfig {
         return taxPercentage;
     }
 
+    public Map<BlockType, ItemStack> getDefaultBlocks() {
+        return blockTypes;
+    }
+
     public Map<BlockType, ItemStack> getBlockTypes() {
         return blockTypes;
     }
@@ -164,6 +165,8 @@ public class PMConfig {
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
+
+    public List<ItemStack> getDefaultMineBlocks() {return defaultMineBlocks; }
 
     public List<ItemStack> getMineBlocks() {
         return mineBlocks;

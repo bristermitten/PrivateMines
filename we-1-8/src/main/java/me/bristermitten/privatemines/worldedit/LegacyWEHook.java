@@ -12,7 +12,6 @@ import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.data.MineSchematic;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
@@ -37,9 +36,9 @@ public class LegacyWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
+    public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
-                .fastmode(true)
+                .fastmode(fastMode)
                 .build();
 
         /*
