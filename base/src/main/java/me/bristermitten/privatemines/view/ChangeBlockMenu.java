@@ -38,6 +38,7 @@ public class ChangeBlockMenu {
         spec.register(plugin);
         PrivateMine mine = storage.getOrCreate(p);
         ItemStack[] blocks = config.getBlockOptions().toArray(new ItemStack[]{});
+
         p.openInventory(spec.genMenu((block, i) -> {
                     i.setType(block.getType());
                     i.setDurability(block.getDurability());
@@ -54,7 +55,7 @@ public class ChangeBlockMenu {
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        mine.fillWE();
+                        mine.fillWESingle(new ItemStack(block.getType()));
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
                     }

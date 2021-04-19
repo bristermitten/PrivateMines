@@ -253,11 +253,13 @@ public class PrivateMine implements ConfigurationSerializable {
         Location max = locations.getRegion().getMaximumLocation();
         Location loc = min.add(max);
 
+        int total = 0;
         for (Player online : Bukkit.getOnlinePlayers()) {
-
+            if (loc.equals(online.getLocation())) {
+                total++;
+            }
         }
-
-        return 1;
+        return total;
     }
 
     public Map<String, Object> serialize() {
@@ -340,6 +342,34 @@ public class PrivateMine implements ConfigurationSerializable {
         }
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
+
+        this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
+    }
+
+    public void fillWESingle(ItemStack itemStack) {
+
+        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+        final WorldEditRegion miningRegion = new WorldEditRegion(
+                Util.toWEVector(selection.getMinimumPoint()),
+                Util.toWEVector(selection.getMaximumPoint()),
+                mainRegion.getWorld()
+        );
+
+        //Could probably cache this but it's not very intensive
+        //free any players who might be in the mine
+
+        /*
+            The Util.getOnlinePlayers part is linked to the caching system saves a few a milliseconds
+         */
+
+        for (Player player : Util.getOnlinePlayers()) {
+            if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
+                player.teleport(locations.getSpawnPoint());
+                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
+            }
+        }
+
+        PrivateMines.getPlugin().getWeHook().fillSingle(miningRegion, itemStack, isFastMode());
 
         this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
     }

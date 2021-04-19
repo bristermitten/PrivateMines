@@ -1,5 +1,5 @@
 name: PrivateMines
-version: @version@
+version: 1.6 # Change this to update version
 main: me.bristermitten.privatemines.PrivateMines
 authors: [BristerMitten, UntouchedOdin0]
 website: github.com/knightzmc

@@ -160,7 +160,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_NO_MINES);
             return;
         }
-        player.sendMessage("Deleting mines...");
+        player.sendMessage(ChatColor.GREEN + "Deleting mines...");
 
         int total = mineSet.size();
 
@@ -248,8 +248,6 @@ public class PrivateMinesCommand extends BaseCommand {
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
         mine.fillWE();
-        String resetStyle = mine.getResetStyle();
-        p.sendMessage(resetStyle);
     }
 
     @Subcommand("reset")
@@ -262,7 +260,6 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        String resetStyle = mine.getResetStyle();
         mine.fillWE();
 
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
@@ -420,11 +417,11 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Gets the current version of Private Mines")
     public void version(Player p) {
         p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
-        p.sendMessage(ChatColor.GREEN + "Latest Spigot version: v" + check.getSpigotVersion());
     }
 
     @Subcommand("setblockstyle")
     @CommandPermission("privatemines.setblockstyle")
+    @CommandCompletion("@players")
     @Description("Set the blocks styles")
     public void setstyle(Player player, OnlinePlayer target, String style) {
 
@@ -439,12 +436,8 @@ public class PrivateMinesCommand extends BaseCommand {
                 player.sendMessage("You didn't specify a style!");
             }
         }
-        player.sendMessage("Setting " + target.player + "'s block style to " + style + "!");
-        target.player.sendMessage(player.getName() + " has set your block style to " + style + "!");
-
-        /*
-            Somehow get the style from Block-Styles in config, and get the block list and set the mine blocks.
-         */
-
+        player.sendMessage(ChatColor.GREEN + "Setting " + target.player + "'s block style to " + style + "!");
+        target.player.sendMessage(ChatColor.GREEN + player.getName() + " has set your block style to " + style + "!");
+        mine.setResetStyle(style);
     }
 }

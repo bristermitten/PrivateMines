@@ -11,6 +11,5 @@ public class UserJoinEvent implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Util.addToOnlinePlayers(event.getPlayer());
-        Bukkit.broadcastMessage(String.valueOf(Util.getOnlinePlayers()));
     }
 }

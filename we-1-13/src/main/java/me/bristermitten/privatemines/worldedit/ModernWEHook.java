@@ -39,6 +39,16 @@ public class ModernWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
+    public void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode) {
+
+        try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
+            session.setBlocks(transform(region), BukkitAdapter.adapt(block.getType().createBlockData()));
+            session.flushSession();
+        } catch (MaxChangedBlocksException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
             session.setFastMode(fastMode);

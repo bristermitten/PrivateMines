@@ -11,6 +11,5 @@ public class UserLeaveEvent implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Util.removeFromOnlinePlayers(event.getPlayer());
-        Bukkit.broadcastMessage(String.valueOf(Util.getOnlinePlayers()));
     }
 }

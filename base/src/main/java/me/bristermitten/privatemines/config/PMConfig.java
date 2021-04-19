@@ -66,13 +66,6 @@ public class PMConfig {
             this.blockTypes.put(BlockType.fromName(block), value.get());
         }
 
-        for (String entry : config.getConfigurationSection("Block-Styles").getKeys(true)) {
-            Bukkit.getLogger().info("[DEBUG] Block-Styles: ");
-            Bukkit.getLogger().info(entry);
-            Bukkit.getLogger().info("[DEBUG] Block-Styles Blocks?: ");
-            Bukkit.getLogger().info("" + config.getList("Block-Styles." + entry));
-        }
-
         this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
         this.npcSkin = config.getString("NPC-Skin");
@@ -87,6 +80,13 @@ public class PMConfig {
         this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
         this.mineBlocks = (List<ItemStack>) config.getList("blocks");
+
+        this.blockOptions = config.getStringList("Block-Options")
+                .stream()
+                .map(Util::parseItem)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
 
         this.defaultMineBlocks = config.getStringList("Block-Styles.Default")
                 .stream()
@@ -162,11 +162,21 @@ public class PMConfig {
         return mineBlocks;
     }
 
+    /*
+        Single Blocks
+     */
+
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
 
-    public List<ItemStack> getDefaultMineBlocks() {return defaultMineBlocks; }
+    /*
+        Multiple blocks
+     */
+
+    public List<ItemStack> getDefaultMineBlocks() {
+        return defaultMineBlocks;
+    }
 
     public List<ItemStack> getMineBlocks() {
         return mineBlocks;

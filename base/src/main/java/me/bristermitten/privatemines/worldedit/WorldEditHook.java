@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface WorldEditHook {
     void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode);
+    void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode);
+
     void fillAir(WorldEditRegion region);
 
     /*

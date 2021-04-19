@@ -36,6 +36,24 @@ public class LegacyWEHook implements WorldEditHook {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
+    /*
+        Fill mine with one type of block
+     */
+
+    public void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode) {
+        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
+                .fastmode(fastMode)
+                .build();
+
+        //noinspection deprecation
+        session.setBlocks(transform(region), new BaseBlock(block.getTypeId()));
+        session.flushQueue();
+    }
+
+    /*
+        Fill the mine with multiple blocks
+     */
+
     public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
                 .fastmode(fastMode)
@@ -45,17 +63,14 @@ public class LegacyWEHook implements WorldEditHook {
             Please help me rework this... I'm gonna destroy something soon.
          */
 
-        final RandomPattern pattern = new RandomPattern();
-
         List<BlockChance> blockChance = new ArrayList<>();
-
 
         RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
 
         //noinspection deprecation
-            session.setBlocks(transform(region), randomFillPattern);
-            session.flushQueue();
-        }
+        session.setBlocks(transform(region), randomFillPattern);
+        session.flushQueue();
+    }
 
     public void fillAir(WorldEditRegion region) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
