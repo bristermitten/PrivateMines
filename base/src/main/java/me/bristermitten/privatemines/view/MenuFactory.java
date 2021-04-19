@@ -35,12 +35,8 @@ public class MenuFactory {
 		new ChangeThemeMenu(p, plugin, config, storage);
 	}
 
-	public void createAndOpenEffectsMenu(Player p) {
-		new ChangeEffectsMenu(p, plugin, pmConfig, config, storage);
-	}
-
 	public void createAndOpenResetPercentMenu(Player p) {
-		new ChangeEffectsMenu(p, plugin, pmConfig, config, storage);
+		new ChangeMineResetPercentMenu(p, plugin, pmConfig, config, storage);
 	}
 
 }

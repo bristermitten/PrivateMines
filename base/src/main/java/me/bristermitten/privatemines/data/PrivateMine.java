@@ -187,12 +187,24 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocks;
     }
 
-    public void setMineBlocks(List<ItemStack> itemStack) {
-        this.blocks = itemStack;
+    public List<String> getMineBlocksString() {
+        ArrayList<String> blocks = new ArrayList<>();
+        for (ItemStack itemStack : getMineBlocks()) {
+            blocks.add(itemStack.getType().name());
+        }
+        return blocks;
     }
 
-    public List<ItemStack> getMineMaterials() {
-        return new ArrayList<>(getMineBlocks());
+    public List<String> getMineBlocksFormatted(List<ItemStack> stack) {
+        ArrayList<String> pretty = new ArrayList();
+        for (ItemStack itemStack : stack) {
+            pretty.add(Util.prettify(itemStack.getType().toString()));
+        }
+        return pretty;
+    }
+
+    public void setMineBlocks(List<ItemStack> itemStack) {
+        this.blocks = itemStack;
     }
 
     public int getMineTier() {

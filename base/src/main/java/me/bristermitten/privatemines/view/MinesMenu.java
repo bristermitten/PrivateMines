@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+
 /**
  * Menu for viewing all open Private Mines
  */
@@ -36,17 +38,23 @@ public class MinesMenu
                         .filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
 
-        /*
-                            String name = displayName.replace("%block%",
-                            Util.getName(block).orElse("Unknown"));
-         */
+
         p.openInventory(spec.genMenu(
                 (pl, i) -> {
                     ItemMeta itemMeta = i.getItemMeta();
                     PrivateMine mine = storage.getOrCreate(pl);
+                    List<String> formattedBlocks = mine.getMineBlocksFormatted(mine.getMineBlocks());
+
+                    for (String s : formattedBlocks) {
+                        pl.sendMessage("MinesMenu ->");
+                        pl.sendMessage("Formatted Blocks: " + s);
+                    }
+
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
                             "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
+                            "%blocks%", mine.getMineBlocks(),
+                            "%blocksFormatted%", mine.getMineBlocksFormatted(mine.getMineBlocks()),
                             "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.",
                             "%tier%", mine.getMineTier());
                     i.setItemMeta(itemMeta);

@@ -28,10 +28,6 @@ Menus:
         Type: BEACON
         Name: "&6&lChange how your mine resets"
       '13':
-        Action: 'change-reset-effect'
-        Type: REDSTONE
-        Name: "&6&lAdd mine reset effects!"
-      '15':
         Action: 'change-reset-percent'
         Type: HOPPER
         Name: "&6&lChange mine reset percentage!"
@@ -49,6 +45,7 @@ Menus:
         Lore:
           - "&7Tax: &6%tax%%"
           - "&7Block Type: &6%block%"
+          - "&7Blocks: &6%blocks%"
           - "&7Tier: &6%tier%"
   Blocks:
     Title: "&6&lChange Block"

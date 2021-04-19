@@ -6,10 +6,7 @@ import com.google.common.primitives.Ints;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -134,7 +131,6 @@ public final class Util {
                 return mutableLine[0];
             }).collect(toList()));
         }
-
     }
 
     public static String prettify(String s) {
@@ -142,6 +138,19 @@ public final class Util {
                 .map(String::toLowerCase)
                 .map(str -> str.substring(0, 1).toUpperCase() + str.substring(1))
                 .collect(Collectors.joining(" "));
+    }
+
+    public static List<String> prettifyList(List<String> is) {
+
+        List<String> prettifiedList = new ArrayList();
+
+        Iterator<String> itemStackIterator = is.iterator();
+        while (itemStackIterator.hasNext()) {
+            System.out.println(itemStackIterator.next());
+            Bukkit.broadcastMessage(String.valueOf(itemStackIterator.next()));
+            prettifiedList.add(prettify(itemStackIterator.next()));
+        }
+        return prettifiedList;
     }
 
 
@@ -238,6 +247,7 @@ public final class Util {
         }
         return sb.toString();
     }
+
     public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
         float percent = (float) current / max;
         int progressBars = (int) (totalBars * percent);
