@@ -21,6 +21,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -247,6 +248,17 @@ public class PrivateMine implements ConfigurationSerializable {
         return locations;
     }
 
+    public int getUsersInMine() {
+        Location min = locations.getRegion().getMinimumLocation();
+        Location max = locations.getRegion().getMaximumLocation();
+        Location loc = min.add(max);
+
+        for (Player online : Bukkit.getOnlinePlayers()) {
+
+        }
+
+        return 1;
+    }
 
     public Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
@@ -316,7 +328,11 @@ public class PrivateMine implements ConfigurationSerializable {
         //Could probably cache this but it's not very intensive
         //free any players who might be in the mine
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
+        /*
+            The Util.getOnlinePlayers part is linked to the caching system saves a few a milliseconds
+         */
+
+        for (Player player : Util.getOnlinePlayers()) {
             if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
                 player.teleport(locations.getSpawnPoint());
                 player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");

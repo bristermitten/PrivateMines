@@ -9,6 +9,8 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.SellNPCTrait;
 import me.bristermitten.privatemines.listeners.BlockBreak;
+import me.bristermitten.privatemines.listeners.UserJoinEvent;
+import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
@@ -33,6 +35,7 @@ import java.io.IOException;
 public final class PrivateMines extends JavaPlugin {
 
     public static final String MINES_FILE_NAME = "mines.yml";
+    private static int resourceID = 90890;
     private Economy econ;
     private MineStorage storage;
     private MenuConfig menuConfig;
@@ -40,13 +43,10 @@ public final class PrivateMines extends JavaPlugin {
     private BukkitCommandManager manager;
     private MineFactory<MineSchematic<?>, ?> factory;
     private UpdateCheck updateCheck;
-
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
     private boolean autoSellEnabled = false;
     private boolean npcsEnabled = false;
-
-    private static int resourceID = 90890;
 
     public static PrivateMines getPlugin() {
         return JavaPlugin.getPlugin(PrivateMines.class);
@@ -128,6 +128,8 @@ public final class PrivateMines extends JavaPlugin {
         }
 
         Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
+        Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
 
         new MineResetTask(this, storage).start();
 
@@ -238,7 +240,6 @@ public final class PrivateMines extends JavaPlugin {
         storage.load(minesConfig);
 
         getLogger().info("Loaded mines.yml");
-
 
         saveResource("menus.yml", false);
 

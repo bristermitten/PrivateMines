@@ -8,6 +8,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 public final class Util {
+
+    private static final Set<Player> onlinePlayers = new HashSet<>();
 
     private Util() {
 
@@ -254,5 +257,29 @@ public final class Util {
 
         return Strings.repeat("" + completeColor + symbol, progressBars)
                 + Strings.repeat("" + nonCompletedColor + symbol, totalBars - progressBars);
+    }
+
+    /*
+        This is a super basic caching system for the online players saves a tiny bit of milliseconds!
+     */
+
+    // Adding a player into the cache system, used mainly in the on player join event
+
+    public static void addToOnlinePlayers(Player player) {
+        onlinePlayers.add(player);
+    }
+
+    // Remove a player from the cache system, used mainly in the on player leave event
+
+    public static void removeFromOnlinePlayers(Player player) {
+        onlinePlayers.remove(player);
+    }
+
+    // Gets the online players, this is used in the MineResetTask class so instead of getting
+    // all the online players each time possibly causing a tiny spike in the server
+    // it will get it from this cache!
+
+    public static Set<Player> getOnlinePlayers() {
+        return onlinePlayers;
     }
 }
