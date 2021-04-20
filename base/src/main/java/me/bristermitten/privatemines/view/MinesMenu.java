@@ -45,18 +45,13 @@ public class MinesMenu
                     PrivateMine mine = storage.getOrCreate(pl);
                     List<String> formattedBlocks = mine.getMineBlocksFormatted(mine.getMineBlocks());
 
-                    for (String s : formattedBlocks) {
-                        pl.sendMessage("MinesMenu ->");
-                        pl.sendMessage("Formatted Blocks: " + s);
-                    }
-
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
                             "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
                             "%blocks%", mine.getMineBlocks(),
                             "%blocksFormatted%", mine.getMineBlocksFormatted(mine.getMineBlocks()),
-                            "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.",
-                            "%tier%", mine.getMineTier());
+                            "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.");
+
                     i.setItemMeta(itemMeta);
                     return i;
                 },

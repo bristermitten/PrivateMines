@@ -133,24 +133,6 @@ public final class PrivateMines extends JavaPlugin {
 
         new MineResetTask(this, storage).start();
 
-        Bukkit.getLogger().info("Checking for updates...");
-        UpdateCheck.of(this)
-                .resourceId(resourceID)
-                .handleResponse(((versionResponse, s) -> {
-                    switch (versionResponse) {
-                        case FOUND_NEW:
-                            Bukkit.getLogger().info("There's a new version for Private Mines v" + s);
-                            Bukkit.getLogger().info("You're currently running v" +
-                                    getPlugin().getDescription().getVersion());
-                            break;
-                        case LATEST:
-                            Bukkit.getLogger().info("You're running the latest version of Private Mines!");
-                            break;
-                        case UNAVAILABLE:
-                            Bukkit.getLogger().info("Unable to perform an update check.");
-                    }
-                })).checkUpdate();
-
         long loaded = System.currentTimeMillis();
         Bukkit.getLogger().info(String.format(ChatColor.GREEN +
                         "Successfully loaded PrivateMines (Took %dms)",

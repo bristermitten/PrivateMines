@@ -429,11 +429,11 @@ public class PrivateMinesCommand extends BaseCommand {
         style = style.toLowerCase();
 
         if (mine == null) {
-            player.sendMessage("That player doesn't have a mine!");
+            player.sendMessage(ChatColor.RED + "That player doesn't have a mine!");
             return;
         } else {
             if (style == null) {
-                player.sendMessage("You didn't specify a style!");
+                player.sendMessage(ChatColor.RED + "You didn't specify a style!");
             }
         }
         player.sendMessage(ChatColor.GREEN + "Setting " + target.player + "'s block style to " + style + "!");

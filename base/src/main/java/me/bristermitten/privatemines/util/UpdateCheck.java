@@ -1,18 +1,14 @@
 package me.bristermitten.privatemines.util;
 
 
-import com.google.common.base.Preconditions;
-import com.google.common.io.Resources;
-import com.google.common.net.HttpHeaders;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
-import javax.net.ssl.HttpsURLConnection;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.HttpURLConnection;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
@@ -51,28 +47,22 @@ public class UpdateCheck {
         return this;
     }
 
-    public void checkUpdate() {
-        Objects.requireNonNull(this.javaPlugin, "javaPlugin");
-        Objects.requireNonNull(this.currentVersion, "currentVersion");
-        Preconditions.checkState(this.resourceId != -1, "resource id not set");
-        Objects.requireNonNull(this.versionResponse, "versionResponse");
+    public String checkUpdate() {
 
-        Bukkit.getScheduler().runTaskAsynchronously(this.javaPlugin, () -> {
-            try {
-                HttpURLConnection httpURLConnection = (HttpsURLConnection) new URL(String.format(SPIGOT_URL, this.resourceId)).openConnection();
-                httpURLConnection.setRequestMethod("GET");
-                httpURLConnection.setRequestProperty(HttpHeaders.USER_AGENT, "Mozilla/5.0");
+        URL url;
+        String version = null;
+        try {
+            url = new URL("https://api.spigotmc.org/legacy/update.php?resource=90890");
+            BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 
-                String fetchedVersion = Resources.toString(httpURLConnection.getURL(), Charset.defaultCharset());
-                spigotVersion = fetchedVersion;
-                boolean latestVersion = fetchedVersion.equalsIgnoreCase(this.currentVersion);
-
-                Bukkit.getScheduler().runTask(this.javaPlugin, () -> this.versionResponse.accept(latestVersion ? VersionResponse.LATEST : VersionResponse.FOUND_NEW, latestVersion ? this.currentVersion : fetchedVersion));
-            } catch (IOException exception) {
-                exception.printStackTrace();
-                Bukkit.getScheduler().runTask(this.javaPlugin, () -> this.versionResponse.accept(VersionResponse.UNAVAILABLE, null));
-            }
-        });
+            String line;
+            line = in.toString();
+            version = line;
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return version;
     }
 
     public String getSpigotVersion() {

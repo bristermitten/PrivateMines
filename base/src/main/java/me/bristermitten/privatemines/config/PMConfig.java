@@ -2,7 +2,6 @@ package me.bristermitten.privatemines.config;
 
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.util.Util;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
