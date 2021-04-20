@@ -247,7 +247,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
-        mine.fillWE();
+        mine.fillWEMultiple(mine.getMineBlocks());
     }
 
     @Subcommand("reset")
@@ -260,7 +260,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.fillWE();
+        mine.fillWEMultiple(mine.getMineBlocks());
 
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
@@ -391,7 +391,7 @@ public class PrivateMinesCommand extends BaseCommand {
 
         mine.setMineSchematic(upgradeSchematic);
         mine.setMineTier(newTier);
-        mine.fillWE();
+        mine.fillWEMultiple(mine.getMineBlocks());
         mine.teleport(p);
     }
 
@@ -418,26 +418,5 @@ public class PrivateMinesCommand extends BaseCommand {
     public void version(Player p) {
         p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
     }
-
-    @Subcommand("setblockstyle")
-    @CommandPermission("privatemines.setblockstyle")
-    @CommandCompletion("@players")
-    @Description("Set the blocks styles")
-    public void setstyle(Player player, OnlinePlayer target, String style) {
-
-        PrivateMine mine = storage.get(target.player);
-        style = style.toLowerCase();
-
-        if (mine == null) {
-            player.sendMessage(ChatColor.RED + "That player doesn't have a mine!");
-            return;
-        } else {
-            if (style == null) {
-                player.sendMessage(ChatColor.RED + "You didn't specify a style!");
-            }
-        }
-        player.sendMessage(ChatColor.GREEN + "Setting " + target.player + "'s block style to " + style + "!");
-        target.player.sendMessage(ChatColor.GREEN + player.getName() + " has set your block style to " + style + "!");
-        mine.setResetStyle(style);
-    }
 }
+

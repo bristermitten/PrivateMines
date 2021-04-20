@@ -2,16 +2,9 @@ package me.bristermitten.privatemines;
 
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import me.bristermitten.privatemines.util.Util;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.text.DecimalFormat;
 
 public class MineResetTask extends BukkitRunnable {
     private final Plugin plugin;
@@ -52,7 +45,7 @@ public class MineResetTask extends BukkitRunnable {
 
         for (PrivateMine mine : storage.getAll()) {
             if (mine.shouldReset()) {
-                mine.fillWE();
+                mine.fillWEMultiple(mine.getMineBlocks());
             }
         }
     }

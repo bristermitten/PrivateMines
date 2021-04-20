@@ -84,7 +84,7 @@ public enum XMaterial {
     ACTIVATOR_RAIL,
     /**
      * https://minecraft.gamepedia.com/Air
-     * {@link Material#isAir()}
+     * {@link Material#isTransparent()} ()}
      *
      * @see #VOID_AIR
      * @see #CAVE_AIR

@@ -175,7 +175,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 plugin.getStorage()
                 );
 
-        privateMine.fillWE();
+        privateMine.fillWEMultiple(config.getDefaultMineBlocks());
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
         if (isNew) {

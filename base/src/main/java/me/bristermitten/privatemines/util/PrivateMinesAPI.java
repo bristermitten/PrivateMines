@@ -1,5 +1,6 @@
-package me.bristermitten.privatemines;
+package me.bristermitten.privatemines.util;
 
+import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -128,6 +129,14 @@ public class PrivateMinesAPI {
 
     public void setMineBlocks(Player player, List<ItemStack> items) {
         storage.get(player).setMineBlocks(items);
+    }
+
+    public void addBlocks(Player player, ItemStack itemStack) {
+        storage.get(player).addMineBlock(itemStack);
+    }
+
+    public void removeBlocks(Player player, ItemStack itemStack) {
+        storage.get(player).removeMineBlock(itemStack);
     }
 
     /**

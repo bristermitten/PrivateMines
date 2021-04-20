@@ -14,6 +14,7 @@ import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.PrivateMinesAPI;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
@@ -35,6 +36,8 @@ import java.io.IOException;
 public final class PrivateMines extends JavaPlugin {
 
     public static final String MINES_FILE_NAME = "mines.yml";
+    private static PrivateMinesAPI privateMinesAPI;
+
     private static int resourceID = 90890;
     private Economy econ;
     private MineStorage storage;
@@ -56,6 +59,10 @@ public final class PrivateMines extends JavaPlugin {
         return getPlugin().econ;
     }
 
+    public static PrivateMinesAPI getPrivateMinesAPI() {
+        return privateMinesAPI;
+    }
+
     public MineWorldManager getMineManager() {
         return mineManager;
     }
@@ -71,6 +78,7 @@ public final class PrivateMines extends JavaPlugin {
     public WorldEditHook getWeHook() {
         return weHook;
     }
+
 
     /*
         Used when the plugin is enabled at the start, loads all the services.

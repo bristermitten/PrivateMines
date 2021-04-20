@@ -5,6 +5,7 @@ import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.patterns.BlockChance;
 import com.sk89q.worldedit.patterns.RandomFillPattern;
@@ -59,16 +60,15 @@ public class LegacyWEHook implements WorldEditHook {
                 .fastmode(fastMode)
                 .build();
 
-        /*
-            Please help me rework this... I'm gonna destroy something soon.
-         */
+        final RandomPattern pattern = new RandomPattern();
 
-        List<BlockChance> blockChance = new ArrayList<>();
-
-        RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
+        for (ItemStack is : blocks) {
+            Pattern pat = new BaseBlock(is.getTypeId());
+            pattern.add(pat, 1);
+        }
 
         //noinspection deprecation
-        session.setBlocks(transform(region), randomFillPattern);
+        session.setBlocks(transform(region), pattern);
         session.flushQueue();
     }
 

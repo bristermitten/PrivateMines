@@ -208,6 +208,18 @@ public class PrivateMine implements ConfigurationSerializable {
         this.blocks = itemStack;
     }
 
+    public void addMineBlock(ItemStack itemStack) {
+        List<ItemStack> blocksOriginal = blocks;
+        blocksOriginal.add(itemStack);
+        this.blocks = blocksOriginal;
+    }
+
+    public void removeMineBlock(ItemStack itemStack) {
+        List<ItemStack> blocksOriginal = blocks;
+        blocksOriginal.remove(itemStack);
+        this.blocks = blocksOriginal;
+    }
+
     public int getMineTier() {
         return this.mineTier;
     }
@@ -318,7 +330,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fastMode = fastMode;
     }
 
-    public void fillWE() {
+    public void fillWEMultiple(List<ItemStack> stack) {
 
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
@@ -485,7 +497,6 @@ public class PrivateMine implements ConfigurationSerializable {
       Sets the new mine schematic (Used when changing themes)
      */
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
-        fillWE();
         boolean mineIsOpen = isOpen();
         setOpen(false);
         delete();
@@ -494,6 +505,8 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getPlayer(owner),
                 mineSchematic,
                 Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()), false);
+
+        fillWEMultiple(newMine.getMineBlocks());
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;
