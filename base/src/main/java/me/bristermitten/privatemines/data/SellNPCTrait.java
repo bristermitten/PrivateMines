@@ -9,6 +9,8 @@ import me.bristermitten.privatemines.service.MineStorage;
 import me.clip.autosell.events.AutoSellEvent;
 import me.clip.autosell.events.SellAllEvent;
 import me.clip.autosell.events.SignSellEvent;
+import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
+import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
@@ -19,12 +21,13 @@ import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.UUID;
 
-public class SellNPCTrait extends Trait
+public class SellNPCTrait extends Trait implements Listener
 {
 
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
@@ -53,6 +56,7 @@ public class SellNPCTrait extends Trait
     /*
       Used when a player right clicks the npc
      */
+
     @EventHandler
     public void onRightClick(NPCRightClickEvent e)
     {
@@ -63,6 +67,24 @@ public class SellNPCTrait extends Trait
         e.getClicker().performCommand("sellall");
     }
 
+    private void process(PrivateMine privateMine, double tax, Player player)
+    {
+        PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
+
+        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
+                "{amount}", String.valueOf(tax),
+                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
+        Bukkit.getOfflinePlayer(owner);
+        if (Bukkit.getOnlinePlayers().contains(owner)) {
+            Bukkit.getPlayer(owner).sendMessage("You've received $" + tax + " from " + player.getName());
+        }
+    }
+
+    /*
+        AutoSell Sell System Listeners..
+    */
 
     @EventHandler
     public void onAutoSell(AutoSellEvent e)
@@ -85,18 +107,6 @@ public class SellNPCTrait extends Trait
         double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
         process(privateMine, tax, e.getPlayer());
     }
-
-    private void process(PrivateMine privateMine, double tax, Player player)
-    {
-        PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
-
-        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
-        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
-                "{amount}", String.valueOf(tax),
-                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-    }
-
 
     @EventHandler
     public void onSellAll(SellAllEvent e)
@@ -130,6 +140,25 @@ public class SellNPCTrait extends Trait
         return !privateMine.contains(player);
     }
 
+    private boolean eventIsNotApplicableSingle(ItemStack itemsSold, Player player)
+    {
+        if (itemsSold == null)
+        {
+            return true;
+        }
+        if (player.getUniqueId().equals(owner))
+        {
+            player.sendMessage("return thing because of OWNER!");
+            return false;
+        }
+        PrivateMine privateMine = storage.get(owner);
+        if (privateMine == null)
+        {
+            return true;
+        }
+        return !privateMine.contains(player);
+    }
+
     @EventHandler
     public void onSignSell(SignSellEvent e)
     {
@@ -143,9 +172,38 @@ public class SellNPCTrait extends Trait
         process(privateMine, tax, e.getPlayer());
     }
 
+    /*
+        UltraPrisonCore Sell System Listeners..
+     */
+
+    @EventHandler
+    public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
+        // Is the person selling the owner? If so, return.
+
+        if (eventIsNotApplicableSingle(new ItemStack(e.getBlock().getType()), e.getPlayer())) {
+            return;
+        }
+
+        PrivateMine privateMine = storage.get(owner);
+        double tax = (e.getMoneyToDeposit() / 100.0) * privateMine.getTaxPercentage();
+        e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
+        e.getPlayer().sendMessage("Processing UPC sell event");
+        process(privateMine, tax, e.getPlayer());
+    }
+
+    @EventHandler
+    public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
+
+        /*
+            Need to add when more things are added to this API.
+         */
+
+        PrivateMine privateMine = storage.get(owner);
+
+    }
+
     public static class UUIDPersister implements Persister<UUID>
     {
-
 
         public UUID create(DataKey dataKey)
         {

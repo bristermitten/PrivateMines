@@ -125,3 +125,6 @@ Default-Reset-Style: "FAST"
 
 Sell-Command: "sellall"
 
+autosell-enabled: false
+ultraprisoncore-enabled: true
+

@@ -49,6 +49,8 @@ public final class PrivateMines extends JavaPlugin {
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
     private boolean autoSellEnabled = false;
+    private boolean ultraPrisonCoreEnabled = false;
+
     private boolean npcsEnabled = false;
 
     public static PrivateMines getPlugin() {
@@ -70,6 +72,8 @@ public final class PrivateMines extends JavaPlugin {
     public boolean isAutoSellEnabled() {
         return autoSellEnabled;
     }
+
+    public boolean isUltraPrisonCoreEnabled() { return ultraPrisonCoreEnabled; }
 
     public boolean isNpcsEnabled() {
         return npcsEnabled;
@@ -117,8 +121,21 @@ public final class PrivateMines extends JavaPlugin {
             CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
             autoSellEnabled = true;
+            Bukkit.getLogger().info("Enabled hook for AutoSell!");
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
+            ultraPrisonCoreEnabled = true;
+            Bukkit.getLogger().info("Enabled hook for UltraPrisonCore!");
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")
+        && Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
+            Bukkit.getLogger().warning("Both AutoSell and UltraPrisonCore hooks were enabled, please only enable one!");
+            Bukkit.getLogger().warning("Disabling PrivateMines!");
+            setEnabled(false);
         }
 
         if (!setupEconomy()) {
@@ -138,6 +155,7 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new SellNPCTrait(), this);
 
         new MineResetTask(this, storage).start();
 
