@@ -13,6 +13,9 @@ subprojects {
         maven { url = 'https://repo.codemc.org/repository/maven-public/' }
     }
 
+    defaultTasks 'build', 'shadowJar'
+
+
     dependencies {
         compileOnly 'org.jetbrains:annotations:20.1.0'
     }

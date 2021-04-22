@@ -5,4 +5,7 @@
 /we-1-8/build/
 /build/classes/java/main/
 /.idea/
-/base/lib/UltraPrisonCore-1.3.20.jar
+/base/build/
+/plugin/build/
+/compat/build/
+/base/lib/UltraPrisonCore-1.3.21.jar
