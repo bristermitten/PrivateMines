@@ -6,8 +6,9 @@ import co.aikar.commands.PaperCommandManager;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
+import me.bristermitten.privatemines.data.AutoSell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.data.MineSchematic;
-import me.bristermitten.privatemines.data.SellNPCTrait;
+import me.bristermitten.privatemines.data.UltraPrisonCore.UltraPrisonCoreNPCTrait;
 import me.bristermitten.privatemines.listeners.BlockBreak;
 import me.bristermitten.privatemines.listeners.UserJoinEvent;
 import me.bristermitten.privatemines.listeners.UserLeaveEvent;
@@ -73,7 +74,9 @@ public final class PrivateMines extends JavaPlugin {
         return autoSellEnabled;
     }
 
-    public boolean isUltraPrisonCoreEnabled() { return ultraPrisonCoreEnabled; }
+    public boolean isUltraPrisonCoreEnabled() {
+        return ultraPrisonCoreEnabled;
+    }
 
     public boolean isNpcsEnabled() {
         return npcsEnabled;
@@ -116,11 +119,6 @@ public final class PrivateMines extends JavaPlugin {
 
         loadCommands(mainConfig, menuFactory);
 
-        if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
-            npcsEnabled = mainConfig.isNpcsEnabled();
-            CitizensAPI.getTraitFactory().registerTrait(TraitInfo.create(SellNPCTrait.class).withName("SellNPC"));
-        }
-
         if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
             autoSellEnabled = true;
             Bukkit.getLogger().info("Enabled hook for AutoSell!");
@@ -132,10 +130,24 @@ public final class PrivateMines extends JavaPlugin {
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")
-        && Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
+                && Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
             Bukkit.getLogger().warning("Both AutoSell and UltraPrisonCore hooks were enabled, please only enable one!");
             Bukkit.getLogger().warning("Disabling PrivateMines!");
             setEnabled(false);
+        }
+
+        if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
+            npcsEnabled = mainConfig.isNpcsEnabled();
+
+            if (autoSellEnabled) {
+                Bukkit.getLogger().info("Enabling AutoSell NPC Trait!");
+                CitizensAPI.getTraitFactory().registerTrait
+                        (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
+            } else if (ultraPrisonCoreEnabled) {
+                Bukkit.getLogger().info("Enabling UltraPrisonCore NPC Trait!");
+                CitizensAPI.getTraitFactory().registerTrait
+                        (TraitInfo.create(UltraPrisonCoreNPCTrait.class).withName("UltraPrisonCoreNPC"));
+            }
         }
 
         if (!setupEconomy()) {
@@ -155,7 +167,32 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new SellNPCTrait(), this);
+
+//        if (getConfig().getBoolean("autosell-enabled") &&
+//                getConfig().getBoolean("ultraprisoncore-enabled")) {
+//            Bukkit.getLogger().warning(ChatColor.RED + "Can't enable UltraPrisonCore and AutoSell at once!");
+//            return;
+//        } else {
+//            if (getConfig().getBoolean("autosell-enabled")) {
+//                if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell")) {
+//                    Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into AutoSell because it's not installed!");
+//                    return;
+//                } else {
+//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into AutoSell...");
+//                    Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
+//                    return;
+//                }
+//            } else {
+//                if (getConfig().getBoolean("ultraprisoncore-enabled")) {
+//                    if (!Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore")) {
+//                        Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into UltraPrisonCore because it's not installed!");
+//                    }
+//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into UltraPrisonCore...");
+//                    Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
+//                    return;
+//                }
+//            }
+//        }
 
         new MineResetTask(this, storage).start();
 

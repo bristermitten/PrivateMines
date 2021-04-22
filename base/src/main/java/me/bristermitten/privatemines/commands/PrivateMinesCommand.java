@@ -75,17 +75,26 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.owner")
     @Description("Set your mine's tax percentage")
     public void tax(Player p, @Optional @Conditions("limits:min=0,max=100") Double taxPercentage) {
-        if (!plugin.isAutoSellEnabled()) {
+        if (!plugin.isAutoSellEnabled() && !plugin.isUltraPrisonCoreEnabled()) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
             return;
+        } else if(plugin.isUltraPrisonCoreEnabled()) {
+            final PrivateMine mine = storage.getOrCreate(p);
+            if (taxPercentage == null) {
+                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
+                return;
+            }
+            mine.setTaxPercentage(taxPercentage);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+        } else if (plugin.isAutoSellEnabled()) {
+            final PrivateMine mine = storage.getOrCreate(p);
+            if (taxPercentage == null) {
+                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
+                return;
+            }
+            mine.setTaxPercentage(taxPercentage);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
         }
-        final PrivateMine mine = storage.getOrCreate(p);
-        if (taxPercentage == null) {
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
-            return;
-        }
-        mine.setTaxPercentage(taxPercentage);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
     }
 
 
