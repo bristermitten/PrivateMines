@@ -37,13 +37,15 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
+    private Double tax;
 
-    public UltraPrisonCore getCore() {
-        return UltraPrisonCore.getInstance();
-    }
 
     public UltraPrisonCoreNPCTrait() {
         super("UltraPrisonCoreNPC");
+    }
+
+    public UltraPrisonCore getCore() {
+        return UltraPrisonCore.getInstance();
     }
 
     public void setOwner(UUID owner) {
@@ -136,7 +138,7 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
 
         double earnings = autoSell.getCurrentEarnings(e.getPlayer());
         double tax = (earnings / 100.0) * privateMine.getTaxPercentage();
-        
+
         e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
         e.getPlayer().sendMessage("Processing UPC auto sell event");
         e.getPlayer().sendMessage("Earnings: " + earnings);
@@ -152,47 +154,51 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             Need to add when more things are added to this API.
          */
 
+
         e.getPlayer().sendMessage("Sell All has successfully fired from UPC.");
         PrivateMine privateMine = storage.get(owner);
-        double taxPercent = privateMine.getTaxPercentage();
+
+        if (privateMine.getTaxPercentage() > 0) {
+            tax = privateMine.getTaxPercentage();
+        } else if (privateMine.getTaxPercentage() == 0) {
+            return;
+        }
+
 
         AutoSellRegion region = e.getRegion();
         Set<Material> sellingMaterials = e.getRegion().getSellingMaterials();
 
-        double d = 0.0D;
+        double d = e.getSellPrice();
 
-        for (Material material : sellingMaterials) {
-            d = sellingMaterials.size() * region.getSellPriceFor(material);
-        }
+//        for (Material material : sellingMaterials) {
+//            d = sellingMaterials.size() * region.getSellPriceFor(material);
+//        }
+
         Bukkit.broadcastMessage(ChatColor.GREEN + "UltraPrisonSellAllEvent d before tax = " + d);
 
-        if (taxPercent == 0) {
-            Bukkit.broadcastMessage("Don't do the tax thing and just give the money!");
-            e.getPlayer().sendMessage("You get $" + d + " because there's no tax");
-            return;
-        } else {
-            double tax = d / 100.0 * privateMine.getTaxPercentage();
+        double takenTax = d / 100.0 * tax;
 
-            e.getPlayer().sendMessage(ChatColor.RED + "Taken $" + tax + " in tax.");
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getUniqueId().equals(owner)) {
-                    p.sendMessage(ChatColor.GREEN + "You've received $" + tax + " tax from " + e.getPlayer().getName());
-                }
-
-                double afterTax = d - tax;
-                p.sendMessage("After tax part: " + afterTax);
+        e.getPlayer().sendMessage(ChatColor.RED + "Taken $" + takenTax + " in tax.");
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getUniqueId().equals(owner)) {
+                p.sendMessage(ChatColor.GREEN + "You've received $" + takenTax +
+                        " tax from " + e.getPlayer().getName());
             }
+
+            double afterTax = d - takenTax;
+            e.setSellPrice(afterTax);
+            p.sendMessage("After tax part: " + afterTax);
         }
     }
+}
 
-    public static class UUIDPersister implements Persister<UUID> {
+class UUIDPersister implements Persister<UUID> {
 
-        public UUID create(DataKey dataKey) {
-            return UUID.fromString(dataKey.getString("UUID"));
-        }
+    public UUID create(DataKey dataKey) {
+        return UUID.fromString(dataKey.getString("UUID"));
+    }
 
-        public void save(UUID uuid, DataKey dataKey) {
-            dataKey.setString("UUID", uuid.toString());
-        }
+    public void save(UUID uuid, DataKey dataKey) {
+        dataKey.setString("UUID", uuid.toString());
     }
 }

@@ -52,6 +52,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private UUID npcId;
     private boolean open;
     private boolean fastMode;
+    private boolean hasTax;
     private List<ItemStack> blocks;
     private double taxPercentage;
     private double minePercentage;
