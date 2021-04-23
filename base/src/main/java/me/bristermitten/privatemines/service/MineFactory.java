@@ -6,7 +6,8 @@ import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineLocations;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
-import me.bristermitten.privatemines.data.SellNPC;
+import me.bristermitten.privatemines.data.AutoSell.AutoSellNPC;
+import me.bristermitten.privatemines.data.UltraPrisonCore.UltraPrisonCoreNPC;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
@@ -43,6 +44,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     private static final String NAME_PLACEHOLDER = "{name}";
     private static final String DISPLAYNAME_PLACEHOLDER = "{displayname}";
     private static final String UUID_PLACEHOLDER = "{uuid}";
+
+    UUID npcUUID;
 
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, MineFactoryCompat<S> compat) {
         this.plugin = plugin;
@@ -151,7 +154,12 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
 
-        UUID npcUUID = createMineNPC(owner, npcLoc);
+
+        if (plugin.isAutoSellEnabled()) {
+            npcUUID = createAutoSellMineNPC(owner, npcLoc);
+        } else if (plugin.isUltraPrisonCoreEnabled()) {
+            npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc);
+        }
 
         //TODO Make shop system somehow?
 
@@ -200,10 +208,24 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return privateMine;
 }
 
-    private UUID createMineNPC(Player owner, Location npcLoc) {
+    private UUID createAutoSellMineNPC(Player owner, Location npcLoc) {
         UUID npcUUID;
         if (plugin.isNpcsEnabled()) {
-            npcUUID = SellNPC.createSellNPC(
+            npcUUID = AutoSellNPC.createSellNPC(
+                    config.getNPCName(),
+                    owner.getName(),
+                    npcLoc,
+                    owner.getUniqueId()).getUniqueId();
+        } else {
+            npcUUID = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
+        }
+        return npcUUID;
+    }
+
+    private UUID createUltraPrisonCoreMineNPC(Player owner, Location npcLoc) {
+        UUID npcUUID;
+        if (plugin.isNpcsEnabled()) {
+            npcUUID = UltraPrisonCoreNPC.createUPCSellNPC(
                     config.getNPCName(),
                     owner.getName(),
                     npcLoc,
