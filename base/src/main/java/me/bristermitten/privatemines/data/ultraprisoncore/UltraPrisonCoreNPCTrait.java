@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.UltraPrisonCore;
+package me.bristermitten.privatemines.data.ultraprisoncore;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
@@ -10,7 +10,6 @@ import me.bristermitten.privatemines.service.MineStorage;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
-import me.drawethree.ultraprisoncore.autosell.AutoSellRegion;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -21,14 +20,12 @@ import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
@@ -137,12 +134,12 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(getCore());
 
         double earnings = autoSell.getCurrentEarnings(e.getPlayer());
-        double tax = (earnings / 100.0) * privateMine.getTaxPercentage();
+        double upcTax = (earnings / 100.0) * privateMine.getTaxPercentage();
 
-        e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
+        e.setMoneyToDeposit(e.getMoneyToDeposit() - upcTax);
         e.getPlayer().sendMessage("Processing UPC auto sell event");
         e.getPlayer().sendMessage("Earnings: " + earnings);
-        e.getPlayer().sendMessage("Tax: " + tax);
+        e.getPlayer().sendMessage("Tax: " + upcTax);
         process(privateMine, tax, e.getPlayer());
     }
 
@@ -154,7 +151,6 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             Need to add when more things are added to this API.
          */
 
-
         e.getPlayer().sendMessage("Sell All has successfully fired from UPC.");
         PrivateMine privateMine = storage.get(owner);
 
@@ -164,15 +160,7 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             return;
         }
 
-
-        AutoSellRegion region = e.getRegion();
-        Set<Material> sellingMaterials = e.getRegion().getSellingMaterials();
-
         double d = e.getSellPrice();
-
-//        for (Material material : sellingMaterials) {
-//            d = sellingMaterials.size() * region.getSellPriceFor(material);
-//        }
 
         Bukkit.broadcastMessage(ChatColor.GREEN + "UltraPrisonSellAllEvent d before tax = " + d);
 
