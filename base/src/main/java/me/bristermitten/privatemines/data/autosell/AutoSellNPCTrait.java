@@ -77,6 +77,12 @@ public class AutoSellNPCTrait extends Trait implements Listener
                 "{tax}", String.valueOf(privateMine.getTaxPercentage()));
         Bukkit.getOfflinePlayer(owner);
         if (Bukkit.getOnlinePlayers().contains(owner)) {
+            BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
+
+            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
+                    "{amount}", String.valueOf(tax),
+                    "{tax}", String.valueOf(privateMine.getMinePercentage()));
+
             Bukkit.getPlayer(owner).sendMessage("You've received $" + tax + " from " + player.getName());
         }
     }

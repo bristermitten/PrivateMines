@@ -151,6 +151,10 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             Need to add when more things are added to this API.
          */
 
+        Player player = e.getPlayer();
+        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+
         e.getPlayer().sendMessage("Sell All has successfully fired from UPC.");
         PrivateMine privateMine = storage.get(owner);
 
@@ -166,19 +170,26 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
 
         double takenTax = d / 100.0 * tax;
 
-        e.getPlayer().sendMessage(ChatColor.RED + "Taken $" + takenTax + " in tax.");
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getUniqueId().equals(owner)) {
-                p.sendMessage(ChatColor.GREEN + "You've received $" + takenTax +
-                        " tax from " + e.getPlayer().getName());
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.getUniqueId() == Bukkit.getPlayer(owner).getUniqueId()) {
+                /*
+                    TODO Put message here saying about giving money bla bla bla....
+                 */
+                PrivateMines.getEconomy().depositPlayer(online, takenTax);
             }
-
-            double afterTax = d - takenTax;
-            e.setSellPrice(afterTax);
-            p.sendMessage("After tax part: " + afterTax);
         }
+
+        double afterTax = d - takenTax;
+        e.setSellPrice(afterTax);
+        e.getPlayer().sendMessage("After tax part: " + afterTax);
+
+        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
+                "{amount}", String.valueOf(takenTax),
+                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
+
     }
 }
+
 
 class UUIDPersister implements Persister<UUID> {
 
