@@ -35,5 +35,4 @@ public class UltraPrisonCoreNPC {
 		trait.setOwner(owner);
 		return npc;
 	}
-
 }

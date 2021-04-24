@@ -150,11 +150,19 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public double getTaxPercentage() {
-        return this.taxPercentage;
+        if (this.taxPercentage == 0) {
+            return 0;
+        } else {
+            return this.taxPercentage;
+        }
     }
 
     public void setTaxPercentage(double amount) {
         this.taxPercentage = amount;
+    }
+
+    public boolean hasTax() {
+        return this.taxPercentage != 0;
     }
 
     public double getMinePercentage() {
@@ -189,6 +197,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocks;
     }
 
+    public void setMineBlocks(List<ItemStack> itemStack) {
+        this.blocks = itemStack;
+    }
+
     public List<String> getMineBlocksString() {
         ArrayList<String> blocks = new ArrayList<>();
         for (ItemStack itemStack : getMineBlocks()) {
@@ -203,10 +215,6 @@ public class PrivateMine implements ConfigurationSerializable {
             pretty.add(Util.prettify(itemStack.getType().toString()));
         }
         return pretty;
-    }
-
-    public void setMineBlocks(List<ItemStack> itemStack) {
-        this.blocks = itemStack;
     }
 
     public void addMineBlock(ItemStack itemStack) {
@@ -321,10 +329,12 @@ public class PrivateMine implements ConfigurationSerializable {
         return open;
     }
 
-    public boolean isFastMode() { return fastMode; }
-
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public boolean isFastMode() {
+        return fastMode;
     }
 
     public void setFastMode(boolean fastMode) {
@@ -443,6 +453,10 @@ public class PrivateMine implements ConfigurationSerializable {
         airBlocks.add(0);
 
         return session.countBlock(region, airBlocks) + 1;
+    }
+
+    public double getTax() {
+        return taxPercentage;
     }
 
     /*

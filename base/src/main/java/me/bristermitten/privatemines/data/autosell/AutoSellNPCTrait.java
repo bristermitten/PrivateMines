@@ -177,16 +177,13 @@ public class AutoSellNPCTrait extends Trait implements Listener
         process(privateMine, tax, e.getPlayer());
     }
 
-    public static class UUIDPersister implements Persister<UUID>
-    {
+    static class UUIDPersister implements Persister<UUID> {
 
-        public UUID create(DataKey dataKey)
-        {
+        public UUID create(DataKey dataKey) {
             return UUID.fromString(dataKey.getString("UUID"));
         }
 
-        public void save(UUID uuid, DataKey dataKey)
-        {
+        public void save(UUID uuid, DataKey dataKey) {
             dataKey.setString("UUID", uuid.toString());
         }
     }

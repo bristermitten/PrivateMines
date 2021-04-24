@@ -167,6 +167,8 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
+        Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
 
 //        if (getConfig().getBoolean("autosell-enabled") &&
 //                getConfig().getBoolean("ultraprisoncore-enabled")) {
