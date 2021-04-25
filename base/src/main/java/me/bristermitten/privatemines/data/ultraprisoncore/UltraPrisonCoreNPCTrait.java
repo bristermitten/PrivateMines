@@ -8,9 +8,7 @@ import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
-import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
-import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
@@ -19,7 +17,6 @@ import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -81,12 +78,16 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
 
         BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+        BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
+
         manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
                 "{amount}", String.valueOf(tax),
-                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-        Bukkit.getOfflinePlayer(owner);
-        if (Bukkit.getOnlinePlayers().contains(owner)) {
-            Bukkit.getPlayer(owner).sendMessage("You've received $" + tax + " from " + player.getName());
+                "{tax}", String.valueOf(privateMine.getTax()));
+
+        if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
+            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
+                    "{amount}", String.valueOf(tax),
+                    "{tax}", String.valueOf(privateMine.getTax()));
         }
     }
 
@@ -104,12 +105,8 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         return !privateMine.contains(player);
     }
 
-    private boolean eventIsNotApplicableSingle(ItemStack itemsSold, Player player) {
-        if (itemsSold == null) {
-            return true;
-        }
+    private boolean eventIsNotApplicable(Player player) {
         if (player.getUniqueId().equals(owner)) {
-            player.sendMessage("return thing because of OWNER!");
             return false;
         }
         privateMine = storage.get(owner);
@@ -124,30 +121,28 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         UltraPrisonCore Sell System Listeners..
      */
 
-    @EventHandler
-    public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
-        // Is the person selling the owner? If so, return.
+    //TODO Fix autosell...
 
-        if (eventIsNotApplicableSingle(new ItemStack(e.getBlock().getType()), e.getPlayer())) {
-            return;
-        }
-        Player player = e.getPlayer();
-        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-
-        UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(getCore());
-
-        double earnings = autoSell.getCurrentEarnings(e.getPlayer());
-        double tax = (earnings / 100.0) * privateMine.getTaxPercentage();
-
-        e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
-        e.getPlayer().sendMessage("Processing UPC auto sell event");
-        player.sendMessage(" ");
-
-        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
-                "{amount}", String.valueOf(tax),
-                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-        process(privateMine, tax, e.getPlayer());
-    }
+//    @EventHandler
+//    public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
+//        // Is the person selling the owner? If so, return.
+//
+//        if (eventIsNotApplicableSingle(new ItemStack(e.getBlock().getType()), e.getPlayer())) {
+//            return;
+//        }
+//        Player player = e.getPlayer();
+//        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+//
+//        UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(getCore());
+//
+//        double earnings = autoSell.getCurrentEarnings(e.getPlayer());
+//        double tax = (earnings / 100.0) * privateMine.getTaxPercentage();
+//
+//        e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
+//        e.getPlayer().sendMessage("Processing UPC auto sell event");
+//        player.sendMessage(" ");
+//        process(privateMine, tax, e.getPlayer());
+//    }
 
 
     @EventHandler
@@ -157,13 +152,14 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             Need to add when more things are added to this API.
          */
 
-
         Player player = e.getPlayer();
-        e.getPlayer().sendMessage("Sell All has successfully fired from UPC.");
         privateMine = storage.get(owner);
-        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
 
         double defaultTax = 0;
+
+        if (eventIsNotApplicable(player)) {
+            return;
+        }
 
         try {
             if (privateMine.getTaxPercentage() > 0) {
@@ -177,33 +173,14 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             }
             double d = e.getSellPrice();
 
-            Bukkit.broadcastMessage(ChatColor.GREEN + "UltraPrisonSellAllEvent d before tax = " + d);
-
             if (tax == 0) {
                 tax = defaultTax;
             }
             double takenTax = d / 100.0 * tax;
 
-            if (Bukkit.getOnlinePlayers().contains(owner)) {
-                BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
-                manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
-                        "{amount}", String.valueOf(takenTax),
-                        "{tax}", String.valueOf(privateMine.getMinePercentage()));
-            }
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                if (p.getUniqueId().equals(owner)) {
-                    p.sendMessage(ChatColor.GREEN + "You've received $" + takenTax +
-                            " tax from " + e.getPlayer().getName());
-                }
-            }
-//
-//                double afterTax = d - takenTax;
-//                e.setSellPrice(afterTax);
-//                p.sendMessage("After tax part: " + afterTax);
-//                manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
-//                        "{amount}", String.valueOf(tax),
-//                        "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-//            }
+            double afterTax = d - takenTax;
+            e.setSellPrice(afterTax);
+            process(privateMine, takenTax, player);
         } catch (NullPointerException e1) {
             // do nothing, its a false exception.
             return;
