@@ -83,45 +83,45 @@ public class PrivateMinesCommand extends BaseCommand {
         if (!plugin.isAutoSellEnabled() && !plugin.isUltraPrisonCoreEnabled()) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
             return;
-        } else if (plugin.isUltraPrisonCoreEnabled()) {
+        }
+        if (plugin.isUltraPrisonCoreEnabled()) {
 
             final PrivateMine mine = storage.getOrCreate(p);
 
             if (config.isTaxSignMenusEnabled()) {
-                SignMenuFactory.Menu menu = signMenuFactory.newMenu(Arrays.asList("Please enter a",
-                        "tax amount:")).reopenIfFail(true)
-                        .response((player, strings) -> {
-                            int taxPercent = Integer.parseInt(strings[2]);
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(
+                        Arrays.asList("Please enter a", "tax amount:"))
+                        .reopenIfFail(true)
+                        .response((player, lines) -> {
+                            int taxPercent = Integer.parseInt(lines[2]);
 
-                            if (strings[2] == null) {
+                            if (lines[2] == null) {
                                 p.sendMessage("Please enter a tax amount.");
                                 return false;
-                            } else {
-                                if (!(taxPercent <= 100 || taxPercentage >= 1)) {
-                                    p.sendMessage("Number either too big or too small.");
-                                    return false;
-                                } else {
-                                    mine.setTaxPercentage(taxPercentage);
-                                    getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
-                                    return true;
-                                }
                             }
+                            if (!(taxPercent <= 100 || taxPercentage >= 1)) {
+                                p.sendMessage("Number either too big or too small.");
+                                return false;
+                            }
+                            mine.setTaxPercentage(taxPercentage);
+                            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+                            return true;
                         });
                 menu.open(p);
-            } else {
-                mine.setTaxPercentage(taxPercentage);
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
-            }
-
-        } else if (plugin.isAutoSellEnabled()) {
-            final PrivateMine mine = storage.getOrCreate(p);
-            if (taxPercentage == null) {
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
                 return;
             }
+
             mine.setTaxPercentage(taxPercentage);
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+            return;
         }
+        final PrivateMine mine = storage.getOrCreate(p);
+        if (taxPercentage == null) {
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
+            return;
+        }
+        mine.setTaxPercentage(taxPercentage);
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
     }
 
 
