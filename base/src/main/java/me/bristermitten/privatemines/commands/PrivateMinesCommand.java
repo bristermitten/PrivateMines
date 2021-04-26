@@ -333,8 +333,6 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Trust players in your mine!")
     public void trust(Player p, OnlinePlayer target) {
         PrivateMine mine = storage.get(p.getPlayer());
-        WorldGuardWrapper wrapper = WorldGuardWrapper.getInstance();
-        World w = Bukkit.getWorld(config.getWorldName());
 
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
