@@ -9,7 +9,6 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.data.autosell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.ultraprisoncore.UltraPrisonCoreNPCTrait;
-import me.bristermitten.privatemines.listeners.BlockBreak;
 import me.bristermitten.privatemines.listeners.UserJoinEvent;
 import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
@@ -169,7 +168,6 @@ public final class PrivateMines extends JavaPlugin {
             Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
         }
 
-        Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
         Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
