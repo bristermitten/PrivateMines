@@ -70,10 +70,8 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         }
 
         if (e.getClicker() == null) {
-            Bukkit.broadcastMessage("Clicker was null?");
             return;
         }
-
         e.getClicker().performCommand("sellall");
     }
 
