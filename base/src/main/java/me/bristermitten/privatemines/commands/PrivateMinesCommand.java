@@ -19,6 +19,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
@@ -219,7 +220,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to Teleport")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pm teleport " + t.getName()))
                 .create());
     }
