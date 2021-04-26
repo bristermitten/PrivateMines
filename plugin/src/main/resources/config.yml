@@ -52,6 +52,9 @@ Default-Price: 5
 #Default percentage in tax that mine owners will be given
 Tax-Percentage: 5
 
+# Should use signs to set tax amount - Please keep disabled until fixed in next update
+Tax-Use-Sign-Menu: false
+
 # Is mine open by default?
 Default-Open: true
 

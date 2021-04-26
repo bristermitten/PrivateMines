@@ -12,6 +12,7 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
@@ -24,6 +25,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,13 +41,16 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MineStorage storage;
     private final PMConfig config;
     private final UpdateCheck check;
+    private final SignMenuFactory signMenuFactory;
 
-    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage, PMConfig config, UpdateCheck check) {
+    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
+                               PMConfig config, UpdateCheck check, SignMenuFactory signMenu) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
         this.check = check;
+        this.signMenuFactory = signMenu;
     }
 
     @Default
@@ -78,14 +83,36 @@ public class PrivateMinesCommand extends BaseCommand {
         if (!plugin.isAutoSellEnabled() && !plugin.isUltraPrisonCoreEnabled()) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
             return;
-        } else if(plugin.isUltraPrisonCoreEnabled()) {
+        } else if (plugin.isUltraPrisonCoreEnabled()) {
+
             final PrivateMine mine = storage.getOrCreate(p);
-            if (taxPercentage == null) {
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
-                return;
+
+            if (config.isTaxSignMenusEnabled()) {
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(Arrays.asList("Please enter a",
+                        "tax amount:")).reopenIfFail(true)
+                        .response((player, strings) -> {
+                            int taxPercent = Integer.parseInt(strings[2]);
+
+                            if (strings[2] == null) {
+                                p.sendMessage("Please enter a tax amount.");
+                                return false;
+                            } else {
+                                if (!(taxPercent <= 100 || taxPercentage >= 1)) {
+                                    p.sendMessage("Number either too big or too small.");
+                                    return false;
+                                } else {
+                                    mine.setTaxPercentage(taxPercentage);
+                                    getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+                                    return true;
+                                }
+                            }
+                        });
+                menu.open(p);
+            } else {
+                mine.setTaxPercentage(taxPercentage);
+                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
             }
-            mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+
         } else if (plugin.isAutoSellEnabled()) {
             final PrivateMine mine = storage.getOrCreate(p);
             if (taxPercentage == null) {

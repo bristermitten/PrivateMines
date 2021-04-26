@@ -16,6 +16,7 @@ import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.PrivateMinesAPI;
+import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
@@ -49,8 +50,11 @@ public final class PrivateMines extends JavaPlugin {
     private UpdateCheck updateCheck;
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
+    private SignMenuFactory signMenuFactory;
+
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
+    private boolean protocolLibEnabled = false;
 
     private boolean npcsEnabled = false;
 
@@ -107,6 +111,7 @@ public final class PrivateMines extends JavaPlugin {
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 
         this.storage = new MineStorage(factory);
+        this.signMenuFactory = new SignMenuFactory(this);
 
         try {
             loadFiles();
@@ -236,7 +241,7 @@ public final class PrivateMines extends JavaPlugin {
         manager.enableUnstableAPI("help");
 
         manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage,
-                mainConfig, updateCheck));
+                mainConfig, updateCheck, signMenuFactory));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {

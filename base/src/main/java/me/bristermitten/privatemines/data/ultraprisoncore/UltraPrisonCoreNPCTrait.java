@@ -8,7 +8,9 @@ import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.drawethree.ultraprisoncore.UltraPrisonCore;
+import me.drawethree.ultraprisoncore.api.events.UltraPrisonAutoSellEvent;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
+import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.citizensnpcs.api.persistence.DelegatePersistence;
@@ -22,6 +24,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,10 +32,10 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
 
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
     private final BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
+    private final DecimalFormat df = new DecimalFormat("#.##");
     PrivateMine privateMine;
 
     @Persist("owner")
-    @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
     private Double tax;
 
@@ -81,12 +84,13 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
 
         manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
-                "{amount}", String.valueOf(tax),
+                "{amount}", String.valueOf(df.format(tax)),
                 "{tax}", String.valueOf(privateMine.getTax()));
 
         if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
+
             manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
-                    "{amount}", String.valueOf(tax),
+                    "{amount}", String.valueOf(df.format(tax)),
                     "{tax}", String.valueOf(privateMine.getTax()));
         }
     }
@@ -121,29 +125,22 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         UltraPrisonCore Sell System Listeners..
      */
 
-    //TODO Fix autosell...
+    @EventHandler
+    public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
+        Player player = e.getPlayer();
+        privateMine = storage.get(owner);
 
-//    @EventHandler
-//    public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
-//        // Is the person selling the owner? If so, return.
-//
-//        if (eventIsNotApplicableSingle(new ItemStack(e.getBlock().getType()), e.getPlayer())) {
-//            return;
-//        }
-//        Player player = e.getPlayer();
-//        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-//
-//        UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(getCore());
-//
-//        double earnings = autoSell.getCurrentEarnings(e.getPlayer());
-//        double tax = (earnings / 100.0) * privateMine.getTaxPercentage();
-//
-//        e.setMoneyToDeposit(e.getMoneyToDeposit() - tax);
-//        e.getPlayer().sendMessage("Processing UPC auto sell event");
-//        player.sendMessage(" ");
-//        process(privateMine, tax, e.getPlayer());
-//    }
-
+        UltraPrisonCore core = UltraPrisonCore.getInstance();
+        UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(core);
+        if (autoSell.isEnabled()) {
+            double earnings = autoSell.getCurrentEarnings(player);
+            double taxEarnings = (earnings / 100.0) * privateMine.getTaxPercentage();
+            e.setMoneyToDeposit(earnings);
+            process(privateMine, taxEarnings, player);
+        } else {
+            return;
+        }
+    }
 
     @EventHandler
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
@@ -185,16 +182,5 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             // do nothing, its a false exception.
             return;
         }
-    }
-}
-
-class UUIDPersister implements Persister<UUID> {
-
-    public UUID create(DataKey dataKey) {
-        return UUID.fromString(dataKey.getString("UUID"));
-    }
-
-    public void save(UUID uuid, DataKey dataKey) {
-        dataKey.setString("UUID", uuid.toString());
     }
 }
