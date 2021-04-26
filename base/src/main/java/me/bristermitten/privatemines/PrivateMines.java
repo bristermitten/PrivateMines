@@ -6,8 +6,8 @@ import co.aikar.commands.PaperCommandManager;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
-import me.bristermitten.privatemines.data.autosell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.data.MineSchematic;
+import me.bristermitten.privatemines.data.autosell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.data.ultraprisoncore.UltraPrisonCoreNPCTrait;
 import me.bristermitten.privatemines.listeners.UserJoinEvent;
 import me.bristermitten.privatemines.listeners.UserLeaveEvent;
@@ -233,16 +233,14 @@ public final class PrivateMines extends JavaPlugin {
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
-        } else {
-            RegisteredServiceProvider<Economy> rsp =
-                    getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp == null) {
-                return false;
-            } else {
-                econ = rsp.getProvider();
-                return econ != null;
-            }
         }
+        RegisteredServiceProvider<Economy> rsp =
+                getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
     }
 
     public MineStorage getStorage() {
