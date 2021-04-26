@@ -99,7 +99,7 @@ public class PrivateMinesCommand extends BaseCommand {
                                 p.sendMessage("Please enter a tax amount.");
                                 return false;
                             }
-                            if (!(taxPercent <= 100 || taxPercentage >= 1)) {
+                            if (taxPercent <= 100 || taxPercentage >= 1) {
                                 p.sendMessage("Number either too big or too small.");
                                 return false;
                             }
