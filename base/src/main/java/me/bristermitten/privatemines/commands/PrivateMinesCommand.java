@@ -59,9 +59,9 @@ public class PrivateMinesCommand extends BaseCommand {
     public void main(Player p) {
         if (p.hasPermission("privatemines.owner")) {
             factory.openMainMenu(p);
-        } else {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
         }
+        getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
     }
 
     @Subcommand("list")
@@ -251,9 +251,9 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         if (mine.ban(target.getPlayer())) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_BANNED, PLAYER_KEY, target.player.getName());
-        } else {
-            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, PLAYER_KEY, target.player.getName());
+            return;
         }
+        getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, PLAYER_KEY, target.player.getName());
     }
 
     @Subcommand("unban|pardon")
@@ -382,11 +382,10 @@ public class PrivateMinesCommand extends BaseCommand {
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
-        } else {
-            if (target.getPlayer() == p) {
-                getCurrentCommandIssuer().sendError(LangKeys.ERR_CAN_NOT_REMOVE_FROM_OWN_MINE);
-                return;
-            }
+        }
+        if (target.getPlayer() == p) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_CAN_NOT_REMOVE_FROM_OWN_MINE);
+            return;
         }
 
         mine.getTrustedPlayers().remove(target.getPlayer().getUniqueId());
@@ -437,21 +436,21 @@ public class PrivateMinesCommand extends BaseCommand {
     public void fixreset(Player p) {
         p.sendMessage(ChatColor.RED + "Attempting to cancel the mine reset task!");
         try {
-            new MineResetTask(PrivateMines.getPlugin(), storage).cancel();
+            new MineResetTask(plugin, storage).cancel();
         } catch (Exception e) {
             e.printStackTrace();
             p.sendMessage(ChatColor.RED + "An exception occurred!");
             return;
         }
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
-        new MineResetTask(PrivateMines.getPlugin(), storage).start();
+        new MineResetTask(plugin, storage).start();
     }
 
     @Subcommand("version")
     @CommandPermission("privatemines.version")
     @Description("Gets the current version of Private Mines")
     public void version(Player p) {
-        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
+        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
     }
 }
 
