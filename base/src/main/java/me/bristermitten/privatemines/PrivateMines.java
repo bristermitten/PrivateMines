@@ -173,7 +173,6 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
 
-
         new MineResetTask(this, storage).start();
 
         long loaded = System.currentTimeMillis();

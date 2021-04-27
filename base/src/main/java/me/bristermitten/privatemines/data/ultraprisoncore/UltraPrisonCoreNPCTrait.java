@@ -13,11 +13,8 @@ import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import me.drawethree.ultraprisoncore.autosell.UltraPrisonAutoSell;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,16 +26,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
-
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
+
     private final BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
+
     private final DecimalFormat df = new DecimalFormat("#.##");
+
     PrivateMine privateMine;
 
     @Persist("owner")
     private UUID owner;
-    private Double tax;
 
+    private Double tax;
 
     public UltraPrisonCoreNPCTrait() {
         super("UltraPrisonCoreNPC");
@@ -54,25 +53,20 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
 
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent e) {
-        if (!e.getNPC().equals(npc)) {
+        if (!e.getNPC().equals(this.npc))
             return;
-        }
     }
-
-    /*
-      Used when a player right clicks the npc
-     */
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent e) {
-        if (!e.getNPC().equals(npc)) {
+        if (!e.getNPC().equals(this.npc))
             return;
-        }
-
         if (e.getClicker() == null) {
+            Bukkit.broadcastMessage("Clicker was null?");
             return;
         }
         e.getClicker().performCommand("sellall");
+        e.getClicker().sendMessage("Hi from upc trait");
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
@@ -94,45 +88,34 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
     }
 
     private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player) {
-        if (itemsSold.isEmpty()) {
+        if (itemsSold.isEmpty())
             return true;
-        }
-        if (player.getUniqueId().equals(owner)) {
+        if (player.getUniqueId().equals(owner))
             return true;
-        }
         PrivateMine privateMine = storage.get(owner);
-        if (privateMine == null) {
+        if (privateMine == null)
             return true;
-        }
         return !privateMine.contains(player);
     }
 
     private boolean eventIsNotApplicable(Player player) {
-        if (player.getUniqueId().equals(owner)) {
+        if (player.getUniqueId().equals(owner))
             return false;
-        }
         privateMine = storage.get(owner);
-        if (privateMine == null) {
+        if (privateMine == null)
             return true;
-        }
         return !privateMine.contains(player);
     }
-
-
-    /*
-        UltraPrisonCore Sell System Listeners..
-     */
 
     @EventHandler
     public void onUPCAutoSellEvent(UltraPrisonAutoSellEvent e) {
         Player player = e.getPlayer();
         privateMine = storage.get(owner);
-
         UltraPrisonCore core = UltraPrisonCore.getInstance();
         UltraPrisonAutoSell autoSell = new UltraPrisonAutoSell(core);
         if (autoSell.isEnabled()) {
             double earnings = autoSell.getCurrentEarnings(player);
-            double taxEarnings = (earnings / 100.0) * privateMine.getTaxPercentage();
+            double taxEarnings = earnings / 100.0D * privateMine.getTaxPercentage();
             e.setMoneyToDeposit(earnings);
             process(privateMine, taxEarnings, player);
         } else {
@@ -142,42 +125,29 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
 
     @EventHandler
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
-
-        /*
-            Need to add when more things are added to this API.
-         */
-
         Player player = e.getPlayer();
         privateMine = storage.get(owner);
-
-        double defaultTax = 0;
-
-        if (eventIsNotApplicable(player)) {
+        double defaultTax = 0.0D;
+        if (eventIsNotApplicable(player))
             return;
-        }
-
         try {
-            if (privateMine.getTaxPercentage() > 0) {
+            if (privateMine.getTaxPercentage() > 0.0D) {
                 try {
                     tax = privateMine.getTaxPercentage();
                 } catch (NullPointerException exc) {
                     defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
                 }
-            } else if (privateMine.getTaxPercentage() == 0) {
+            } else if (privateMine.getTaxPercentage() == 0.0D) {
                 return;
             }
             double d = e.getSellPrice();
-
-            if (tax == 0) {
+            if (tax == 0.0D)
                 tax = defaultTax;
-            }
-            double takenTax = d / 100.0 * tax;
-
+            double takenTax = d / 100.0D * tax;
             double afterTax = d - takenTax;
             e.setSellPrice(afterTax);
             process(privateMine, takenTax, player);
         } catch (NullPointerException e1) {
-            // do nothing, its a false exception.
             return;
         }
     }
