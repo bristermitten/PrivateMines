@@ -6,16 +6,16 @@ import co.aikar.commands.PaperCommandManager;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
-import me.bristermitten.privatemines.data.AutoSell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.data.MineSchematic;
-import me.bristermitten.privatemines.data.UltraPrisonCore.UltraPrisonCoreNPCTrait;
-import me.bristermitten.privatemines.listeners.BlockBreak;
+import me.bristermitten.privatemines.data.autosell.AutoSellNPCTrait;
+import me.bristermitten.privatemines.data.ultraprisoncore.UltraPrisonCoreNPCTrait;
 import me.bristermitten.privatemines.listeners.UserJoinEvent;
 import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.PrivateMinesAPI;
+import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
@@ -49,8 +49,11 @@ public final class PrivateMines extends JavaPlugin {
     private UpdateCheck updateCheck;
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
+    private SignMenuFactory signMenuFactory;
+
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
+    private boolean protocolLibEnabled = false;
 
     private boolean npcsEnabled = false;
 
@@ -107,6 +110,7 @@ public final class PrivateMines extends JavaPlugin {
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
 
         this.storage = new MineStorage(factory);
+        this.signMenuFactory = new SignMenuFactory(this);
 
         try {
             loadFiles();
@@ -164,35 +168,11 @@ public final class PrivateMines extends JavaPlugin {
             Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
         }
 
-        Bukkit.getPluginManager().registerEvents(new BlockBreak(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
+        Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
+        Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
 
-//        if (getConfig().getBoolean("autosell-enabled") &&
-//                getConfig().getBoolean("ultraprisoncore-enabled")) {
-//            Bukkit.getLogger().warning(ChatColor.RED + "Can't enable UltraPrisonCore and AutoSell at once!");
-//            return;
-//        } else {
-//            if (getConfig().getBoolean("autosell-enabled")) {
-//                if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell")) {
-//                    Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into AutoSell because it's not installed!");
-//                    return;
-//                } else {
-//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into AutoSell...");
-//                    Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
-//                    return;
-//                }
-//            } else {
-//                if (getConfig().getBoolean("ultraprisoncore-enabled")) {
-//                    if (!Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore")) {
-//                        Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into UltraPrisonCore because it's not installed!");
-//                    }
-//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into UltraPrisonCore...");
-//                    Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
-//                    return;
-//                }
-//            }
-//        }
 
         new MineResetTask(this, storage).start();
 
@@ -221,7 +201,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @NotNull
     private MineFactory<?, ?> loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
-        return new MineFactory(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
+        return new MineFactory<>(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
@@ -234,7 +214,7 @@ public final class PrivateMines extends JavaPlugin {
         manager.enableUnstableAPI("help");
 
         manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage,
-                mainConfig, updateCheck));
+                mainConfig, updateCheck, signMenuFactory));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {
@@ -253,16 +233,14 @@ public final class PrivateMines extends JavaPlugin {
     private boolean setupEconomy() {
         if (getServer().getPluginManager().getPlugin("Vault") == null) {
             return false;
-        } else {
-            RegisteredServiceProvider<Economy> rsp =
-                    getServer().getServicesManager().getRegistration(Economy.class);
-            if (rsp == null) {
-                return false;
-            } else {
-                econ = rsp.getProvider();
-                return econ != null;
-            }
         }
+        RegisteredServiceProvider<Economy> rsp =
+                getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return true;
     }
 
     public MineStorage getStorage() {

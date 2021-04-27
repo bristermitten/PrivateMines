@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.AutoSell;
+package me.bristermitten.privatemines.data.autosell;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
@@ -77,6 +77,12 @@ public class AutoSellNPCTrait extends Trait implements Listener
                 "{tax}", String.valueOf(privateMine.getTaxPercentage()));
         Bukkit.getOfflinePlayer(owner);
         if (Bukkit.getOnlinePlayers().contains(owner)) {
+            BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
+
+            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
+                    "{amount}", String.valueOf(tax),
+                    "{tax}", String.valueOf(privateMine.getMinePercentage()));
+
             Bukkit.getPlayer(owner).sendMessage("You've received $" + tax + " from " + player.getName());
         }
     }
@@ -171,16 +177,13 @@ public class AutoSellNPCTrait extends Trait implements Listener
         process(privateMine, tax, e.getPlayer());
     }
 
-    public static class UUIDPersister implements Persister<UUID>
-    {
+    static class UUIDPersister implements Persister<UUID> {
 
-        public UUID create(DataKey dataKey)
-        {
+        public UUID create(DataKey dataKey) {
             return UUID.fromString(dataKey.getString("UUID"));
         }
 
-        public void save(UUID uuid, DataKey dataKey)
-        {
+        public void save(UUID uuid, DataKey dataKey) {
             dataKey.setString("UUID", uuid.toString());
         }
     }

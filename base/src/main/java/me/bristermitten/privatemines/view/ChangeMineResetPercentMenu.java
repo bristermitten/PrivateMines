@@ -52,9 +52,7 @@ public class ChangeMineResetPercentMenu {
                 decreasepercent -> e -> {
                     if (p.hasPermission("privatemine.percent." + decreasepercent)) {
                         p.sendMessage(ChatColor.GREEN + "Decreased reset percent by  " + decreasepercent + "%");
-
                         mine.decreaseResetPercentage(decreasepercent);
-                        p.sendMessage("Mine reset percent now = " + mine.getResetPercentage());
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this percent!");
                     }

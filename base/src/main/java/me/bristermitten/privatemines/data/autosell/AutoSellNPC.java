@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.AutoSell;
+package me.bristermitten.privatemines.data.autosell;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;

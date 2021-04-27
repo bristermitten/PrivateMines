@@ -12,18 +12,21 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
+import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,13 +42,16 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MineStorage storage;
     private final PMConfig config;
     private final UpdateCheck check;
+    private final SignMenuFactory signMenuFactory;
 
-    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage, PMConfig config, UpdateCheck check) {
+    public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
+                               PMConfig config, UpdateCheck check, SignMenuFactory signMenu) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
         this.check = check;
+        this.signMenuFactory = signMenu;
     }
 
     @Default
@@ -53,9 +59,9 @@ public class PrivateMinesCommand extends BaseCommand {
     public void main(Player p) {
         if (p.hasPermission("privatemines.owner")) {
             factory.openMainMenu(p);
-        } else {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
         }
+        getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
     }
 
     @Subcommand("list")
@@ -78,23 +84,45 @@ public class PrivateMinesCommand extends BaseCommand {
         if (!plugin.isAutoSellEnabled() && !plugin.isUltraPrisonCoreEnabled()) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
             return;
-        } else if(plugin.isUltraPrisonCoreEnabled()) {
-            final PrivateMine mine = storage.getOrCreate(p);
-            if (taxPercentage == null) {
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
-                return;
-            }
-            mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
-        } else if (plugin.isAutoSellEnabled()) {
-            final PrivateMine mine = storage.getOrCreate(p);
-            if (taxPercentage == null) {
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
-                return;
-            }
-            mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
         }
+        if (plugin.isUltraPrisonCoreEnabled()) {
+
+            final PrivateMine mine = storage.getOrCreate(p);
+
+            if (config.isTaxSignMenusEnabled()) {
+                SignMenuFactory.Menu menu = signMenuFactory.newMenu(
+                        Arrays.asList("Please enter a", "tax amount:"))
+                        .reopenIfFail(true)
+                        .response((player, lines) -> {
+                            int taxPercent = Integer.parseInt(lines[2]);
+
+                            if (lines[2] == null) {
+                                p.sendMessage("Please enter a tax amount.");
+                                return false;
+                            }
+                            if (taxPercent <= 100 || taxPercentage >= 1) {
+                                p.sendMessage("Number either too big or too small.");
+                                return false;
+                            }
+                            mine.setTaxPercentage(taxPercentage);
+                            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+                            return true;
+                        });
+                menu.open(p);
+                return;
+            }
+
+            mine.setTaxPercentage(taxPercentage);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+            return;
+        }
+        final PrivateMine mine = storage.getOrCreate(p);
+        if (taxPercentage == null) {
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
+            return;
+        }
+        mine.setTaxPercentage(taxPercentage);
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
     }
 
 
@@ -192,7 +220,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         p.spigot().sendMessage(new ComponentBuilder("Click to teleport").color(ChatColor.GOLD)
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Click to Teleport").create()))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to Teleport")))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pm teleport " + t.getName()))
                 .create());
     }
@@ -223,9 +251,9 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         if (mine.ban(target.getPlayer())) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_BANNED, PLAYER_KEY, target.player.getName());
-        } else {
-            getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, PLAYER_KEY, target.player.getName());
+            return;
         }
+        getCurrentCommandIssuer().sendError(LangKeys.INFO_PLAYER_BANNED, PLAYER_KEY, target.player.getName());
     }
 
     @Subcommand("unban|pardon")
@@ -305,8 +333,6 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Trust players in your mine!")
     public void trust(Player p, OnlinePlayer target) {
         PrivateMine mine = storage.get(p.getPlayer());
-        WorldGuardWrapper wrapper = WorldGuardWrapper.getInstance();
-        World w = Bukkit.getWorld(config.getWorldName());
 
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
@@ -356,11 +382,10 @@ public class PrivateMinesCommand extends BaseCommand {
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
-        } else {
-            if (target.getPlayer() == p) {
-                getCurrentCommandIssuer().sendError(LangKeys.ERR_CAN_NOT_REMOVE_FROM_OWN_MINE);
-                return;
-            }
+        }
+        if (target.getPlayer() == p) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_CAN_NOT_REMOVE_FROM_OWN_MINE);
+            return;
         }
 
         mine.getTrustedPlayers().remove(target.getPlayer().getUniqueId());
@@ -411,21 +436,21 @@ public class PrivateMinesCommand extends BaseCommand {
     public void fixreset(Player p) {
         p.sendMessage(ChatColor.RED + "Attempting to cancel the mine reset task!");
         try {
-            new MineResetTask(PrivateMines.getPlugin(), storage).cancel();
+            new MineResetTask(plugin, storage).cancel();
         } catch (Exception e) {
             e.printStackTrace();
             p.sendMessage(ChatColor.RED + "An exception occurred!");
             return;
         }
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
-        new MineResetTask(PrivateMines.getPlugin(), storage).start();
+        new MineResetTask(plugin, storage).start();
     }
 
     @Subcommand("version")
     @CommandPermission("privatemines.version")
     @Description("Gets the current version of Private Mines")
     public void version(Player p) {
-        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + PrivateMines.getPlugin().getDescription().getVersion());
+        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
     }
 }
 

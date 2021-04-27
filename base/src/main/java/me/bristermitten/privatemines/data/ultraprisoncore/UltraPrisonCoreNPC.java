@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.UltraPrisonCore;
+package me.bristermitten.privatemines.data.ultraprisoncore;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -35,5 +35,4 @@ public class UltraPrisonCoreNPC {
 		trait.setOwner(owner);
 		return npc;
 	}
-
 }
