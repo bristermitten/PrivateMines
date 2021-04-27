@@ -22,9 +22,8 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -149,13 +148,12 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.give")
     @CommandCompletion("@players")
     @Description("Give a Player a PrivateMine")
-    public void give(OfflinePlayer target) {
-        Player t = target.getPlayer();
-        if (storage.has(t)) {
+    public void give(CommandSender sender, OnlinePlayer target) {
+        if (storage.has(target.getPlayer())) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
             return;
         }
-        storage.getOrCreate(t).teleport();
+        storage.getOrCreate(target.getPlayer()).teleport();
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
     }
 
@@ -307,8 +305,8 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.trustedlist")
     @CommandCompletion("@players")
     @Description("Lists who's trusted in your Private Mine!")
-    public void trusted(Player p) {
-        PrivateMine mine = storage.get(p.getPlayer());
+    public void trusted(Player sender) {
+        PrivateMine mine = storage.get(sender);
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
@@ -319,11 +317,11 @@ public class PrivateMinesCommand extends BaseCommand {
             return;
         }
 
-        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+        sender.sendMessage(ChatColor.GREEN + "Trusted players: ");
         for (UUID s : mine.getTrustedPlayers()) {
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
             String lastKnownName = offlinePlayer.getName();
-            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            sender.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
         }
     }
 
@@ -332,7 +330,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Trust players in your mine!")
     public void trust(Player p, OnlinePlayer target) {
-        PrivateMine mine = storage.get(p.getPlayer());
+        PrivateMine mine = storage.get(p);
 
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
