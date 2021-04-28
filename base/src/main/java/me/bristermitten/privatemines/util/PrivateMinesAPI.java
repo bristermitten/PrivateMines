@@ -63,16 +63,6 @@ public class PrivateMinesAPI {
 
     /**
      *
-     * @param player - The player who's mine percentage you want to get
-     * @return double - The mine block percent left
-     */
-
-    public double getMinePercentage(Player player) {
-        return storage.get(player).getMinePercentage();
-    }
-
-    /**
-     *
      * @param player - The player who's mine reset percentage you want to check
      * @param percentage - The percentage of which the mine should reset at
      */
