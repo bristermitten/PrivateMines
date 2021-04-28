@@ -7,10 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MineStorage {
@@ -37,7 +34,7 @@ public class MineStorage {
     @SuppressWarnings("unchecked")
     public void load(YamlConfiguration config) {
         if (config.contains(DATA_DO_NOT_CHANGE)) {
-            factory.getManager().load(config.getConfigurationSection(DATA_DO_NOT_CHANGE)
+            factory.getManager().load(Objects.requireNonNull(config.getConfigurationSection(DATA_DO_NOT_CHANGE))
                     .getValues(true));
         }
 
