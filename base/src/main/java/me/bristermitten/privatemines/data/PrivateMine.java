@@ -3,14 +3,8 @@ package me.bristermitten.privatemines.data;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
-import com.boydti.fawe.FaweAPI;
-import com.boydti.fawe.util.EditSessionBuilder;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.regions.CuboidRegion;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
-import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
@@ -31,6 +25,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.codemc.worldguardwrapper.WorldGuardWrapper;
 import org.codemc.worldguardwrapper.region.IWrappedRegion;
 import org.codemc.worldguardwrapper.selection.ICuboidSelection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -40,27 +35,26 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
     //How far between a mine reset in milliseconds
-    private final int RESET_THRESHOLD;
+    private final int resetDelay;
     private final UUID owner;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
     private final List<String> commands;
-    private final MineStorage mineStorage;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
     private boolean fastMode;
-    private boolean hasTax;
     private List<ItemStack> blocks;
     private double taxPercentage;
-    private double minePercentage;
     private double resetPercentage;
     private MineSchematic<?> mineSchematic;
     private long nextResetTime;
     private int mineTier;
     private String resetStyle;
+
+    // Is it even possible to get this down to the 7 max?
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -77,8 +71,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        double resetPercent,
                        int resetTime,
                        int mineTier,
-                       MineSchematic<?> mineSchematic,
-                       MineStorage storage) {
+                       MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
         this.trustedPlayers = trustedPlayers;
@@ -93,9 +86,8 @@ public class PrivateMine implements ConfigurationSerializable {
         this.taxPercentage = taxPercentage;
         this.resetPercentage = resetPercent;
         this.mineSchematic = mineSchematic;
-        this.RESET_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(resetTime);
+        this.resetDelay = (int) TimeUnit.MINUTES.toMillis(resetTime);
         this.mineTier = mineTier + 1;
-        this.mineStorage = storage;
     }
 
     @SuppressWarnings("unchecked")
@@ -128,7 +120,6 @@ public class PrivateMine implements ConfigurationSerializable {
         List<String> commands = (List<String>) map.get("Commands");
 
         MineSchematic<?> schematic = SchematicStorage.getInstance().get(schematicName);
-        MineStorage storage = PrivateMines.getPlugin().getStorage();
 
         if (schematic == null) {
             throw new IllegalArgumentException("Invalid Schematic " + schematicName);
@@ -141,12 +132,12 @@ public class PrivateMine implements ConfigurationSerializable {
         Set<UUID> trustedPlayers = Optional.ofNullable((List<String>) map.get("TrustedPlayers"))
                 .map(trusted -> trusted.stream().map(UUID::fromString).collect(Collectors.toSet())).orElse(new HashSet<>());
 
-        String shopName = "shop-" + owner.toString();
+        String shopName = "shop-" + owner;
         Shop shop = new Shop(shopName);
         SellHandler.addShop(shop);
 
         return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, fastMode, blocks, mainRegion, locations,
-                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, schematic, storage);
+                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, schematic);
     }
 
     public double getTaxPercentage() {
@@ -163,10 +154,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public boolean hasTax() {
         return this.taxPercentage != 0;
-    }
-
-    public double getMinePercentage() {
-        return this.minePercentage;
     }
 
     public double getResetPercentage() {
@@ -202,11 +189,11 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public List<String> getMineBlocksString() {
-        ArrayList<String> blocks = new ArrayList<>();
+        ArrayList<String> blocksString = new ArrayList<>();
         for (ItemStack itemStack : getMineBlocks()) {
-            blocks.add(itemStack.getType().name());
+            blocksString.add(itemStack.getType().name());
         }
-        return blocks;
+        return blocksString;
     }
 
     public List<String> getMineBlocksFormatted(List<ItemStack> stack) {
@@ -238,7 +225,7 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public int getResetTime() {
-        return this.RESET_THRESHOLD;
+        return this.resetDelay;
     }
 
     public boolean contains(Player p) {
@@ -283,7 +270,7 @@ public class PrivateMine implements ConfigurationSerializable {
         return total;
     }
 
-    public Map<String, Object> serialize() {
+    public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
         map.put("Open", this.open);
@@ -294,7 +281,7 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
         map.put("Reset-Percentage", this.resetPercentage);
-        map.put("Reset-Delay", this.RESET_THRESHOLD);
+        map.put("Reset-Delay", this.resetDelay);
         map.put("Reset-Style", this.resetStyle);
         map.put("Mine-Tier", this.mineTier);
         map.put("Commands", this.commands);
@@ -366,7 +353,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
 
-        this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
+        this.nextResetTime = System.currentTimeMillis() + resetDelay;
     }
 
     public void fillWESingle(ItemStack itemStack) {
@@ -394,65 +381,11 @@ public class PrivateMine implements ConfigurationSerializable {
 
         PrivateMines.getPlugin().getWeHook().fillSingle(miningRegion, itemStack, isFastMode());
 
-        this.nextResetTime = System.currentTimeMillis() + RESET_THRESHOLD;
+        this.nextResetTime = System.currentTimeMillis() + resetDelay;
     }
 
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
-    }
-
-    public int getTotalBlocks() {
-        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
-
-        final WorldEditRegion miningRegion = new WorldEditRegion(
-                Util.toWEVector(selection.getMinimumPoint()),
-                Util.toWEVector(selection.getMaximumPoint()),
-                mainRegion.getWorld()
-        );
-
-        Vector min1 = new Vector(
-                miningRegion.getMinimumLocation().getBlockX(),
-                miningRegion.getMinimumLocation().getBlockY(),
-                miningRegion.getMinimumLocation().getBlockZ());
-
-        Vector max1 = new Vector(
-                miningRegion.getMaximumLocation().getBlockX(),
-                miningRegion.getMaximumLocation().getBlockY(),
-                miningRegion.getMaximumLocation().getBlockZ());
-
-        CuboidRegion region = new CuboidRegion(min1, max1);
-        return region.getArea();
-    }
-
-    public int getAirBlocks() {
-
-        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
-        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(locations.getRegion().getWorld().getName()))
-                .fastmode(true)
-                .build();
-
-        final WorldEditRegion miningRegion = new WorldEditRegion(
-                Util.toWEVector(selection.getMinimumPoint()),
-                Util.toWEVector(selection.getMaximumPoint()),
-                mainRegion.getWorld()
-        );
-
-        Vector min1 = new Vector(
-                miningRegion.getMinimumLocation().getBlockX(),
-                miningRegion.getMinimumLocation().getBlockY(),
-                miningRegion.getMinimumLocation().getBlockZ());
-
-        Vector max1 = new Vector(
-                miningRegion.getMaximumLocation().getBlockX(),
-                miningRegion.getMaximumLocation().getBlockY(),
-                miningRegion.getMaximumLocation().getBlockZ());
-
-        CuboidRegion region = new CuboidRegion(min1, max1);
-
-        Set<Integer> airBlocks = new HashSet<>();
-        airBlocks.add(0);
-
-        return session.countBlock(region, airBlocks) + 1;
     }
 
     public double getTax() {

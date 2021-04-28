@@ -175,9 +175,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getResetPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
-                mineSchematic,
-                plugin.getStorage()
-                );
+                mineSchematic
+        );
 
         privateMine.fillWEMultiple(config.getDefaultMineBlocks());
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
