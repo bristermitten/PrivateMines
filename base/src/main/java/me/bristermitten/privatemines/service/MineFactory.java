@@ -58,6 +58,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
     }
 
+    public PrivateMine createAtLocation(Player owner, M mineSchematic, Location location) {
+        return create(owner, mineSchematic, location, false);
+    }
+
     private boolean dataMatches(byte data, short expectedData) {
         if (data == 0) {
             return expectedData == 0;
