@@ -28,7 +28,6 @@ public enum LangKeys implements MessageKeyProvider {
 
     ERR_NO_MINES,
 
-    ERR_MINE_UPGRADE_ERROR,
     ERR_MINE_UPGRADE_ERROR_INVALID_SCHEMATIC,
     ERR_MINE_UPGRADE_ERROR_INVALID_TIER,
 
@@ -48,8 +47,6 @@ public enum LangKeys implements MessageKeyProvider {
     INFO_MINE_GIVEN,
     INFO_MINE_OPENED,
     INFO_MINE_CLOSED,
-
-    INFO_SET_RESET_STYLE,
 
     INFO_MINE_RESET,
     INFO_MINE_RESET_OTHER,
