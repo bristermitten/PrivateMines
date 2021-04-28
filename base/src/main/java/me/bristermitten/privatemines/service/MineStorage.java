@@ -3,7 +3,9 @@ package me.bristermitten.privatemines.service;
 import com.google.common.collect.ImmutableSet;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -65,12 +67,28 @@ public class MineStorage {
         MineSchematic<?> defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
         if (defaultSchematic == null) {
             p.sendMessage(ChatColor.RED + "No Default Schematic. Contact an Admin.");
+            Bukkit.getLogger().info("There was no default schematic, to fix this error,");
+            Bukkit.getLogger().info("go into the schematics.yml file and add a new schematic");
+            Bukkit.getLogger().info("and make sure that you have at least one schematics default");
+            Bukkit.getLogger().info("option set to true.");
             throw new IllegalStateException("No Default Schematic found"); //TODO this needs to be more user friendly
         }
 
         mine = factory.create(p, defaultSchematic, true);
         mines.put(p.getUniqueId(), mine);
 
+        return mine;
+    }
+
+    public PrivateMine createAtLocation(Player player, MineSchematic<?> schematic, Location location) {
+        PrivateMine mine;
+        if (schematic == null) {
+            player.sendMessage(ChatColor.RED + "Schematic missing, report to an admin.");
+        }
+
+        mine = factory.createAtLocation(player, schematic, location);
+        mines.remove(player.getUniqueId());
+        mines.put(player.getUniqueId(), mine);
         return mine;
     }
 
