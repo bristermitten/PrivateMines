@@ -87,17 +87,6 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         }
     }
 
-    private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player) {
-        if (itemsSold.isEmpty())
-            return true;
-        if (player.getUniqueId().equals(owner))
-            return true;
-        PrivateMine privateMine = storage.get(owner);
-        if (privateMine == null)
-            return true;
-        return !privateMine.contains(player);
-    }
-
     private boolean eventIsNotApplicable(Player player) {
         if (player.getUniqueId().equals(owner))
             return false;
@@ -148,7 +137,7 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
             e.setSellPrice(afterTax);
             process(privateMine, takenTax, player);
         } catch (NullPointerException e1) {
-            return;
+            e1.printStackTrace();
         }
     }
 }
