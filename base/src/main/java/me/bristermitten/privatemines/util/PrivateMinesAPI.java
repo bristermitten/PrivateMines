@@ -9,7 +9,6 @@ import java.util.List;
 
 public class PrivateMinesAPI {
 
-    private final PrivateMines plugin;
     private final MineStorage storage;
 
     public String formatTime(int time) {
@@ -27,7 +26,6 @@ public class PrivateMinesAPI {
      */
 
     public PrivateMinesAPI(PrivateMines plugin, MineStorage storage) {
-        this.plugin = plugin;
         this.storage = storage;
     }
 
