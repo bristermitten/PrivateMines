@@ -13,7 +13,6 @@ import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.signs.SignMenuFactory;
-import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -39,16 +38,14 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
-    private final UpdateCheck check;
     private final SignMenuFactory signMenuFactory;
 
     public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
-                               PMConfig config, UpdateCheck check, SignMenuFactory signMenu) {
+                               PMConfig config, SignMenuFactory signMenu) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
-        this.check = check;
         this.signMenuFactory = signMenu;
     }
 
