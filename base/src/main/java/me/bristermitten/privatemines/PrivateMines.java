@@ -15,8 +15,7 @@ import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.PrivateMinesAPI;
-import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
-import me.bristermitten.privatemines.util.UpdateCheck;
+import me.bristermitten.privatemines.util.signs.SignMenuFactory;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;
@@ -39,21 +38,18 @@ public final class PrivateMines extends JavaPlugin {
     public static final String MINES_FILE_NAME = "mines.yml";
     private static PrivateMinesAPI privateMinesAPI;
 
-    private static int resourceID = 90890;
     private Economy econ;
     private MineStorage storage;
     private MenuConfig menuConfig;
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
     private MineFactory<MineSchematic<?>, ?> factory;
-    private UpdateCheck updateCheck;
     private WorldEditHook weHook;
     private MineWorldManager mineManager;
     private SignMenuFactory signMenuFactory;
 
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
-    private boolean protocolLibEnabled = false;
 
     private boolean npcsEnabled = false;
 
@@ -173,7 +169,6 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
 
-
         new MineResetTask(this, storage).start();
 
         long loaded = System.currentTimeMillis();
@@ -214,7 +209,7 @@ public final class PrivateMines extends JavaPlugin {
         manager.enableUnstableAPI("help");
 
         manager.registerCommand(new PrivateMinesCommand(this, menuFactory, storage,
-                mainConfig, updateCheck, signMenuFactory));
+                mainConfig, signMenuFactory));
 
         manager.getCommandConditions().addCondition(Double.class, "limits", (c, exec, value) -> {
             if (value == null) {

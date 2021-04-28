@@ -13,9 +13,8 @@ public class AutoSellNPC {
 	private AutoSellNPC() {
 	}
 
-	/*
-	Creates the sell NPC.
-	 */
+	//Creates the sell NPC for AutoSell.
+
 	public static NPC createSellNPC(String name, String skinName, Location location, UUID owner) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		npc.spawn(location);
@@ -34,5 +33,4 @@ public class AutoSellNPC {
 		trait.setOwner(owner);
 		return npc;
 	}
-
 }

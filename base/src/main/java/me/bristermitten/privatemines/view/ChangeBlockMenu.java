@@ -10,6 +10,7 @@ import me.bristermitten.privatemines.util.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
@@ -41,8 +42,12 @@ public class ChangeBlockMenu {
 
         p.openInventory(spec.genMenu((block, i) -> {
                     i.setType(block.getType());
-                    i.setDurability(block.getDurability());
                     ItemMeta itemMeta = i.getItemMeta();
+                    Damageable damageable = (Damageable) itemMeta;
+                    if (damageable != null) {
+                        damageable.setDamage(damageable.getDamage());
+                    }
+
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%block%",
                             Util.getName(block).orElse("Unknown"));

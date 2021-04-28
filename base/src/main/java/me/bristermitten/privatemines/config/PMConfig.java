@@ -57,14 +57,19 @@ public class PMConfig {
         this.mineRegionNameFormat = config.getString("mine-region-name");
 
         ConfigurationSection blocks = config.getConfigurationSection("Blocks");
-        for (String block : blocks.getKeys(false)) {
-            final String blockType = blocks.getString(block);
-            final Optional<ItemStack> value = Util.parseItem(blockType);
-            if (!value.isPresent()) {
-                throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
-            }
+        if (blocks != null) {
+            for (String block : blocks.getKeys(false)) {
+                final String blockType = blocks.getString(block);
+                final Optional<ItemStack> value;
+                if (blockType != null) {
+                    value = Util.parseItem(blockType);
+                    if (!value.isPresent()) {
+                        throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
+                    }
 
-            this.blockTypes.put(BlockType.fromName(block), value.get());
+                    this.blockTypes.put(BlockType.fromName(block), value.get());
+                }
+            }
         }
 
         this.useTaxSignMenu = config.getBoolean("Tax-Use-Sign-Menu");
@@ -79,9 +84,7 @@ public class PMConfig {
         this.firstTimeCommands = config.getStringList("FirstTimeCommands");
         this.commands = config.getStringList("Commands");
         this.resetStyles = config.getStringList("Reset-Styles");
-        this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
-        this.mineBlocks = (List<ItemStack>) config.getList("blocks");
 
         this.blockOptions = config.getStringList("Block-Options")
                 .stream()
@@ -104,17 +107,20 @@ public class PMConfig {
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
+
         this.sellCommand = config.getString("sellCommand");
         this.resetPercentages = config.getIntegerList("Reset-Percentages");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
 
-        for (String key : colorsSection.getKeys(false)) {
-            try {
-                this.colors.put((MessageType) MessageType.class.getField(key).get(null),
-                        ChatColor.valueOf(colorsSection.getString(key)));
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
+        if (colorsSection != null) {
+            for (String key : colorsSection.getKeys(false)) {
+                try {
+                    this.colors.put((MessageType) MessageType.class.getField(key).get(null),
+                            ChatColor.valueOf(colorsSection.getString(key)));
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -136,9 +142,9 @@ public class PMConfig {
         return worldName;
     }
 
-    public String getMineRegionNameFormat() {return mineRegionNameFormat;}
+    public String getMineRegionNameFormat() { return mineRegionNameFormat;}
 
-    public String getSellCommand() {return sellCommand; }
+    public String getSellCommand() { return sellCommand; }
 
     public double getTaxPercentage() {
         return taxPercentage;

@@ -1,5 +1,4 @@
-package me.bristermitten.privatemines.util.Signs;
-
+package me.bristermitten.privatemines.util.signs;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;

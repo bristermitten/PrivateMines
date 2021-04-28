@@ -12,8 +12,8 @@ import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
-import me.bristermitten.privatemines.util.UpdateCheck;
+import me.bristermitten.privatemines.util.Util;
+import me.bristermitten.privatemines.util.signs.SignMenuFactory;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -22,9 +22,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.codemc.worldguardwrapper.WorldGuardWrapper;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -41,16 +39,14 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
-    private final UpdateCheck check;
     private final SignMenuFactory signMenuFactory;
 
     public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
-                               PMConfig config, UpdateCheck check, SignMenuFactory signMenu) {
+                               PMConfig config, SignMenuFactory signMenu) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
-        this.check = check;
         this.signMenuFactory = signMenu;
     }
 

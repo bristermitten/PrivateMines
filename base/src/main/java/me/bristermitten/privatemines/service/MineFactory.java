@@ -58,6 +58,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
     }
 
+    public PrivateMine createAtLocation(Player owner, M mineSchematic, Location location) {
+        return create(owner, mineSchematic, location, false);
+    }
+
     private boolean dataMatches(byte data, short expectedData) {
         if (data == 0) {
             return expectedData == 0;
@@ -137,7 +141,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (min == null || max == null || min.equals(max)) {
             throw new IllegalArgumentException("Mine schematic did not define 2 distinct corner blocks, mine cannot be formed");
         }
-        if (spawnLoc == null) {
+        if (spawnLoc == null && location.getWorld() != null) {
             spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
             plugin.getLogger().warning(() -> "No spawn block was defined, so the schematic root will be used. Searching for " + spawnMaterial);
         }
@@ -153,8 +157,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         IWrappedRegion mineRegion = createMineWorldGuardRegion(owner, miningRegion, worldGuardRegion);
 
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
-
-
 
 
         //TODO Make shop system somehow?
@@ -175,9 +177,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getResetPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
-                mineSchematic,
-                plugin.getStorage()
-                );
+                mineSchematic
+        );
 
         privateMine.fillWEMultiple(config.getDefaultMineBlocks());
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
@@ -185,7 +186,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (plugin.isAutoSellEnabled()) {
             npcUUID = createAutoSellMineNPC(owner, npcLoc);
         } else if (plugin.isUltraPrisonCoreEnabled()) {
-            npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc, privateMine.getTaxPercentage());
+            npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc);
         }
 
         if (isNew) {
@@ -211,23 +212,23 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 }
 
     private UUID createAutoSellMineNPC(Player owner, Location npcLoc) {
-        UUID npcUUID;
+        UUID npcuuid;
         if (plugin.isNpcsEnabled()) {
-            npcUUID = AutoSellNPC.createSellNPC(
+            npcuuid = AutoSellNPC.createSellNPC(
                     config.getNPCName(),
                     owner.getName(),
                     npcLoc,
                     owner.getUniqueId()).getUniqueId();
         } else {
-            npcUUID = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
+            npcuuid = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
         }
-        return npcUUID;
+        return npcuuid;
     }
 
-    private UUID createUltraPrisonCoreMineNPC(Player owner, Location npcLoc, Double tax) {
-        UUID npcUUID;
+    private UUID createUltraPrisonCoreMineNPC(Player owner, Location npcLoc) {
+        UUID npcuuid;
         if (plugin.isNpcsEnabled()) {
-            npcUUID = UltraPrisonCoreNPC.createUPCSellNPC(
+            npcuuid = UltraPrisonCoreNPC.createUPCSellNPC(
                     config.getNPCName(),
                     owner.getName(),
                     npcLoc,
@@ -235,9 +236,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             )
                     .getUniqueId();
         } else {
-            npcUUID = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
+            npcuuid = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
         }
-        return npcUUID;
+        return npcuuid;
     }
 
     @NotNull

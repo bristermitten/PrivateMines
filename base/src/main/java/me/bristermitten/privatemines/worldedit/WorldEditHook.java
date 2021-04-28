@@ -1,7 +1,6 @@
 package me.bristermitten.privatemines.worldedit;
 
 import me.bristermitten.privatemines.data.MineSchematic;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;

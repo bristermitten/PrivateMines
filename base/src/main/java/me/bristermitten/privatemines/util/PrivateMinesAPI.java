@@ -9,7 +9,6 @@ import java.util.List;
 
 public class PrivateMinesAPI {
 
-    private final PrivateMines plugin;
     private final MineStorage storage;
 
     public String formatTime(int time) {
@@ -27,7 +26,6 @@ public class PrivateMinesAPI {
      */
 
     public PrivateMinesAPI(PrivateMines plugin, MineStorage storage) {
-        this.plugin = plugin;
         this.storage = storage;
     }
 
@@ -59,16 +57,6 @@ public class PrivateMinesAPI {
 
     public void setMineTaxPercentage(Player player, Double percentage) {
         storage.get(player).setTaxPercentage(percentage);
-    }
-
-    /**
-     *
-     * @param player - The player who's mine percentage you want to get
-     * @return double - The mine block percent left
-     */
-
-    public double getMinePercentage(Player player) {
-        return storage.get(player).getMinePercentage();
     }
 
     /**
