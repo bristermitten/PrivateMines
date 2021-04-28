@@ -39,9 +39,6 @@ public class MineResetTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        /*
-            TODO Implement a decent percent system.
-         */
 
         for (PrivateMine mine : storage.getAll()) {
             if (mine.shouldReset()) {
