@@ -84,9 +84,7 @@ public class PMConfig {
         this.firstTimeCommands = config.getStringList("FirstTimeCommands");
         this.commands = config.getStringList("Commands");
         this.resetStyles = config.getStringList("Reset-Styles");
-        this.effects = (List<ParticleEffect>) config.getList("effects");
         this.mineRegionNameFormat = config.getString("mine-region-name");
-        this.mineBlocks = (List<ItemStack>) config.getList("blocks");
 
         this.blockOptions = config.getStringList("Block-Options")
                 .stream()
@@ -108,6 +106,7 @@ public class PMConfig {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+
 
         this.sellCommand = config.getString("sellCommand");
         this.resetPercentages = config.getIntegerList("Reset-Percentages");
