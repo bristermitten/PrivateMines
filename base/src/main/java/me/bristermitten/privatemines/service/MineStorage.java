@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -14,9 +15,9 @@ public class MineStorage {
 
     public static final String DATA_DO_NOT_CHANGE = "Data-Do-Not-Change";
     private final Map<UUID, PrivateMine> mines = new HashMap<>();
-    private final MineFactory factory;
+    private final MineFactory<MineSchematic<?>, ?> factory;
 
-    public MineStorage(MineFactory factory) {
+    public MineStorage(MineFactory<MineSchematic<?>, ?> factory) {
         this.factory = factory;
     }
 
@@ -57,17 +58,18 @@ public class MineStorage {
     public PrivateMine getOrCreate(Player p) {
         PrivateMine mine = mines.get(p.getUniqueId());
 
-        if (mine == null) {
-
-            MineSchematic<?> defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
-            if (defaultSchematic == null) {
-                p.sendMessage(ChatColor.RED + "No Default Schematic. Contact an Admin.");
-                throw new IllegalStateException("No Default Schematic found");
-            }
-
-            mine = factory.create(p, defaultSchematic, true);
-            mines.put(p.getUniqueId(), mine);
+        if (mine != null) {
+            return mine;
         }
+
+        MineSchematic<?> defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
+        if (defaultSchematic == null) {
+            p.sendMessage(ChatColor.RED + "No Default Schematic. Contact an Admin.");
+            throw new IllegalStateException("No Default Schematic found"); //TODO this needs to be more user friendly
+        }
+
+        mine = factory.create(p, defaultSchematic, true);
+        mines.put(p.getUniqueId(), mine);
 
         return mine;
     }
@@ -75,7 +77,7 @@ public class MineStorage {
     /*
       Gets the player's private mine
      */
-    public PrivateMine get(Player p) {
+    public PrivateMine get(OfflinePlayer p) {
         return mines.get(p.getUniqueId());
     }
 
@@ -89,14 +91,14 @@ public class MineStorage {
     /*
       Checks if the player has a private mine.
      */
-    public boolean has(Player p) {
+    public boolean has(OfflinePlayer p) {
         return mines.containsKey(p.getUniqueId());
     }
 
     /*
      Removes a player's private mine.
      */
-    public void remove(Player target) {
+    public void remove(OfflinePlayer target) {
         mines.remove(target.getUniqueId());
     }
 
