@@ -57,16 +57,18 @@ public class PMConfig {
         this.mineRegionNameFormat = config.getString("mine-region-name");
 
         ConfigurationSection blocks = config.getConfigurationSection("Blocks");
-        for (String block : blocks.getKeys(false)) {
-            final String blockType = blocks.getString(block);
-            final Optional<ItemStack> value;
-            if (blockType != null) {
-                value = Util.parseItem(blockType);
-                if (!value.isPresent()) {
-                    throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
-                }
+        if (blocks != null) {
+            for (String block : blocks.getKeys(false)) {
+                final String blockType = blocks.getString(block);
+                final Optional<ItemStack> value;
+                if (blockType != null) {
+                    value = Util.parseItem(blockType);
+                    if (!value.isPresent()) {
+                        throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
+                    }
 
-                this.blockTypes.put(BlockType.fromName(block), value.get());
+                    this.blockTypes.put(BlockType.fromName(block), value.get());
+                }
             }
         }
 
