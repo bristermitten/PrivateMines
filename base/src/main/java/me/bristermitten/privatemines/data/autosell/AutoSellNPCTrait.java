@@ -50,6 +50,8 @@ public class AutoSellNPCTrait extends Trait implements Listener
         {
             return;
         }
+        e.getClicker().performCommand("sellall");
+        //TODO Possibly add a price gui?
     }
 
     /*
@@ -75,15 +77,12 @@ public class AutoSellNPCTrait extends Trait implements Listener
         manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
                 "{amount}", String.valueOf(tax),
                 "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-        Bukkit.getOfflinePlayer(owner);
-        if (Bukkit.getOnlinePlayers().contains(owner)) {
+        if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
             BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
 
             manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
                     "{amount}", String.valueOf(tax),
                     "{tax}", String.valueOf(privateMine.getMinePercentage()));
-
-            Bukkit.getPlayer(owner).sendMessage("You've received $" + tax + " from " + player.getName());
         }
     }
 
@@ -136,25 +135,6 @@ public class AutoSellNPCTrait extends Trait implements Listener
         if (player.getUniqueId().equals(owner))
         {
             return true;
-        }
-        PrivateMine privateMine = storage.get(owner);
-        if (privateMine == null)
-        {
-            return true;
-        }
-        return !privateMine.contains(player);
-    }
-
-    private boolean eventIsNotApplicableSingle(ItemStack itemsSold, Player player)
-    {
-        if (itemsSold == null)
-        {
-            return true;
-        }
-        if (player.getUniqueId().equals(owner))
-        {
-            player.sendMessage("return thing because of OWNER!");
-            return false;
         }
         PrivateMine privateMine = storage.get(owner);
         if (privateMine == null)
