@@ -447,7 +447,8 @@ public class PrivateMine implements ConfigurationSerializable {
     public void setMineSchematic(MineSchematic<?> mineSchematic) {
         boolean mineIsOpen = isOpen();
         setOpen(false);
-        delete();
+
+//        delete();
 
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
                 Bukkit.getPlayer(owner),
@@ -482,5 +483,13 @@ public class PrivateMine implements ConfigurationSerializable {
         manager.sendMessage(issuer, MessageType.ERROR, LangKeys.ERR_YOU_WERE_UNBANNED, PLAYER_PLACEHOLDER, Bukkit.getOfflinePlayer(owner).getName());
 
         return bannedPlayers.remove(player.getUniqueId());
+    }
+
+
+    public void upgradeMine(Player player) {
+
+        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+
+        PrivateMines.getPlugin().getWeHook().fillAir(mainRegion);
     }
 }

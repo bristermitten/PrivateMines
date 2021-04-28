@@ -17,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -24,6 +26,7 @@ import static java.util.stream.Collectors.toList;
 public final class Util {
 
     private static final Set<Player> onlinePlayers = new HashSet<>();
+    private static final Pattern rgbColor = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
 
     private Util() {
 
@@ -100,6 +103,21 @@ public final class Util {
         }
 
         return lines.stream().map(Util::color).collect(toList());
+    }
+
+    public static String colorRGB(String s) {
+        return ChatColor.translateAlternateColorCodes('&', parseRGB(s));
+    }
+
+    public static String parseRGB(String msg) {
+        Matcher matcher = rgbColor.matcher(msg);
+        while(matcher.find()) {
+            String color = msg.substring(matcher.start(), matcher.end());
+            String hex = color.replace("&", "").toUpperCase();
+            msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(hex).toString());
+            matcher = rgbColor.matcher(msg);
+        }
+        return msg;
     }
 
     public static Map<String, String> arrayToMap(Object... array) {
