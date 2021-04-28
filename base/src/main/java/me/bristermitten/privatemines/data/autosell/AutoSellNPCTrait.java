@@ -82,7 +82,7 @@ public class AutoSellNPCTrait extends Trait implements Listener
 
             manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
                     "{amount}", String.valueOf(tax),
-                    "{tax}", String.valueOf(privateMine.getMinePercentage()));
+                    "{tax}", String.valueOf(privateMine.getTax()));
         }
     }
 

@@ -15,7 +15,7 @@ import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.PrivateMinesAPI;
-import me.bristermitten.privatemines.util.Signs.SignMenuFactory;
+import me.bristermitten.privatemines.util.signs.SignMenuFactory;
 import me.bristermitten.privatemines.util.UpdateCheck;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
