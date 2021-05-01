@@ -3,6 +3,7 @@ package me.bristermitten.privatemines.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
+import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import me.bristermitten.privatemines.MineResetTask;
 import me.bristermitten.privatemines.PrivateMines;
@@ -23,10 +24,10 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -440,6 +441,32 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         p.sendMessage(ChatColor.GREEN + "Cancelled task successfully, attempting to start it back up!");
         new MineResetTask(plugin, storage).start();
+    }
+
+    @Subcommand("setblockstyle")
+    @CommandPermission("privatemines.setblockstyle")
+    @CommandCompletion("@players")
+    @Description("Sets the block style for a mine")
+    public void setblockstyle(Player p, OnlinePlayer target, String style) {
+        PrivateMine mine = storage.get(target.player);
+        PrivateMines privateMines = PrivateMines.getPlugin();
+        List<ItemStack> blocks;
+
+        p.sendMessage("setblockstyle did actually run btw....");
+        p.sendMessage(config.getBlockStyles().toString());
+
+        for (String s : config.getBlockStyles()) {
+            if (s.contains(style)) {
+                blocks = privateMines.getConfig().getStringList("Block-Styles." + style).stream()
+                        .map(Util::parseItem)
+                        .filter(java.util.Optional::isPresent)
+                        .map(java.util.Optional::get)
+                        .collect(Collectors.toList());
+            mine.setMineBlocks(blocks);
+            } else if (!s.contains(style)) {
+                p.sendMessage(ChatColor.RED + "Missing style!");
+            }
+        }
     }
 
     @Subcommand("version")

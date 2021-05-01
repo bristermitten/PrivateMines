@@ -267,7 +267,6 @@ public final class PrivateMines extends JavaPlugin {
         this.menuConfig = new MenuConfig(menusConfig);
 
         getLogger().info("Loaded menus.yml");
-
     }
 
     private void saveFiles() throws IOException {

@@ -231,6 +231,14 @@ public final class Util {
                 .map(XMaterial::parseItem);
     }
 
+    public static ItemStack toItemStack(String s) {
+        Material material = Material.matchMaterial(s);
+        if (material == null) {
+            return null;
+        }
+        return new ItemStack(material);
+    }
+
 
     public static String parseStyle(String s) {
         switch (s) {

@@ -19,10 +19,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
-import java.util.List;
 import java.util.UUID;
 
 public class UltraPrisonCoreNPCTrait extends Trait implements Listener {

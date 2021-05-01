@@ -24,6 +24,7 @@ public class PMConfig {
     private List<String> firstTimeCommands;
     private List<String> commands;
     private List<String> resetStyles;
+    private List<String> blockStyles;
 
     private List<ParticleEffect> effects;
 
@@ -93,6 +94,8 @@ public class PMConfig {
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
+        this.blockStyles = config.getStringList("Block-Styles");
+
         this.defaultMineBlocks = config.getStringList("Block-Styles.Default")
                 .stream()
                 .map(Util::parseItem)
@@ -123,7 +126,6 @@ public class PMConfig {
                 }
             }
         }
-
     }
 
     public Map<MessageType, ChatColor> getColors() {
@@ -195,6 +197,7 @@ public class PMConfig {
     public List<String> getFirstTimeCommands() { return firstTimeCommands; }
     public List<String> getCommands() {return commands;}
     public List<String> getResetStyles() {return resetStyles; }
+    public List<String> getBlockStyles() { return blockStyles; }
 
     public List<Integer> getResetPercentages() {return resetPercentages; }
 
