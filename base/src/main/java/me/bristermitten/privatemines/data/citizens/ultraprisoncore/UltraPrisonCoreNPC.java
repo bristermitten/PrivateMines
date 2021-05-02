@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.autosell;
+package me.bristermitten.privatemines.data.citizens.ultraprisoncore;
 
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -9,13 +9,13 @@ import org.bukkit.entity.EntityType;
 
 import java.util.UUID;
 
-public class AutoSellNPC {
-	private AutoSellNPC() {
-	}
+public class UltraPrisonCoreNPC {
 
-	//Creates the sell NPC for AutoSell.
+	/*
+	Creates the sell NPC.
+	 */
 
-	public static NPC createSellNPC(String name, String skinName, Location location, UUID owner) {
+	public static NPC createUPCSellNPC(String name, String skinName, Location location, UUID owner) {
 		NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, name);
 		npc.spawn(location);
 
@@ -23,10 +23,10 @@ public class AutoSellNPC {
 		((SkinnableEntity) npc.getEntity()).setSkinName(skinName);
 		npc.getTrait(LookClose.class).toggle();
 
-		AutoSellNPCTrait trait = npc.getTrait(AutoSellNPCTrait.class);
+		UltraPrisonCoreNPCTrait trait = npc.getTrait(UltraPrisonCoreNPCTrait.class);
 
 		if (trait == null) {
-			trait = new AutoSellNPCTrait();
+			trait = new UltraPrisonCoreNPCTrait();
 			npc.addTrait(trait);
 		}
 

@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.ultraprisoncore;
+package me.bristermitten.privatemines.data.citizens.ultraprisoncore;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
@@ -38,7 +38,7 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
     private Double tax;
 
     public UltraPrisonCoreNPCTrait() {
-        super("UltraPrisonCoreNPC");
+        super("UltraPrisonCoreNPCTrait");
     }
 
     public UltraPrisonCore getCore() {
@@ -60,11 +60,9 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         if (!e.getNPC().equals(this.npc))
             return;
         if (e.getClicker() == null) {
-            Bukkit.broadcastMessage("Clicker was null?");
             return;
         }
         e.getClicker().performCommand("sellall");
-        e.getClicker().sendMessage("Hi from upc trait");
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {

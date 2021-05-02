@@ -6,8 +6,8 @@ import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineLocations;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
-import me.bristermitten.privatemines.data.autosell.AutoSellNPC;
-import me.bristermitten.privatemines.data.ultraprisoncore.UltraPrisonCoreNPC;
+import me.bristermitten.privatemines.data.citizens.autosell.AutoSellNPC;
+import me.bristermitten.privatemines.data.citizens.ultraprisoncore.UltraPrisonCoreNPC;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
@@ -233,7 +233,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                     owner.getName(),
                     npcLoc,
                     owner.getUniqueId()
-            )
+                    )
                     .getUniqueId();
         } else {
             npcuuid = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist

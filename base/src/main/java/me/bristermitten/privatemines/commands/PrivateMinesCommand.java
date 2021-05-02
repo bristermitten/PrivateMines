@@ -40,15 +40,13 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
-    private final SignMenuFactory signMenuFactory;
 
     public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
-                               PMConfig config, SignMenuFactory signMenu) {
+                               PMConfig config) {
         this.plugin = plugin;
         this.factory = factory;
         this.storage = storage;
         this.config = config;
-        this.signMenuFactory = signMenu;
     }
 
     @Default
@@ -85,29 +83,6 @@ public class PrivateMinesCommand extends BaseCommand {
         if (plugin.isUltraPrisonCoreEnabled()) {
 
             final PrivateMine mine = storage.getOrCreate(p);
-
-            if (config.isTaxSignMenusEnabled()) {
-                SignMenuFactory.Menu menu = signMenuFactory.newMenu(
-                        Arrays.asList("Please enter a", "tax amount:"))
-                        .reopenIfFail(true)
-                        .response((player, lines) -> {
-                            int taxPercent = Integer.parseInt(lines[2]);
-
-                            if (lines[2] == null) {
-                                p.sendMessage("Please enter a tax amount.");
-                                return false;
-                            }
-                            if (taxPercent <= 100 || taxPercentage >= 1) {
-                                p.sendMessage("Number either too big or too small.");
-                                return false;
-                            }
-                            mine.setTaxPercentage(taxPercentage);
-                            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
-                            return true;
-                        });
-                menu.open(p);
-                return;
-            }
 
             mine.setTaxPercentage(taxPercentage);
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());

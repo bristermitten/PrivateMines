@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.data.autosell;
+package me.bristermitten.privatemines.data.citizens.autosell;
 
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
@@ -36,7 +36,7 @@ public class AutoSellNPCTrait extends Trait implements Listener
 
     public AutoSellNPCTrait()
     {
-        super("AutoSellNPC");
+        super("AutoSellNPCTrait");
     }
 
     public void setOwner(UUID owner)
