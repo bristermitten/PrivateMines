@@ -9,7 +9,6 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.citizens.autosell.AutoSellListener;
 import me.bristermitten.privatemines.data.citizens.autosell.AutoSellNPCTrait;
-import me.bristermitten.privatemines.data.citizens.ultraprisoncore.UltraPrisonCoreListener;
 import me.bristermitten.privatemines.data.citizens.ultraprisoncore.UltraPrisonCoreNPCTrait;
 import me.bristermitten.privatemines.listeners.UserJoinEvent;
 import me.bristermitten.privatemines.listeners.UserLeaveEvent;
@@ -148,14 +147,10 @@ public final class PrivateMines extends JavaPlugin {
                 Bukkit.getLogger().info("Enabling AutoSell NPC Trait!");
                 CitizensAPI.getTraitFactory().registerTrait
                         (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
-                Bukkit.getLogger().info("load autosell npc listener...");
-                Bukkit.getPluginManager().registerEvents(new AutoSellListener(), this);
             } else if (ultraPrisonCoreEnabled) {
                 Bukkit.getLogger().info("Enabling UltraPrisonCore NPC Trait!");
                 CitizensAPI.getTraitFactory().registerTrait
                         (TraitInfo.create(UltraPrisonCoreNPCTrait.class).withName("UltraPrisonCoreNPC"));
-                Bukkit.getLogger().info("load UltraPrisonCore npc listener...");
-                Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreListener(), this);
             }
         }
 
@@ -177,6 +172,7 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
         // Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
+        Bukkit.getPluginManager().registerEvents(new AutoSellListener(), this);
 
 //        if (getConfig().getBoolean("autosell-enabled") &&
 //                getConfig().getBoolean("ultraprisoncore-enabled")) {

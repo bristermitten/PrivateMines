@@ -6,12 +6,10 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.data.PrivateMine;
-import me.bristermitten.privatemines.data.citizens.autosell.AutoSellNPCTrait;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
-import net.citizensnpcs.api.persistence.Persist;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +17,7 @@ import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-public class UltraPrisonCoreListener implements Listener {
+public class UltraPrisonListener implements Listener {
 
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
     PrivateMine privateMine;
@@ -29,7 +27,7 @@ public class UltraPrisonCoreListener implements Listener {
 
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent e) {
-        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class))
+        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class))
         {
             return;
         }
@@ -44,7 +42,7 @@ public class UltraPrisonCoreListener implements Listener {
     @EventHandler
     public void onRightClick(NPCRightClickEvent e)
     {
-        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class))
+        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class))
         {
             return;
         }
@@ -95,10 +93,10 @@ public class UltraPrisonCoreListener implements Listener {
         try {
             defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
             if (privateMine.getTaxPercentage() > 0.0D) {
-                    tax = privateMine.getTaxPercentage();
-                    if (tax == 0.0D) {
-                        tax = defaultTax;
-                    }
+                tax = privateMine.getTaxPercentage();
+                if (tax == 0.0D) {
+                    tax = defaultTax;
+                }
 
             } else if (privateMine.getTaxPercentage() == 0.0D) {
                 return;
