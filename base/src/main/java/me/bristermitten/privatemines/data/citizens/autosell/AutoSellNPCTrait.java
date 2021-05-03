@@ -29,7 +29,6 @@ import java.util.UUID;
 public class AutoSellNPCTrait extends Trait implements Listener
 {
 
-    private final MineStorage storage = PrivateMines.getPlugin().getStorage();
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
@@ -44,118 +43,6 @@ public class AutoSellNPCTrait extends Trait implements Listener
         this.owner = owner;
     }
 
-    @EventHandler
-    public void onLeftClick(NPCLeftClickEvent e) {
-        if (!e.getNPC().equals(npc))
-        {
-            return;
-        }
-        e.getClicker().performCommand("sellall");
-        //TODO Possibly add a price gui?
-    }
-
-    /*
-      Used when a player right clicks the npc
-     */
-
-    @EventHandler
-    public void onRightClick(NPCRightClickEvent e)
-    {
-        if (!e.getNPC().equals(npc))
-        {
-            return;
-        }
-        e.getClicker().performCommand("sellall");
-    }
-
-    private void process(PrivateMine privateMine, double tax, Player player)
-    {
-        PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
-
-        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
-        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
-        manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
-                "{amount}", String.valueOf(tax),
-                "{tax}", String.valueOf(privateMine.getTaxPercentage()));
-        if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
-            BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
-
-            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
-                    "{amount}", String.valueOf(tax),
-                    "{tax}", String.valueOf(privateMine.getTax()));
-        }
-    }
-
-    /*
-        AutoSell Sell System Listeners..
-    */
-
-    @EventHandler
-    public void onAutoSell(AutoSellEvent e)
-    {
-        //No need to tax the owner
-        if (e.getPlayer().getUniqueId().equals(owner)) return;
-
-        PrivateMine privateMine = storage.get(owner);
-        if (privateMine == null)
-        {
-            return;
-        }
-
-        if (!privateMine.contains(e.getPlayer()))
-        {
-            return;
-        }
-
-        e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
-        double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
-        process(privateMine, tax, e.getPlayer());
-    }
-
-    @EventHandler
-    public void onSellAll(SellAllEvent e)
-    {
-        if (eventIsNotApplicable(e.getItemsSold(), e.getPlayer()))
-        {
-            return;
-        }
-        PrivateMine privateMine = storage.get(owner);
-
-        double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
-        e.setTotalCost(e.getTotalCost() - tax);
-        process(privateMine, tax, e.getPlayer());
-    }
-
-    private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player)
-    {
-        if (itemsSold.isEmpty())
-        {
-            return true;
-        }
-        if (player.getUniqueId().equals(owner))
-        {
-            return true;
-        }
-        PrivateMine privateMine = storage.get(owner);
-        if (privateMine == null)
-        {
-            return true;
-        }
-        return !privateMine.contains(player);
-    }
-
-    @EventHandler
-    public void onSignSell(SignSellEvent e)
-    {
-        if (eventIsNotApplicable(e.getItemsSold(), e.getPlayer()))
-        {
-            return;
-        }
-        PrivateMine privateMine = storage.get(owner);
-        double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
-        e.setTotalCost(e.getTotalCost() - tax);
-        process(privateMine, tax, e.getPlayer());
-    }
 
     static class UUIDPersister implements Persister<UUID> {
 
