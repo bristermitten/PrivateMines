@@ -5,24 +5,20 @@ import net.citizensnpcs.api.persistence.Persist;
 import net.citizensnpcs.api.persistence.Persister;
 import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.util.DataKey;
-import org.bukkit.event.Listener;
 
 import java.util.UUID;
 
-public class AutoSellNPCTrait extends Trait implements Listener
-{
+public class AutoSellNPCTrait extends Trait {
 
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
 
-    public AutoSellNPCTrait()
-    {
+    public AutoSellNPCTrait() {
         super("AutoSellNPCTrait");
     }
 
-    public void setOwner(UUID owner)
-    {
+    public void setOwner(UUID owner) {
         this.owner = owner;
     }
 

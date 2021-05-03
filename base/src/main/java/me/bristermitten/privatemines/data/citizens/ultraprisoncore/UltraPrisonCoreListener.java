@@ -89,16 +89,17 @@ public class UltraPrisonCoreListener implements Listener {
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
         Player player = e.getPlayer();
         privateMine = storage.get(owner);
-        double defaultTax = 0.0D;
+        double defaultTax;
         if (eventIsNotApplicable(player))
             return;
         try {
+            defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
             if (privateMine.getTaxPercentage() > 0.0D) {
-                try {
                     tax = privateMine.getTaxPercentage();
-                } catch (NullPointerException exc) {
-                    defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
-                }
+                    if (tax == 0.0D) {
+                        tax = defaultTax;
+                    }
+
             } else if (privateMine.getTaxPercentage() == 0.0D) {
                 return;
             }
