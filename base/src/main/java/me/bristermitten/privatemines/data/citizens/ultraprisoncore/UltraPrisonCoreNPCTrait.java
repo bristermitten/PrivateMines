@@ -49,6 +49,10 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
         this.owner = owner;
     }
 
+    public UUID getOwner() {
+        return this.owner;
+    }
+
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent e) {
         if (!e.getNPC().equals(this.npc))
@@ -81,6 +85,7 @@ public class UltraPrisonCoreNPCTrait extends Trait implements Listener {
                     "{amount}", String.valueOf(df.format(tax)),
                     "{tax}", String.valueOf(privateMine.getTax()));
         }
+        Bukkit.getLogger().info("UltraPrisonCoreNPCTrait process");
     }
 
     private boolean eventIsNotApplicable(Player player) {
