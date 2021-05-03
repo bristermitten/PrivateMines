@@ -76,6 +76,8 @@ public class UltraPrisonCoreListener implements Listener {
             manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
                     "{amount}", String.valueOf(tax),
                     "{tax}", String.valueOf(privateMine.getTax()));
+
+            Bukkit.broadcastMessage("ULTRAPRISONCORELISTENER PROCESS LINE #80");
         }
     }
 

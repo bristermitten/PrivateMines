@@ -106,6 +106,7 @@ public class AutoSellListener implements Listener {
         double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
         process(privateMine, tax, e.getPlayer());
+        Bukkit.broadcastMessage("AUTOSELL SELLALL LINE 109?");
     }
 
     private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player)
