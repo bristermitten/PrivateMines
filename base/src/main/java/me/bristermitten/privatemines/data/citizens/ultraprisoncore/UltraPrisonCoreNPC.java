@@ -11,6 +11,9 @@ import java.util.UUID;
 
 public class UltraPrisonCoreNPC {
 
+	private UltraPrisonCoreNPC() {
+	}
+
 	/*
 	Creates the sell NPC.
 	 */

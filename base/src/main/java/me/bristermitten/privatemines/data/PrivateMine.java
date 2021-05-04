@@ -36,7 +36,7 @@ public class PrivateMine implements ConfigurationSerializable {
     public static final String PLAYER_PLACEHOLDER = "{player}";
     //How far between a mine reset in milliseconds
     private final int resetDelay;
-    private final UUID owner;
+    private UUID owner;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
     private final List<String> commands;
@@ -303,8 +303,12 @@ public class PrivateMine implements ConfigurationSerializable {
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
     }
 
+    public void setOwner(UUID owner) {
+        this.owner = owner;
+    }
+
     public UUID getOwner() {
-        return owner;
+        return Objects.requireNonNull(owner);
     }
 
     public void teleport() {

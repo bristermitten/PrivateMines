@@ -450,5 +450,14 @@ public class PrivateMinesCommand extends BaseCommand {
     public void version(Player p) {
         p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
     }
+
+    @Subcommand("reload")
+    @CommandPermission("privatemines.reload")
+    @Description("Reloads the PrivateMines plugin")
+    public void reload(Player p) {
+        p.sendMessage(ChatColor.GREEN + "Reloading the configuration files...");
+        plugin.reloadConfig();
+        p.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
+    }
 }
 
