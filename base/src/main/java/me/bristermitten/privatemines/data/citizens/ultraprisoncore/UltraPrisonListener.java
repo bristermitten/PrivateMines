@@ -78,9 +78,9 @@ public class UltraPrisonListener implements Listener {
     @EventHandler
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
         Player player = e.getPlayer();
-        this.privateMine = this.storage.get(player.getUniqueId());
-        this.owner = this.privateMine.getOwner();
-        if (this.owner == null)
+        privateMine = storage.get(player.getUniqueId());
+        owner = privateMine.getOwner();
+        if (owner == null)
             Bukkit.broadcastMessage("UPC owner is null 98");
         if (eventIsNotApplicable(player))
             return;
