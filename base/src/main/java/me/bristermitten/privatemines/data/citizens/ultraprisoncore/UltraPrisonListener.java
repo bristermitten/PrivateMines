@@ -18,52 +18,41 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 public class UltraPrisonListener implements Listener {
-
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
-    PrivateMine privateMine;
-    UUID owner;
-    private Double tax;
 
+    PrivateMine privateMine;
+
+    UUID owner;
+
+    private Double tax;
 
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent e) {
-        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class)) {
+        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class))
             return;
-        }
         e.getClicker().performCommand("sellall");
-        //TODO Possibly add a price gui?
     }
-
-    /*
-      Used when a player right clicks the npc
-     */
 
     @EventHandler
     public void onRightClick(NPCRightClickEvent e) {
-        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class)) {
+        if (!e.getNPC().hasTrait(UltraPrisonCoreNPCTrait.class))
             return;
-        }
         e.getClicker().performCommand("sellall");
     }
 
     private boolean eventIsNotApplicable(Player player) {
         privateMine = storage.get(player.getUniqueId());
         owner = privateMine.getOwner();
-
-        if (owner == null) {
+        if (owner == null)
             Bukkit.broadcastMessage("UPC owner is null 53");
-        }
-
         if (player.getUniqueId().equals(owner))
             return false;
-        if (privateMine == null) {
+        if (privateMine == null)
             Bukkit.getLogger().info("UltraPrisonListener privateMine null");
-        }
         return !privateMine.contains(player);
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
-
         if (owner == null) {
             Bukkit.broadcastMessage("UPC owner is null 68");
         }
@@ -86,31 +75,21 @@ public class UltraPrisonListener implements Listener {
         }
     }
 
-    /*
-        AutoSell Sell System Listeners..
-    */
-
     @EventHandler
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
         Player player = e.getPlayer();
-        privateMine = storage.get(player.getUniqueId());
-        owner = privateMine.getOwner();
-
-        if (owner == null) {
+        this.privateMine = this.storage.get(player.getUniqueId());
+        this.owner = this.privateMine.getOwner();
+        if (this.owner == null)
             Bukkit.broadcastMessage("UPC owner is null 98");
-        }
-
-        double defaultTax;
         if (eventIsNotApplicable(player))
             return;
         try {
-            defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
+            double defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
             if (privateMine.getTaxPercentage() > 0.0D) {
                 tax = privateMine.getTaxPercentage();
-                if (tax == 0.0D) {
+                if (tax == 0.0D)
                     tax = defaultTax;
-                }
-
             } else if (privateMine.getTaxPercentage() == 0.0D) {
                 return;
             }
