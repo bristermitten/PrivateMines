@@ -47,24 +47,8 @@ public class UltraPrisonListener implements Listener {
     }
 
     private boolean eventIsNotApplicable(Player player) {
-
-        /*
-            The owner here keeps coming up as null,
-            I don't know how to fix it.
-         */
-
-        if (owner == null) {
-            Bukkit.getLogger().info("eventIsNot owner == null");
-        }
-        if (storage.has(Bukkit.getOfflinePlayer(owner)) == false) {
-            Bukkit.broadcastMessage("storage.has = false");
-        } else {
-            Bukkit.broadcastMessage("storage.has = true");
-        }
-        if (privateMine == null) {
-            Bukkit.getLogger().info("UltraPrisonListener privateMine null");
-            privateMine = storage.get(owner);
-        }
+        privateMine = storage.get(player.getUniqueId());
+        owner = privateMine.getOwner();
 
         if (owner == null) {
             Bukkit.broadcastMessage("UPC owner is null 53");
@@ -72,6 +56,9 @@ public class UltraPrisonListener implements Listener {
 
         if (player.getUniqueId().equals(owner))
             return false;
+        if (privateMine == null) {
+            Bukkit.getLogger().info("UltraPrisonListener privateMine null");
+        }
         return !privateMine.contains(player);
     }
 
@@ -106,42 +93,36 @@ public class UltraPrisonListener implements Listener {
     @EventHandler
     public void onUPCSellAllEvent(UltraPrisonSellAllEvent e) {
         Player player = e.getPlayer();
+        privateMine = storage.get(player.getUniqueId());
+        owner = privateMine.getOwner();
 
-        if (eventIsNotApplicable(player)) {
-            return;
+        if (owner == null) {
+            Bukkit.broadcastMessage("UPC owner is null 98");
         }
 
-        PrivateMine getPrivateMine = storage.get(player);
-        double privateMineTax = getPrivateMine.getTaxPercentage();
+        double defaultTax;
+        if (eventIsNotApplicable(player))
+            return;
+        try {
+            defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
+            if (privateMine.getTaxPercentage() > 0.0D) {
+                tax = privateMine.getTaxPercentage();
+                if (tax == 0.0D) {
+                    tax = defaultTax;
+                }
 
-        double d = e.getSellPrice();
-
-        double takenTax = d / 100.0D * privateMineTax;
-        double afterTax = d - takenTax;
-        process(privateMine, afterTax, player);
-
-//        double defaultTax;
-//        if (eventIsNotApplicable(player))
-//            return;
-//        try {
-//            defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
-//            if (privateMine.getTaxPercentage() > 0.0D) {
-//                tax = privateMine.getTaxPercentage();
-//                if (tax == 0.0D) {
-//                    tax = defaultTax;
-//                }
-//
-//            } else if (privateMine.getTaxPercentage() == 0.0D) {
-//                return;
-//            }
-//            if (tax == 0.0D)
-//                tax = defaultTax;
-//            double takenTax = d / 100.0D * tax;
-//            double afterTax = d - takenTax;
-//            e.setSellPrice(afterTax);
-//            process(privateMine, takenTax, player);
-//        } catch (NullPointerException e1) {
-//            e1.printStackTrace();
-//        }
+            } else if (privateMine.getTaxPercentage() == 0.0D) {
+                return;
+            }
+            double d = e.getSellPrice();
+            if (tax == 0.0D)
+                tax = defaultTax;
+            double takenTax = d / 100.0D * tax;
+            double afterTax = d - takenTax;
+            e.setSellPrice(afterTax);
+            process(privateMine, takenTax, player);
+        } catch (NullPointerException e1) {
+            e1.printStackTrace();
+        }
     }
 }
