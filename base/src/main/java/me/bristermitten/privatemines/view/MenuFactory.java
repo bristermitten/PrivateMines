@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 /**
  * Factory pattern for creating Menus
  */
+
 public class MenuFactory {
 	private final MineStorage storage;
 
