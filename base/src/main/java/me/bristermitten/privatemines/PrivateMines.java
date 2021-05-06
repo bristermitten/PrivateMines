@@ -176,32 +176,6 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new AutoSellListener(), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonListener(), this);
 
-//        if (getConfig().getBoolean("autosell-enabled") &&
-//                getConfig().getBoolean("ultraprisoncore-enabled")) {
-//            Bukkit.getLogger().warning(ChatColor.RED + "Can't enable UltraPrisonCore and AutoSell at once!");
-//            return;
-//        } else {
-//            if (getConfig().getBoolean("autosell-enabled")) {
-//                if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell")) {
-//                    Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into AutoSell because it's not installed!");
-//                    return;
-//                } else {
-//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into AutoSell...");
-//                    Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
-//                    return;
-//                }
-//            } else {
-//                if (getConfig().getBoolean("ultraprisoncore-enabled")) {
-//                    if (!Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore")) {
-//                        Bukkit.getLogger().warning(ChatColor.RED + "Failed to hook into UltraPrisonCore because it's not installed!");
-//                    }
-//                    Bukkit.getLogger().info(ChatColor.GREEN + "Hooking into UltraPrisonCore...");
-//                    Bukkit.getPluginManager().registerEvents(new UltraPrisonCoreNPCTrait(), this);
-//                    return;
-//                }
-//            }
-//        }
-
         new MineResetTask(this, storage).start();
 
         long loaded = System.currentTimeMillis();

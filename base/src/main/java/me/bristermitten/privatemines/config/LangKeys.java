@@ -50,7 +50,9 @@ public enum LangKeys implements MessageKeyProvider {
 
     INFO_MINE_RESET,
     INFO_MINE_RESET_OTHER,
-    INFO_NO_PLAYER;
+    INFO_NO_PLAYER,
+
+    INFO_YOU_MADE_NO_MONEY;
 
     private final MessageKey key = MessageKey.of("privatemines." + name().toLowerCase());
 

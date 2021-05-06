@@ -11,6 +11,7 @@ import me.drawethree.ultraprisoncore.api.events.UltraPrisonSellAllEvent;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 public class UltraPrisonListener implements Listener {
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
+    private static final BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
 
     PrivateMine privateMine;
 
@@ -48,18 +50,17 @@ public class UltraPrisonListener implements Listener {
         if (player.getUniqueId().equals(owner))
             return false;
         if (privateMine == null)
-            Bukkit.getLogger().info("UltraPrisonListener privateMine null");
+            Bukkit.getLogger().warning("UltraPrisonListener privatemine was null!");
         return !privateMine.contains(player);
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
         if (owner == null) {
-            Bukkit.broadcastMessage("UPC owner is null 68");
+            Bukkit.getLogger().warning("UltraPrisonListener owner was null!");
         }
 
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
 
-        BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
         BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
         manager.sendMessage(issuer, MessageType.INFO, LangKeys.INFO_TAX_TAKEN,
                 "{amount}", String.valueOf(tax),
@@ -70,8 +71,6 @@ public class UltraPrisonListener implements Listener {
             manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
                     "{amount}", String.valueOf(tax),
                     "{tax}", String.valueOf(privateMine.getTax()));
-
-            Bukkit.broadcastMessage("ULTRAPRISONCORELISTENER PROCESS LINE #80");
         }
     }
 
@@ -80,8 +79,10 @@ public class UltraPrisonListener implements Listener {
         Player player = e.getPlayer();
         privateMine = storage.get(player.getUniqueId());
         owner = privateMine.getOwner();
+        BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
+
         if (owner == null)
-            Bukkit.broadcastMessage("UPC owner is null 98");
+            Bukkit.getLogger().warning("UltraPrisonSellAllEvent owner was null!");
         if (eventIsNotApplicable(player))
             return;
         try {
@@ -98,6 +99,13 @@ public class UltraPrisonListener implements Listener {
                 tax = defaultTax;
             double takenTax = d / 100.0D * tax;
             double afterTax = d - takenTax;
+
+            if (afterTax == 0) {
+                player.sendMessage(ChatColor.RED + "You made no money from this sale!");
+                manager.sendMessage(issuer, MessageType.ERROR, LangKeys.INFO_YOU_MADE_NO_MONEY);
+                return;
+            }
+
             e.setSellPrice(afterTax);
             process(privateMine, takenTax, player);
         } catch (NullPointerException e1) {
