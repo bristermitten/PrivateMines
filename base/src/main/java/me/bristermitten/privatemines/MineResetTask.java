@@ -2,6 +2,7 @@ package me.bristermitten.privatemines;
 
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -42,7 +43,7 @@ public class MineResetTask extends BukkitRunnable {
 
         for (PrivateMine mine : storage.getAll()) {
             if (mine.shouldReset()) {
-                mine.fillWEMultiple(mine.getMineBlocks());
+                mine.fillWEMultiple(mine.getOwnerPlayer());
             }
         }
     }

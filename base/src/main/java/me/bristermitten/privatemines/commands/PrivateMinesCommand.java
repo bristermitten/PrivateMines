@@ -3,7 +3,6 @@ package me.bristermitten.privatemines.commands;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandIssuer;
 import co.aikar.commands.annotation.*;
-import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import me.bristermitten.privatemines.MineResetTask;
 import me.bristermitten.privatemines.PrivateMines;
@@ -14,7 +13,6 @@ import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
-import me.bristermitten.privatemines.util.signs.SignMenuFactory;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -26,7 +24,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -256,7 +256,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
-        mine.fillWEMultiple(mine.getMineBlocks());
+        mine.fillWEMultiple(mine.getOwnerPlayer());
     }
 
     @Subcommand("reset")
@@ -269,7 +269,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.fillWEMultiple(mine.getMineBlocks());
+        mine.fillWEMultiple(mine.getOwnerPlayer());
 
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
@@ -320,9 +320,11 @@ public class PrivateMinesCommand extends BaseCommand {
 
         mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
-
+        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
         for (UUID s : mine.getTrustedPlayers()) {
-            p.sendMessage(s.toString());
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+            String lastKnownName = offlinePlayer.getName();
+            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
         }
     }
 
@@ -342,6 +344,12 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         mine.getTrustedPlayers().remove(target.player.getUniqueId());
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
+        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+        for (UUID s : mine.getTrustedPlayers()) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+            String lastKnownName = offlinePlayer.getName();
+            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+        }
     }
 
 
@@ -397,7 +405,7 @@ public class PrivateMinesCommand extends BaseCommand {
 
         mine.setMineSchematic(upgradeSchematic);
         mine.setMineTier(newTier);
-        mine.fillWEMultiple(mine.getMineBlocks());
+        mine.fillWEMultiple(mine.getOwnerPlayer());
         mine.teleport(p);
     }
 

@@ -6,6 +6,7 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesCreationEvent;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
+import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
@@ -314,6 +315,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return Objects.requireNonNull(owner);
     }
 
+    public Player getOwnerPlayer() {
+        return Objects.requireNonNull(Bukkit.getPlayer(owner));
+    }
+
     public void teleport() {
         Player player = Bukkit.getPlayer(this.owner);
         if (player != null) teleport(player);
@@ -335,7 +340,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fastMode = fastMode;
     }
 
-    public void fillWEMultiple(List<ItemStack> stack) {
+    public void fillWEMultiple(Player owner) {
 
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
@@ -357,6 +362,13 @@ public class PrivateMine implements ConfigurationSerializable {
                 player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
             }
         }
+
+        PrivateMinesResetEvent privateMinesResetEventEvent
+                = new PrivateMinesResetEvent(owner,
+                this,
+                getMineBlocks(),
+                resetDelay);
+        Events.callAsync(privateMinesResetEventEvent);
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
 
@@ -467,7 +479,7 @@ public class PrivateMine implements ConfigurationSerializable {
                 mineSchematic,
                 Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()), false);
 
-        fillWEMultiple(newMine.getMineBlocks());
+        fillWEMultiple(Bukkit.getPlayer(getOwner()));
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;

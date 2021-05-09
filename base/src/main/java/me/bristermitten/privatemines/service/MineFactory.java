@@ -182,7 +182,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 mineSchematic
         );
 
-        privateMine.fillWEMultiple(config.getDefaultMineBlocks());
+        privateMine.fillWEMultiple(owner);
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
         if (plugin.isAutoSellEnabled()) {
@@ -214,7 +214,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         PrivateMinesCreationEvent privateMinesCreationEvent
                 = new PrivateMinesCreationEvent(owner, privateMine,
                 config.getMineBlocks(), config.getTaxPercentage(), config.getResetDelay());
-        Events.callAsync(privateMinesCreationEvent);
+        Events.call(privateMinesCreationEvent);
         return privateMine;
 }
 
