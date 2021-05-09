@@ -3,7 +3,7 @@ subprojects {
     apply plugin: 'maven-publish'
 
     group = 'me.bristermitten'
-    version = '1.6.1-c' // Change this for the versioning
+    version = '1.6.1-d' // Change this for the versioning
 
     sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 

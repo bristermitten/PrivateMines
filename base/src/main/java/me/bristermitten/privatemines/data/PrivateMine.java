@@ -4,6 +4,8 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.api.PrivateMinesCreationEvent;
+import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
@@ -11,6 +13,7 @@ import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import me.clip.autosell.SellHandler;
 import me.clip.autosell.objects.Shop;
+import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
@@ -408,6 +411,11 @@ public class PrivateMine implements ConfigurationSerializable {
                 mainRegion.getWorld()
         );
 
+        PrivateMinesDeletionEvent privateMinesDeletionEvent
+                = new PrivateMinesDeletionEvent(this,
+                getMineBlocks(), getTaxPercentage(), Bukkit.getPlayer(owner));
+
+        Events.callAsync(privateMinesDeletionEvent);
         /*
             Removes mine blocks + shell also
          */

@@ -1,4 +1,4 @@
-package me.bristermitten.privatemines.util;
+package me.bristermitten.privatemines.api;
 
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.service.MineStorage;

@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.service;
 
 import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.api.PrivateMinesCreationEvent;
 import me.bristermitten.privatemines.config.BlockType;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineLocations;
@@ -13,6 +14,7 @@ import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.MineFactoryCompat;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
+import me.lucko.helper.Events;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -208,6 +210,11 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 Bukkit.dispatchCommand(console, s);
             }
         }
+
+        PrivateMinesCreationEvent privateMinesCreationEvent
+                = new PrivateMinesCreationEvent(owner, privateMine,
+                config.getMineBlocks(), config.getTaxPercentage(), config.getResetDelay());
+        Events.callAsync(privateMinesCreationEvent);
         return privateMine;
 }
 
@@ -272,6 +279,13 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     }
 
     public void setMineFlags(IWrappedRegion region) {
+        final WorldGuardWrapper w = WorldGuardWrapper.getInstance();
+        Stream.of(
+                w.getFlag("mob-spawning", WrappedState.class)
+        ).filter(Optional::isPresent)
+                .map(Optional::get)
+                .forEach(flag  -> region.setFlag(flag, WrappedState.DENY));
+
         WorldGuardWrapper.getInstance().getFlag("block-break", WrappedState.class)
                 .ifPresent(flag -> region.setFlag(flag, WrappedState.ALLOW));
     }
