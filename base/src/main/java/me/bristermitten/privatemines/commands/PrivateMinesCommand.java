@@ -467,5 +467,17 @@ public class PrivateMinesCommand extends BaseCommand {
         plugin.reloadConfig();
         p.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
     }
+
+    @Subcommand("home")
+    @CommandPermission("privatemines.home")
+    @Description("Teleports you to your Private Mine directly")
+    public void home(Player p) {
+        PrivateMine mine = storage.get(p);
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        mine.teleport();
+    }
 }
 
