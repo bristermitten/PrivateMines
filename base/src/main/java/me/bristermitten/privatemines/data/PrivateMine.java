@@ -368,7 +368,7 @@ public class PrivateMine implements ConfigurationSerializable {
                 this,
                 getMineBlocks(),
                 resetDelay);
-        Events.callAsync(privateMinesResetEventEvent);
+        Events.call(privateMinesResetEventEvent);
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
 
@@ -427,7 +427,7 @@ public class PrivateMine implements ConfigurationSerializable {
                 = new PrivateMinesDeletionEvent(this,
                 getMineBlocks(), getTaxPercentage(), Bukkit.getPlayer(owner));
 
-        Events.callAsync(privateMinesDeletionEvent);
+        Events.call(privateMinesDeletionEvent);
         /*
             Removes mine blocks + shell also
          */
