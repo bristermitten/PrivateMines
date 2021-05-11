@@ -113,24 +113,23 @@ public final class PrivateMines extends JavaPlugin {
 
         loadCommands(mainConfig, menuFactory);
 
-        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
-            autoSellEnabled = true;
+        this.autoSellEnabled = Bukkit.getPluginManager().isPluginEnabled("AutoSell");
+        final boolean autoSellEnabledConfig = getConfig().getBoolean("autoscroll-enabled");
+        if (autoSellEnabled && autoSellEnabledConfig) {
             getLogger().info("Enabled hook for AutoSell!");
-        } else {
-            if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
-                getLogger().warning("Couldn't load Private Mines because " +
-                        "AutoSell was not found!");
-                setEnabled(false);
-            }
+        } else if (!autoSellEnabled && autoSellEnabledConfig) {
+            getLogger().severe("Couldn't load PrivateMines because AutoSell was not found!");
+            setEnabled(false);
+            //Might be better to not disable the plugin here, as a single line error is a bit hard to notice
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
-            ultraPrisonCoreEnabled = true;
+        this.ultraPrisonCoreEnabled = Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore");
+        final boolean upcEnabledConfig = getConfig().getBoolean("ultraprisoncore-enabled");
+        if (ultraPrisonCoreEnabled && upcEnabledConfig) {
             getLogger().info("Enabled hook for UltraPrisonCore!");
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")
-                && Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
+        if (autoSellEnabled && autoSellEnabledConfig && ultraPrisonCoreEnabled && upcEnabledConfig) {
             getLogger().warning("Both AutoSell and UltraPrisonCore hooks were enabled, please only enable one!");
             getLogger().warning("Disabling PrivateMines!");
             setEnabled(false);
@@ -139,7 +138,7 @@ public final class PrivateMines extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
             npcsEnabled = mainConfig.isNpcsEnabled();
 
-            if (autoSellEnabled) {
+            if (this.autoSellEnabled) {
                 getLogger().info("Enabling AutoSell NPC Trait!");
                 CitizensAPI.getTraitFactory().registerTrait
                         (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
