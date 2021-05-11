@@ -68,7 +68,7 @@ public class UltraPrisonListener implements Listener {
         if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
             BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
 
-            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
+            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECEIVED,
                     "{amount}", String.valueOf(tax),
                     "{tax}", String.valueOf(privateMine.getTax()));
         }
@@ -102,7 +102,6 @@ public class UltraPrisonListener implements Listener {
 
             if (afterTax == 0) {
                 player.sendMessage(ChatColor.RED + "You made no money from this sale!");
-                manager.sendMessage(issuer, MessageType.ERROR, LangKeys.INFO_YOU_MADE_NO_MONEY);
                 return;
             }
 

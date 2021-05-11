@@ -14,6 +14,8 @@ import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -405,8 +407,10 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         UUID npcID = mine.getNPCUUID();
-//        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
-//        npc.despawn();
+        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
+        if (npc != null) {
+            npc.destroy();
+        }
 
         Location spawnLocation = mine.getLocations().getSpawnPoint();
 
