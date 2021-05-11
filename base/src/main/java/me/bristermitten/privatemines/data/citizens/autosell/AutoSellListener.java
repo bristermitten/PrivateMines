@@ -79,11 +79,10 @@ public class AutoSellListener implements Listener {
         if (eventIsInvalid(Collections.singleton(e.getItemStackSold()), e.getPlayer())) {
             return;
         }
-        if (privateMine != null) {
-            e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
-            double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
-            processTax(privateMine, tax, e.getPlayer());
-        }
+
+        e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
+        double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
+        processTax(privateMine, tax, e.getPlayer());
     }
 
     @EventHandler
@@ -93,11 +92,9 @@ public class AutoSellListener implements Listener {
         }
         final PrivateMine privateMine = storage.get(e.getPlayer().getUniqueId());
 
-        if (privateMine != null) {
-            double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
-            e.setTotalCost(e.getTotalCost() - tax);
-            processTax(privateMine, tax, e.getPlayer());
-        }
+        double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
+        e.setTotalCost(e.getTotalCost() - tax);
+        processTax(privateMine, tax, e.getPlayer());
     }
 
     private boolean eventIsInvalid(Collection<ItemStack> itemsSold, Player player) {
@@ -123,10 +120,8 @@ public class AutoSellListener implements Listener {
             return;
         }
         PrivateMine privateMine = storage.get(e.getPlayer());
-        if (privateMine != null) {
-            double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
-            e.setTotalCost(e.getTotalCost() - tax);
-            processTax(privateMine, tax, e.getPlayer());
-        }
+        double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
+        e.setTotalCost(e.getTotalCost() - tax);
+        processTax(privateMine, tax, e.getPlayer());
     }
 }
