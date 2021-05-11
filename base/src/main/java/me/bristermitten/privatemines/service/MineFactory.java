@@ -36,17 +36,14 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
     public static final String DEFAULT_MINE_OPEN_KEY = "Default-Open";
     private static final String DEFAULT_MINE_FAST_MODE_KEY = "Default-Fast-Mode";
-    protected final PMConfig config;
-    protected final PrivateMines plugin;
-    private final MineWorldManager manager;
-    private final MineFactoryCompat<S> compat;
-
-    // List the placeholders here for re-use.
-
     private static final String NAME_PLACEHOLDER = "{name}";
     private static final String DISPLAYNAME_PLACEHOLDER = "{displayname}";
     private static final String UUID_PLACEHOLDER = "{uuid}";
+    protected final PMConfig config;
 
+    protected final PrivateMines plugin;
+    private final MineWorldManager manager;
+    private final MineFactoryCompat<S> compat;
     UUID npcUUID;
 
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, MineFactoryCompat<S> compat) {
@@ -71,13 +68,21 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return expectedData % data == 0;
     }
 
-    /*
-    Creates the private mine, pastes the schematic, sets the spawn location and fills the mine.
+    //TODO this method is way too complex. Refactor ASAP
+
+    /**
+     * Creates a private mine, pastes the schematic, sets the spawn location and fills the mine.
+     *
+     * @param owner         The private mine owner
+     * @param mineSchematic The schematic to paste for the mine
+     * @param origin        Where to paste the mine. This is the exact location where the schematic should be pasted (where the player would be standing if doing //paste)
+     * @param isNew         If this is a new private mine or upgrading a new one.
+     *                      Much of the functionality in this method does not belong here and should be refactored immediately.
      */
     @SuppressWarnings("deprecation")
-    public PrivateMine create(Player owner, M mineSchematic, final Location location, boolean isNew) {
+    public PrivateMine create(Player owner, M mineSchematic, final Location origin, @Deprecated boolean isNew) {
 
-        WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), location);
+        WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), origin);
 
         Location spawnLoc = null;
 
@@ -97,7 +102,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 	    Loops through all of the blocks to find the spawn location block, replaces it with air and sets the location
 	    in the config.
 	    */
-        World world = location.getWorld();
+        World world = origin.getWorld();
+        if (world == null) {
+            throw new IllegalArgumentException("World for provided location was null");
+        }
         for (WorldEditVector pt : compat.loop(region)) {
             final Block blockAt = world.getBlockAt((int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
             Material type = blockAt.getType();
@@ -105,7 +113,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             if (type == Material.AIR || type.name().equals("LEGACY_AIR")) continue;
 
             if (spawnLoc == null && type == spawnMaterial.getType() && dataMatches(data, spawnMaterial.getDurability())) {
-                spawnLoc = new Location(location.getWorld(), pt.getX() + 0.5, pt.getY() + 0.5, pt.getZ() + 0.5);
+                spawnLoc = new Location(origin.getWorld(), pt.getX() + 0.5, pt.getY() + 0.5, pt.getZ() + 0.5);
                 Block block = spawnLoc.getBlock();
                 if (block.getState().getData() instanceof Directional) {
                     spawnLoc.setYaw(Util.getYaw(((Directional) block.getState().getData()).getFacing()));
@@ -134,7 +142,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 			Loops through all the blocks finding the NPC block and sets the NPC location.
 			*/
             if (type == npcMaterial.getType() && dataMatches(data, npcMaterial.getDurability())) {
-                npcLoc = new Location(location.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
+                npcLoc = new Location(origin.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
                 npcLoc.add(npcLoc.getX() > 0 ? 0.5 : -0.5, 0.0, npcLoc.getZ() > 0 ? 0.5 : -0.5);
                 blockAt.setType(Material.AIR); //Clear the block
             }
@@ -143,8 +151,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (min == null || max == null || min.equals(max)) {
             throw new IllegalArgumentException("Mine schematic did not define 2 distinct corner blocks, mine cannot be formed");
         }
-        if (spawnLoc == null && location.getWorld() != null) {
-            spawnLoc = location.getWorld().getHighestBlockAt(location).getLocation();
+        if (spawnLoc == null && origin.getWorld() != null) {
+            spawnLoc = origin.getWorld().getHighestBlockAt(origin).getLocation();
             plugin.getLogger().warning(() -> "No spawn block was defined, so the schematic root will be used. Searching for " + spawnMaterial);
         }
         if (npcLoc == null) {
@@ -152,10 +160,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             plugin.getLogger().warning(() -> "No npc spawnpoint was defined, so the schematic spawn will be used. Searching for " + npcMaterial);
         }
 
-        WorldEditRegion mainRegion = new WorldEditRegion((region.getMinimumPoint()), region.getMaximumPoint(), location.getWorld());
+        WorldEditRegion mainRegion = new WorldEditRegion(region.getMinimumPoint(), region.getMaximumPoint(), origin.getWorld());
         IWrappedRegion worldGuardRegion = createMainWorldGuardRegion(owner, mainRegion);
 
-        WorldEditRegion miningRegion = new WorldEditRegion(min, max, location.getWorld());
+        WorldEditRegion miningRegion = new WorldEditRegion(min, max, origin.getWorld());
         IWrappedRegion mineRegion = createMineWorldGuardRegion(owner, miningRegion, worldGuardRegion);
 
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
@@ -191,24 +199,19 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc);
         }
 
+        final List<String> commandsToRun;
         if (isNew) {
-            for (String s : firstTimeCommands) {
-                s = s.replace(NAME_PLACEHOLDER, owner.getName());
-                s = s.replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName());
-                s = s.replace(UUID_PLACEHOLDER, owner.getPlayer().getUniqueId().toString());
-                Bukkit.dispatchCommand(console, s);
-            }
-
-            if (config.getDefaultBlock() == null) {
-                Bukkit.getLogger().info("Default block was null!");
-            }
+            commandsToRun = firstTimeCommands;
         } else {
-            for (String s : commands) {
-                s = s.replace(NAME_PLACEHOLDER, owner.getName());
-                s = s.replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName());
-                s = s.replace(UUID_PLACEHOLDER, owner.getPlayer().getUniqueId().toString());
-                Bukkit.dispatchCommand(console, s);
-            }
+            commandsToRun = commands;
+        }
+        for (String command : commandsToRun) {
+            final String formattedCommand =
+                    command.replace(NAME_PLACEHOLDER, owner.getName())
+                            .replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName())
+                            .replace(UUID_PLACEHOLDER, owner.getUniqueId().toString());
+
+            Bukkit.dispatchCommand(console, formattedCommand);
         }
 
         PrivateMinesCreationEvent privateMinesCreationEvent
@@ -216,36 +219,36 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getMineBlocks(), config.getTaxPercentage(), config.getResetDelay());
         Events.call(privateMinesCreationEvent);
         return privateMine;
-}
+    }
 
+    //TODO  These 2 methods do pretty much the exact same thing and should be abstracted out (all npc functionality should be)
     private UUID createAutoSellMineNPC(Player owner, Location npcLoc) {
-        UUID npcuuid;
+        UUID npcUUID;
         if (plugin.isNpcsEnabled()) {
-            npcuuid = AutoSellNPC.createSellNPC(
+            npcUUID = AutoSellNPC.createSellNPC(
                     config.getNPCName(),
                     owner.getName(),
                     npcLoc,
                     owner.getUniqueId()).getUniqueId();
         } else {
-            npcuuid = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
+            npcUUID = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
         }
-        return npcuuid;
+        return npcUUID;
     }
 
     private UUID createUltraPrisonCoreMineNPC(Player owner, Location npcLoc) {
-        UUID npcuuid;
+        UUID npcUUID;
         if (plugin.isNpcsEnabled()) {
-            npcuuid = UltraPrisonCoreNPC.createUPCSellNPC(
+            npcUUID = UltraPrisonCoreNPC.createUPCSellNPC(
                     config.getNPCName(),
                     owner.getName(),
                     npcLoc,
                     owner.getUniqueId()
-                    )
-                    .getUniqueId();
+            ).getUniqueId();
         } else {
-            npcuuid = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
+            npcUUID = UUID.randomUUID(); //This means we can fail gracefully when the NPC doesn't exist
         }
-        return npcuuid;
+        return npcUUID;
     }
 
     @NotNull
@@ -284,7 +287,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 w.getFlag("mob-spawning", WrappedState.class)
         ).filter(Optional::isPresent)
                 .map(Optional::get)
-                .forEach(flag  -> region.setFlag(flag, WrappedState.DENY));
+                .forEach(flag -> region.setFlag(flag, WrappedState.DENY));
 
         WorldGuardWrapper.getInstance().getFlag("block-break", WrappedState.class)
                 .ifPresent(flag -> region.setFlag(flag, WrappedState.ALLOW));

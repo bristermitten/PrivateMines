@@ -429,9 +429,10 @@ public class PrivateMine implements ConfigurationSerializable {
         setOpen(false);
 
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
-                Bukkit.getPlayer(owner),
+                getOwnerPlayer(),
                 mineSchematic,
-                Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()), false);
+                mainRegion.getMinimumLocation(),
+                false);
 
         fillMine();
 
