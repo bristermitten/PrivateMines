@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -403,9 +404,16 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_TIER);
         }
 
-        mine.setMineSchematic(upgradeSchematic);
+        UUID npcID = mine.getNPCUUID();
+//        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
+//        npc.despawn();
+
+        Location spawnLocation = mine.getLocations().getSpawnPoint();
+
+        mine.setMineSchematic(upgradeSchematic, spawnLocation);
         mine.setMineTier(newTier);
         mine.fillMine();
+//        npc.spawn(mine.getLocations().getNpcLocation());
         mine.teleport(p);
     }
 
