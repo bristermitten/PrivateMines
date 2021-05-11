@@ -168,7 +168,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         MineLocations locations = new MineLocations(spawnLoc, min, (max), mineRegion);
 
-
         //TODO Make shop system somehow?
 
         final PrivateMine privateMine = new PrivateMine(
@@ -195,6 +194,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         if (plugin.isAutoSellEnabled()) {
             npcUUID = createAutoSellMineNPC(owner, npcLoc);
+            locations.setNpcLocation(npcLoc);
         } else if (plugin.isUltraPrisonCoreEnabled()) {
             npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc);
         }

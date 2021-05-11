@@ -15,6 +15,8 @@ import java.util.Objects;
 
 public class MineLocations implements ConfigurationSerializable {
     private Location spawnPoint;
+    private Location npcLocation;
+
     private final WorldEditRegion region;
     private final IWrappedRegion wgRegion;
 
@@ -64,6 +66,10 @@ public class MineLocations implements ConfigurationSerializable {
     public void setSpawnPoint(Location spawnPoint) {
         this.spawnPoint = spawnPoint;
     }
+
+    public void setNpcLocation(Location npcLocation) { this.npcLocation = npcLocation; }
+
+    public Location getNpcLocation() { return this.npcLocation; }
 
     public WorldEditRegion getRegion() {
         return this.region;

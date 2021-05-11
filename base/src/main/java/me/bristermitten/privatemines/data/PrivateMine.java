@@ -18,6 +18,7 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -223,6 +224,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.resetDelay;
     }
 
+    public UUID getNPCUUID() {
+        return this.npcId;
+    }
+
     public boolean contains(Player p) {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
@@ -417,14 +422,14 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Sets the new mine schematic (Used when changing themes)
      */
-    public void setMineSchematic(MineSchematic<?> mineSchematic) {
+    public void setMineSchematic(MineSchematic<?> mineSchematic, Location location) {
         boolean mineIsOpen = isOpen();
         setOpen(false);
 
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
                 getOwnerPlayer(),
                 mineSchematic,
-                mainRegion.getMinimumLocation(),
+                location,
                 false);
 
         fillMine();
