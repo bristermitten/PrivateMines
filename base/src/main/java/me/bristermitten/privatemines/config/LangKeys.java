@@ -41,7 +41,7 @@ public enum LangKeys implements MessageKeyProvider {
     INFO_TAX_INFO,
     INFO_TAX_TAKEN,
     INFO_TAX_RECEIVED,
-
+    INFO_YOU_MADE_NO_MONEY,
     INFO_MINE_GIVEN,
     INFO_MINE_OPENED,
     INFO_MINE_CLOSED,

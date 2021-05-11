@@ -3,13 +3,10 @@ package me.bristermitten.privatemines.util;
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,11 +16,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static net.md_5.bungee.api.ChatColor.translateAlternateColorCodes;
 
 public final class Util {
 
@@ -46,17 +43,6 @@ public final class Util {
         return new WorldEditVector(bukkitVector.getX(), bukkitVector.getY(), bukkitVector.getZ());
     }
 
-    public static Location toLocation(WorldEditVector weVector, World world) {
-        return new Location(world, weVector.getX(), weVector.getY(), weVector.getZ());
-    }
-
-    public static BlockVector3 toWGLocation(Location location) {
-        return BlockVector3.at(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-    }
-
-    public static com.sk89q.worldedit.world.World toWEWorld(org.bukkit.World world) {
-        return BukkitAdapter.adapt(world);
-    }
 
     public static WorldEditVector deserializeWorldEditVector(Map<String, Object> map) {
         return toWEVector(Vector.deserialize(map));
@@ -98,7 +84,7 @@ public final class Util {
         if (s == null) {
             return null;
         }
-        return ChatColor.translateAlternateColorCodes('&', s);
+        return translateAlternateColorCodes('&', s);
     }
 
     public static List<String> color(List<String> lines) {
@@ -107,21 +93,6 @@ public final class Util {
         }
 
         return lines.stream().map(Util::color).collect(toList());
-    }
-
-    public static String colorRGB(String s) {
-        return ChatColor.translateAlternateColorCodes('&', parseRGB(s));
-    }
-
-    public static String parseRGB(String msg) {
-        Matcher matcher = rgbColor.matcher(msg);
-        while (matcher.find()) {
-            String color = msg.substring(matcher.start(), matcher.end());
-            String hex = color.replace("&", "").toUpperCase();
-            msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(hex).toString());
-            matcher = rgbColor.matcher(msg);
-        }
-        return msg;
     }
 
     public static Map<String, String> arrayToMap(Object... array) {

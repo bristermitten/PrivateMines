@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PrivateMinesUpgradeEvent {
@@ -16,12 +15,9 @@ public class PrivateMinesUpgradeEvent {
     private final Player player;
 
     private final PrivateMine privateMine;
-
-    private boolean cancelled;
     private final Integer resetTime;
-
     private final MineSchematic mineSchematic;
-
+    private boolean cancelled;
     private List<ItemStack> mineBlocks;
 
     public PrivateMinesUpgradeEvent(Player player,

@@ -64,6 +64,7 @@ import java.util.regex.PatternSyntaxException;
  * @see Material
  * @see ItemStack
  */
+@SuppressWarnings("SameReturnValue")
 public enum XMaterial {
     ACACIA_BOAT("BOAT_ACACIA"),
     ACACIA_BUTTON("WOOD_BUTTON"),

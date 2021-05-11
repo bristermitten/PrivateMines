@@ -22,6 +22,7 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -404,16 +405,11 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_TIER);
         }
 
-        UUID npcID = mine.getNPCUUID();
-//        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
-//        npc.despawn();
-
         Location spawnLocation = mine.getLocations().getSpawnPoint();
 
         mine.setMineSchematic(upgradeSchematic, spawnLocation);
         mine.setMineTier(newTier);
         mine.fillMine();
-//        npc.spawn(mine.getLocations().getNpcLocation());
         mine.teleport(p);
     }
 
@@ -438,23 +434,21 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.setblockstyle")
     @CommandCompletion("@players")
     @Description("Sets the block style for a mine")
-    public void setblockstyle(Player p, OnlinePlayer target, String style) {
+    public void setBlockStyle(Player p, OnlinePlayer target, String style) {
         PrivateMine mine = storage.get(target.player);
-        PrivateMines privateMines = PrivateMines.getPlugin();
-        List<ItemStack> blocks;
-
-        p.sendMessage("setblockstyle did actually run btw....");
-        p.sendMessage(config.getBlockStyles().toString());
-
-        for (String s : config.getBlockStyles()) {
-            if (s.contains(style)) {
-                blocks = privateMines.getConfig().getStringList("Block-Styles." + style).stream()
+        if (mine == null) {
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+            return;
+        }
+        for (String blockStyle : config.getBlockStyles()) {
+            if (blockStyle.contains(style)) {
+                List<ItemStack> blocks = plugin.getConfig().getStringList("Block-Styles." + style).stream()
                         .map(Util::parseItem)
                         .filter(java.util.Optional::isPresent)
                         .map(java.util.Optional::get)
                         .collect(Collectors.toList());
-            mine.setMineBlocks(blocks);
-            } else if (!s.contains(style)) {
+                mine.setMineBlocks(blocks);
+            } else {
                 p.sendMessage(ChatColor.RED + "Missing style!");
             }
         }
@@ -463,24 +457,24 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("version")
     @CommandPermission("privatemines.version")
     @Description("Gets the current version of Private Mines")
-    public void version(Player p) {
-        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
+    public void version(CommandSender sender) {
+        sender.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
     }
 
     @Subcommand("reload")
     @CommandPermission("privatemines.reload")
     @Description("Reloads the PrivateMines plugin")
-    public void reload(Player p) {
-        p.sendMessage(ChatColor.GREEN + "Reloading the configuration files...");
+    public void reload(CommandSender sender) {
+        sender.sendMessage(ChatColor.GREEN + "Reloading the configuration files...");
         plugin.reloadConfig();
-        p.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
+        sender.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
     }
 
     @Subcommand("home")
     @CommandPermission("privatemines.home")
     @Description("Teleports you to your Private Mine directly")
-    public void home(Player p) {
-        PrivateMine mine = storage.get(p);
+    public void home(Player sender) {
+        PrivateMine mine = storage.get(sender);
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
