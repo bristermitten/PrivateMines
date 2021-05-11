@@ -182,7 +182,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 mineSchematic
         );
 
-        privateMine.fillWEMultiple(owner);
+        privateMine.fillMine();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
         if (plugin.isAutoSellEnabled()) {

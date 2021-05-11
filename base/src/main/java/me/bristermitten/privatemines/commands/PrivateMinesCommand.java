@@ -256,7 +256,7 @@ public class PrivateMinesCommand extends BaseCommand {
         }
 
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET);
-        mine.fillWEMultiple(mine.getOwnerPlayer());
+        mine.fillMine();
     }
 
     @Subcommand("reset")
@@ -269,7 +269,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.fillWEMultiple(mine.getOwnerPlayer());
+        mine.fillMine();
 
         plugin.getManager().getCommandIssuer(target.getPlayer()).sendInfo(LangKeys.INFO_MINE_RESET);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_RESET_OTHER, PLAYER_KEY, target.getPlayer().getName());
@@ -405,7 +405,7 @@ public class PrivateMinesCommand extends BaseCommand {
 
         mine.setMineSchematic(upgradeSchematic);
         mine.setMineTier(newTier);
-        mine.fillWEMultiple(mine.getOwnerPlayer());
+        mine.fillMine();
         mine.teleport(p);
     }
 

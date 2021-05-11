@@ -8,9 +8,10 @@ import java.util.List;
 
 public interface WorldEditHook {
     void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode);
+
     void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode);
 
-    void fillAir(WorldEditRegion region);
+    void fillAir(WorldEditRegion region, boolean fastMode);
 
     /*
         SonarLint errors up here on both of these methods saying

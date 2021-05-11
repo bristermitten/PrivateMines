@@ -50,17 +50,17 @@ public class ChangeBlockMenu {
 
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%block%",
-                            Util.getName(block).orElse("Unknown"));
+                            Util.getItemName(block).orElse("Unknown"));
                     itemMeta.setDisplayName(name);
                     List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%block%",
-                            Util.getName(block).orElse("Unknown"))).collect(Collectors.toList());
+                            Util.getItemName(block).orElse("Unknown"))).collect(Collectors.toList());
                     itemMeta.setLore(lore);
                     i.setItemMeta(itemMeta);
                     return i;
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        mine.fillWESingle(new ItemStack(block.getType()));
+                        mine.fillWESingle(block);
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
                     }

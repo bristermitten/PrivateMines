@@ -7,16 +7,15 @@ import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
-import com.sk89q.worldedit.patterns.BlockChance;
-import com.sk89q.worldedit.patterns.RandomFillPattern;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.data.MineSchematic;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LegacyWEHook implements WorldEditHook {
@@ -42,13 +41,7 @@ public class LegacyWEHook implements WorldEditHook {
      */
 
     public void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode) {
-        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
-                .fastmode(fastMode)
-                .build();
-
-        //noinspection deprecation
-        session.setBlocks(transform(region), new BaseBlock(block.getTypeId()));
-        session.flushQueue();
+        fill(region, Collections.singletonList(block), fastMode);
     }
 
     /*
@@ -63,29 +56,17 @@ public class LegacyWEHook implements WorldEditHook {
         final RandomPattern pattern = new RandomPattern();
 
         for (ItemStack is : blocks) {
+            //noinspection deprecation
             Pattern pat = new BaseBlock(is.getTypeId());
             pattern.add(pat, 1);
         }
 
-        //noinspection deprecation
         session.setBlocks(transform(region), pattern);
         session.flushQueue();
     }
 
-    public void fillAir(WorldEditRegion region) {
-        final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
-                .fastmode(true)
-                .build();
-
-        List<BlockChance> blockChance = new ArrayList<>();
-
-        BlockChance air = new BlockChance(new BaseBlock(0), 100);
-        blockChance.add(air);
-        RandomFillPattern randomFillPattern = new RandomFillPattern(blockChance);
-
-        //noinspection deprecation
-        session.setBlocks(transform(region), randomFillPattern);
-        session.flushQueue();
+    public void fillAir(WorldEditRegion region, boolean fastMode) {
+        fillSingle(region, new ItemStack(Material.AIR), fastMode);
     }
 
     @Override

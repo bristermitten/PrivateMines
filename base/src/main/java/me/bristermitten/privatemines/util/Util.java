@@ -6,15 +6,16 @@ import com.google.common.primitives.Ints;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -111,7 +112,7 @@ public final class Util {
 
     public static String parseRGB(String msg) {
         Matcher matcher = rgbColor.matcher(msg);
-        while(matcher.find()) {
+        while (matcher.find()) {
             String color = msg.substring(matcher.start(), matcher.end());
             String hex = color.replace("&", "").toUpperCase();
             msg = msg.replace(color, net.md_5.bungee.api.ChatColor.of(hex).toString());
@@ -161,21 +162,8 @@ public final class Util {
                 .collect(Collectors.joining(" "));
     }
 
-    public static List<String> prettifyList(List<String> is) {
 
-        List<String> prettifiedList = new ArrayList();
-
-        Iterator<String> itemStackIterator = is.iterator();
-        while (itemStackIterator.hasNext()) {
-            System.out.println(itemStackIterator.next());
-            Bukkit.broadcastMessage(String.valueOf(itemStackIterator.next()));
-            prettifiedList.add(prettify(itemStackIterator.next()));
-        }
-        return prettifiedList;
-    }
-
-
-    public static Optional<String> getName(ItemStack s) {
+    public static Optional<String> getItemName(ItemStack s) {
         try {
             final XMaterial xMaterial = XMaterial.matchXMaterial(s);
             return Optional.of(prettify(xMaterial.name()));
@@ -220,6 +208,7 @@ public final class Util {
         }
         //Prioritise native material names
         try {
+            //noinspection deprecation
             return Optional.of(new ItemStack(Material.valueOf(materialName), 1, durability));
         } catch (IllegalArgumentException ignored) {
         }
@@ -229,14 +218,6 @@ public final class Util {
         }
         return XMaterial.matchXMaterial(s)
                 .map(XMaterial::parseItem);
-    }
-
-    public static ItemStack toItemStack(String s) {
-        Material material = Material.matchMaterial(s);
-        if (material == null) {
-            return null;
-        }
-        return new ItemStack(material);
     }
 
 
@@ -258,8 +239,9 @@ public final class Util {
                 return "Front to Back";
             case "BACK_FRONT":
                 return "Back to Front";
+            default:
+                return "Unknown reset Style!";
         }
-        return "Unknown reset Style!";
     }
 
 
@@ -268,21 +250,8 @@ public final class Util {
         return format.format(integer);
     }
 
-    private static String readAll(BufferedReader rd) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = rd.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
-    }
-
-    public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
-        float percent = (float) current / max;
-        int progressBars = (int) (totalBars * percent);
-
-        return Strings.repeat("" + completeColor + symbol, progressBars)
-                + Strings.repeat("" + nonCompletedColor + symbol, totalBars - progressBars);
+    public static void addToOnlinePlayers(Player player) {
+        onlinePlayers.add(player);
     }
 
     /*
@@ -291,21 +260,25 @@ public final class Util {
 
     // Adding a player into the cache system, used mainly in the on player join event
 
-    public static void addToOnlinePlayers(Player player) {
-        onlinePlayers.add(player);
+    public static void removeFromOnlinePlayers(Player player) {
+        onlinePlayers.remove(player);
     }
 
     // Remove a player from the cache system, used mainly in the on player leave event
 
-    public static void removeFromOnlinePlayers(Player player) {
-        onlinePlayers.remove(player);
+    public static Set<Player> getOnlinePlayers() {
+        return onlinePlayers;
     }
 
     // Gets the online players, this is used in the MineResetTask class so instead of getting
     // all the online players each time possibly causing a tiny spike in the server
     // it will get it from this cache!
 
-    public static Set<Player> getOnlinePlayers() {
-        return onlinePlayers;
+    public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
+        float percent = (float) current / max;
+        int progressBars = (int) (totalBars * percent);
+
+        return Strings.repeat("" + completeColor + symbol, progressBars)
+                + Strings.repeat("" + nonCompletedColor + symbol, totalBars - progressBars);
     }
 }

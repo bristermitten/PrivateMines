@@ -4,7 +4,6 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
-import me.bristermitten.privatemines.api.PrivateMinesCreationEvent;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
 import me.bristermitten.privatemines.config.LangKeys;
@@ -19,7 +18,6 @@ import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -38,12 +36,14 @@ import java.util.stream.Collectors;
 public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
-    //How far between a mine reset in milliseconds
+    /**
+     * How far between a mine reset in milliseconds
+     */
     private final int resetDelay;
-    private UUID owner;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
     private final List<String> commands;
+    private UUID owner;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
@@ -59,6 +59,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private String resetStyle;
 
     // Is it even possible to get this down to the 7 max?
+    // Yes.
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -201,23 +202,19 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public List<String> getMineBlocksFormatted(List<ItemStack> stack) {
-        ArrayList<String> pretty = new ArrayList();
-        for (ItemStack itemStack : stack) {
-            pretty.add(Util.prettify(itemStack.getType().toString()));
-        }
-        return pretty;
+        return stack.stream()
+                .map(Util::getItemName)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
     }
 
     public void addMineBlock(ItemStack itemStack) {
-        List<ItemStack> blocksOriginal = blocks;
-        blocksOriginal.add(itemStack);
-        this.blocks = blocksOriginal;
+        this.blocks.add(itemStack);
     }
 
     public void removeMineBlock(ItemStack itemStack) {
-        List<ItemStack> blocksOriginal = blocks;
-        blocksOriginal.remove(itemStack);
-        this.blocks = blocksOriginal;
+        this.blocks.remove(itemStack);
     }
 
     public int getMineTier() {
@@ -260,20 +257,6 @@ public class PrivateMine implements ConfigurationSerializable {
         return locations;
     }
 
-    public int getUsersInMine() {
-        Location min = locations.getRegion().getMinimumLocation();
-        Location max = locations.getRegion().getMaximumLocation();
-        Location loc = min.add(max);
-
-        int total = 0;
-        for (Player online : Bukkit.getOnlinePlayers()) {
-            if (loc.equals(online.getLocation())) {
-                total++;
-            }
-        }
-        return total;
-    }
-
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
@@ -307,12 +290,12 @@ public class PrivateMine implements ConfigurationSerializable {
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
     }
 
-    public void setOwner(UUID owner) {
-        this.owner = owner;
-    }
-
     public UUID getOwner() {
         return Objects.requireNonNull(owner);
+    }
+
+    public void setOwner(UUID owner) {
+        this.owner = owner;
     }
 
     public Player getOwnerPlayer() {
@@ -340,21 +323,17 @@ public class PrivateMine implements ConfigurationSerializable {
         this.fastMode = fastMode;
     }
 
-    public void fillWEMultiple(Player owner) {
+    public void fillMine() {
+        fillMine(getMineBlocks());
+    }
 
+    public void fillMine(List<ItemStack> blocksToFill) {
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
         final WorldEditRegion miningRegion = new WorldEditRegion(
                 Util.toWEVector(selection.getMinimumPoint()),
                 Util.toWEVector(selection.getMaximumPoint()),
                 mainRegion.getWorld()
         );
-
-        //Could probably cache this but it's not very intensive
-        //free any players who might be in the mine
-
-        /*
-            The Util.getOnlinePlayers part is linked to the caching system saves a few a milliseconds
-         */
 
         for (Player player : Util.getOnlinePlayers()) {
             if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
@@ -363,44 +342,21 @@ public class PrivateMine implements ConfigurationSerializable {
             }
         }
 
-        PrivateMinesResetEvent privateMinesResetEventEvent
-                = new PrivateMinesResetEvent(owner,
+        PrivateMinesResetEvent privateMinesResetEventEvent = new PrivateMinesResetEvent(
+                this.getOwnerPlayer(),
                 this,
-                getMineBlocks(),
+                blocksToFill,
                 resetDelay);
+
         Events.call(privateMinesResetEventEvent);
 
-        PrivateMines.getPlugin().getWeHook().fill(miningRegion, getMineBlocks(), isFastMode());
+        PrivateMines.getPlugin().getWeHook().fill(miningRegion, blocksToFill, isFastMode());
 
         this.nextResetTime = System.currentTimeMillis() + resetDelay;
     }
 
     public void fillWESingle(ItemStack itemStack) {
-
-        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
-        final WorldEditRegion miningRegion = new WorldEditRegion(
-                Util.toWEVector(selection.getMinimumPoint()),
-                Util.toWEVector(selection.getMaximumPoint()),
-                mainRegion.getWorld()
-        );
-
-        //Could probably cache this but it's not very intensive
-        //free any players who might be in the mine
-
-        /*
-            The Util.getOnlinePlayers part is linked to the caching system saves a few a milliseconds
-         */
-
-        for (Player player : Util.getOnlinePlayers()) {
-            if (miningRegion.contains(Util.toWEVector(player.getLocation()))) {
-                player.teleport(locations.getSpawnPoint());
-                player.sendMessage(ChatColor.GREEN + "You've been teleported to the mine spawn point!");
-            }
-        }
-
-        PrivateMines.getPlugin().getWeHook().fillSingle(miningRegion, itemStack, isFastMode());
-
-        this.nextResetTime = System.currentTimeMillis() + resetDelay;
+        fillMine(Collections.singletonList(itemStack));
     }
 
     public boolean shouldReset() {
@@ -431,8 +387,8 @@ public class PrivateMine implements ConfigurationSerializable {
         /*
             Removes mine blocks + shell also
          */
-        PrivateMines.getPlugin().getWeHook().fillAir(mainRegion);
-        PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
+        PrivateMines.getPlugin().getWeHook().fillAir(mainRegion, isFastMode());
+        PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
         removeAllPlayers();
         removeRegion();
 
@@ -472,14 +428,12 @@ public class PrivateMine implements ConfigurationSerializable {
         boolean mineIsOpen = isOpen();
         setOpen(false);
 
-//        delete();
-
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
                 Bukkit.getPlayer(owner),
                 mineSchematic,
                 Util.toLocation(mainRegion.getCenter(), locations.getSpawnPoint().getWorld()), false);
 
-        fillWEMultiple(Bukkit.getPlayer(getOwner()));
+        fillMine();
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;
@@ -509,11 +463,4 @@ public class PrivateMine implements ConfigurationSerializable {
         return bannedPlayers.remove(player.getUniqueId());
     }
 
-
-    public void upgradeMine(Player player) {
-
-        final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
-
-        PrivateMines.getPlugin().getWeHook().fillAir(mainRegion);
-    }
 }
