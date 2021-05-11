@@ -44,7 +44,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
     private final List<String> commands;
-    private UUID owner;
+    private final UUID owner;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
@@ -203,7 +203,6 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
 
-
     public void addMineBlock(ItemStack itemStack) {
         this.blocks.add(itemStack);
     }
@@ -232,13 +231,6 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-    public boolean fastMode() {
-        return fastMode;
-    }
-
-    public String getResetStyle() {
-        return resetStyle;
-    }
 
     public void setResetStyle(String style) {
         this.resetStyle = style;
@@ -293,10 +285,6 @@ public class PrivateMine implements ConfigurationSerializable {
         return Objects.requireNonNull(owner);
     }
 
-    public void setOwner(UUID owner) {
-        this.owner = owner;
-    }
-
     public Player getOwnerPlayer() {
         return Objects.requireNonNull(Bukkit.getPlayer(owner));
     }
@@ -344,10 +332,14 @@ public class PrivateMine implements ConfigurationSerializable {
         PrivateMinesResetEvent privateMinesResetEventEvent = new PrivateMinesResetEvent(
                 this.getOwnerPlayer(),
                 this,
-                blocksToFill,
-                resetDelay);
+                blocksToFill
+        );
 
         Events.call(privateMinesResetEventEvent);
+
+        if (privateMinesResetEventEvent.isCancelled()) {
+            return;
+        }
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, blocksToFill, isFastMode());
 

@@ -6,6 +6,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,12 +17,21 @@ public class PrivateMinesResetEvent extends Event implements Cancellable {
     private final Player player;
 
     private final PrivateMine privateMine;
-
+    private final List<ItemStack> mineBlocks;
     private boolean cancelled;
-    private Double tax;
-    private Integer resetTime;
 
-    private List<ItemStack> mineBlocks;
+    public PrivateMinesResetEvent(Player player,
+                                  PrivateMine privateMine,
+                                  List<ItemStack> blocks) {
+        this.player = player;
+        this.privateMine = privateMine;
+        this.mineBlocks = blocks;
+    }
+
+    @SuppressWarnings("unused") // Bukkit API
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 
     public Player getPlayer() {
         return player;
@@ -35,45 +45,16 @@ public class PrivateMinesResetEvent extends Event implements Cancellable {
         return this.mineBlocks;
     }
 
-    public Double getTax() {
-        return this.tax;
-    }
 
-    public Integer getResetTime() {
-        return this.resetTime;
-    }
-
-    public void setMineBlocks(List<ItemStack> blocks) {
-        this.mineBlocks = blocks;
-    }
-
-    public void setResetTime(Integer resetTime) {
-        this.resetTime = resetTime;
+    public boolean isCancelled() {
+        return this.cancelled;
     }
 
     public void setCancelled(boolean isCancelled) {
         this.cancelled = isCancelled;
     }
 
-    public boolean isCancelled() {
-        return this.cancelled;
-    }
-
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public PrivateMinesResetEvent(Player player,
-                                     PrivateMine privateMine,
-                                     List<ItemStack> blocks,
-                                     Integer resetTime) {
-        this.player = player;
-        this.privateMine = privateMine;
-        this.mineBlocks = blocks;
-        this.resetTime = resetTime;
+    public @NotNull HandlerList getHandlers() {
+        return getHandlerList();
     }
 }
