@@ -69,7 +69,8 @@ public class ModernMineFactoryCompat implements MineFactoryCompat<Clipboard> {
             public WorldEditVector next() {
                 return ModernWEHook.transform(vectors.next());
             }
-        }; //Iterator#map when java ;-;
+        }; //if only we had map() for iterators :(
+
         return () -> weVecIterator;
     }
 

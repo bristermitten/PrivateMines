@@ -2,14 +2,14 @@ package me.bristermitten.privatemines.data.citizens.autosell;
 
 import net.citizensnpcs.api.persistence.DelegatePersistence;
 import net.citizensnpcs.api.persistence.Persist;
-import net.citizensnpcs.api.persistence.Persister;
+import net.citizensnpcs.api.persistence.UUIDPersister;
 import net.citizensnpcs.api.trait.Trait;
-import net.citizensnpcs.api.util.DataKey;
 
 import java.util.UUID;
 
 public class AutoSellNPCTrait extends Trait {
 
+    @SuppressWarnings("unused")
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;
@@ -22,14 +22,4 @@ public class AutoSellNPCTrait extends Trait {
         this.owner = owner;
     }
 
-    static class UUIDPersister implements Persister<UUID> {
-
-        public UUID create(DataKey dataKey) {
-            return UUID.fromString(dataKey.getString("UUID"));
-        }
-
-        public void save(UUID uuid, DataKey dataKey) {
-            dataKey.setString("UUID", uuid.toString());
-        }
-    }
 }

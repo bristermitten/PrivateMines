@@ -380,8 +380,7 @@ public class PrivateMine implements ConfigurationSerializable {
         );
 
         PrivateMinesDeletionEvent privateMinesDeletionEvent
-                = new PrivateMinesDeletionEvent(this,
-                getMineBlocks(), getTaxPercentage(), Bukkit.getPlayer(owner));
+                = new PrivateMinesDeletionEvent(this);
 
         Events.call(privateMinesDeletionEvent);
         /*
