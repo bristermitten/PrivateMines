@@ -115,10 +115,10 @@ public final class PrivateMines extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
             autoSellEnabled = true;
-            Bukkit.getLogger().info("Enabled hook for AutoSell!");
+            getLogger().info("Enabled hook for AutoSell!");
         } else {
             if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")) {
-                Bukkit.getLogger().warning("Couldn't load Private Mines because " +
+                getLogger().warning("Couldn't load Private Mines because " +
                         "AutoSell was not found!");
                 setEnabled(false);
             }
@@ -126,13 +126,13 @@ public final class PrivateMines extends JavaPlugin {
 
         if (Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
             ultraPrisonCoreEnabled = true;
-            Bukkit.getLogger().info("Enabled hook for UltraPrisonCore!");
+            getLogger().info("Enabled hook for UltraPrisonCore!");
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("AutoSell") && getConfig().getBoolean("autosell-enabled")
                 && Bukkit.getPluginManager().isPluginEnabled("UltraPrisonCore") && getConfig().getBoolean("ultraprisoncore-enabled")) {
-            Bukkit.getLogger().warning("Both AutoSell and UltraPrisonCore hooks were enabled, please only enable one!");
-            Bukkit.getLogger().warning("Disabling PrivateMines!");
+            getLogger().warning("Both AutoSell and UltraPrisonCore hooks were enabled, please only enable one!");
+            getLogger().warning("Disabling PrivateMines!");
             setEnabled(false);
         }
 
@@ -140,11 +140,11 @@ public final class PrivateMines extends JavaPlugin {
             npcsEnabled = mainConfig.isNpcsEnabled();
 
             if (autoSellEnabled) {
-                Bukkit.getLogger().info("Enabling AutoSell NPC Trait!");
+                getLogger().info("Enabling AutoSell NPC Trait!");
                 CitizensAPI.getTraitFactory().registerTrait
                         (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
             } else if (ultraPrisonCoreEnabled) {
-                Bukkit.getLogger().info("Enabling UltraPrisonCore NPC Trait!");
+                getLogger().info("Enabling UltraPrisonCore NPC Trait!");
                 CitizensAPI.getTraitFactory().registerTrait
                         (TraitInfo.create(UltraPrisonCoreNPCTrait.class).withName("UltraPrisonCoreNPC"));
             }
@@ -157,11 +157,11 @@ public final class PrivateMines extends JavaPlugin {
         }
 
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            Bukkit.getLogger().info("Found PlaceholderAPI, you can use those placeholders!");
+            getLogger().info("Found PlaceholderAPI, you can use those placeholders!");
         } else {
-            Bukkit.getLogger().info("Couldn't find PlaceholderAPI. But you can still use the plugin,");
-            Bukkit.getLogger().info("you can download the plugin from the spigot website at:");
-            Bukkit.getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
+            getLogger().info("Couldn't find PlaceholderAPI. But you can still use the plugin,");
+            getLogger().info("you can download the plugin from the spigot website at:");
+            getLogger().info("https://www.spigotmc.org/resources/placeholderapi.6245/");
         }
 
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
