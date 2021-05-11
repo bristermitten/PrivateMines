@@ -201,13 +201,7 @@ public class PrivateMine implements ConfigurationSerializable {
         return blocksString;
     }
 
-    public List<String> getMineBlocksFormatted(List<ItemStack> stack) {
-        return stack.stream()
-                .map(Util::getItemName)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-    }
+
 
     public void addMineBlock(ItemStack itemStack) {
         this.blocks.add(itemStack);

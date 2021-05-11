@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +33,7 @@ import java.util.stream.IntStream;
  * <p>
  * For an example see {@link PrivateMineMenu}
  */
-public class MenuSpec
-{
+public class MenuSpec {
 
     private final InventoryHolder holder;
     /**
@@ -60,13 +60,11 @@ public class MenuSpec
      */
     private ItemStack everyItem;
 
-    public MenuSpec()
-    {
+    public MenuSpec() {
         holder = new MenuHolder();
     }
 
-    public void addAction(String name, Consumer<InventoryClickEvent> action)
-    {
+    public void addAction(String name, Consumer<InventoryClickEvent> action) {
         actionMap.put(name, action);
     }
 
@@ -76,8 +74,7 @@ public class MenuSpec
      *
      * @param other the spec to copy from
      */
-    public void copyFrom(MenuSpec other)
-    {
+    public void copyFrom(MenuSpec other) {
         this.title = other.title;
         this.size = other.size;
         this.itemsMap = new HashMap<>(other.itemsMap);
@@ -87,21 +84,17 @@ public class MenuSpec
         this.everyItem = other.everyItem == null ? null : other.everyItem.clone();
     }
 
-    public void loadFrom(ConfigurationSection section, Object... placeholders)
-    {
-        if (section == null)
-        {
+    public void loadFrom(ConfigurationSection section, Object... placeholders) {
+        if (section == null) {
             throw new NullPointerException("MenuSpec section is null");
         }
 
         title = Util.color(section.getString("Title"));
         size = section.getInt("Size");
         ConfigurationSection items = section.getConfigurationSection("Items");
-        if (items.contains("Every"))
-        {
+        if (items.contains("Every")) {
             everyItem = Util.deserializeStack(items.getConfigurationSection("Every").getValues(true));
-        } else for (String key : items.getKeys(false))
-        {
+        } else for (String key : items.getKeys(false)) {
 
             ConfigurationSection s = items.getConfigurationSection(key);
 
@@ -109,13 +102,11 @@ public class MenuSpec
             ItemStack item = Util.deserializeStack(s.getValues(true), placeholders);
             itemsMap.put(slot, item);
 
-            if (s.contains("Action"))
-            {
+            if (s.contains("Action")) {
                 actionSlotMap.put(slot, actionMap.get(s.getString("Action")));
             }
         }
-        if (section.contains("Background"))
-        {
+        if (section.contains("Background")) {
             backgroundItem = Util.deserializeStack(section.getConfigurationSection("Background").getValues(true));
         }
     }
@@ -123,8 +114,7 @@ public class MenuSpec
     /*
         Generates the menu
      */
-    public Inventory genMenu()
-    {
+    public Inventory genMenu() {
         this.inventory = Bukkit.createInventory(holder, size, title);
         itemsMap.entrySet().stream().filter(e -> e.getKey() > 0 && e.getKey() < inventory.getSize())
                 .forEach(entry -> inventory.setItem(entry.getKey(), entry.getValue()));
@@ -138,12 +128,10 @@ public class MenuSpec
     @SafeVarargs
     public final <T> Inventory genMenu(BiFunction<T, ItemStack, ItemStack> toItem,
                                        Function<T, Consumer<InventoryClickEvent>> clickFunction,
-                                       T... data)
-    {
+                                       T... data) {
 
         this.inventory = Bukkit.createInventory(holder, size, title);
-        for (int i = 0, tsLength = data.length; i < tsLength; i++)
-        {
+        for (int i = 0, tsLength = data.length; i < tsLength; i++) {
             T t = data[i];
             ItemStack newItem = toItem.apply(t, everyItem.clone());
             inventory.addItem(newItem);
@@ -155,22 +143,18 @@ public class MenuSpec
         return inventory;
     }
 
-    public Inventory getMenu()
-    {
+    public Inventory getMenu() {
         return inventory;
     }
 
     /*
       Creates the listeners for the menu
      */
-    public Listener toListener()
-    {
-        return new Listener()
-        {
+    public Listener toListener() {
+        return new Listener() {
             @EventHandler
-            public void onClick(InventoryClickEvent e)
-            {
-                if (!e.getInventory().getHolder().equals(holder)) return;
+            public void onClick(InventoryClickEvent e) {
+                if (!holder.equals(e.getInventory().getHolder())) return;
                 e.setCancelled(true);
                 Consumer<InventoryClickEvent> consumer = actionSlotMap.get(e.getSlot());
                 if (consumer == null) return;
@@ -181,9 +165,8 @@ public class MenuSpec
                Clears all the listener handlers because the menu was closed.
              */
             @EventHandler
-            public void onClose(InventoryCloseEvent e)
-            {
-                if (!e.getInventory().getHolder().equals(holder)) return;
+            public void onClose(InventoryCloseEvent e) {
+                if (!holder.equals(e.getInventory().getHolder())) return;
                 InventoryClickEvent.getHandlerList().unregister(listener);
                 e.getHandlers().unregister(listener);
 
@@ -204,8 +187,7 @@ public class MenuSpec
        Unknown
      */
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof MenuSpec)) return false;
         MenuSpec menuSpec = (MenuSpec) o;
@@ -216,16 +198,14 @@ public class MenuSpec
       Unknown
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Objects.hash(holder);
     }
 
     /*
       Registers the listeners for the plugin
      */
-    public void register(Plugin p)
-    {
+    public void register(Plugin p) {
         if (listener != null) return;
         listener = toListener();
         Bukkit.getPluginManager().registerEvents(listener, p);
@@ -234,14 +214,12 @@ public class MenuSpec
     /*
        Manages the menu holder
      */
-    private class MenuHolder implements InventoryHolder
-    {
+    private class MenuHolder implements InventoryHolder {
 
         private final UUID uuid = UUID.randomUUID();
 
         @Override
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof MenuHolder)) return false;
             MenuHolder that = (MenuHolder) o;
@@ -249,14 +227,13 @@ public class MenuSpec
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hash(uuid);
         }
 
         @Override
-        public Inventory getInventory()
-        {
+        @NotNull
+        public Inventory getInventory() {
             return inventory;
         }
     }

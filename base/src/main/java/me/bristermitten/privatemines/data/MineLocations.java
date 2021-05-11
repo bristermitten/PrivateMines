@@ -24,9 +24,6 @@ public class MineLocations implements ConfigurationSerializable {
     private static final String REGION_STRING = "Region";
     private static final String WORLDGUARD_REGION_STRING = "WorldGuardRegion";
 
-    /*
-       Gets the mine locations, e.g. Spawn point and mine region.
-     */
     public MineLocations(Location spawnPoint, WorldEditVector mineAreaMin, WorldEditVector mineAreaMax, IWrappedRegion wgRegion) {
         Objects.requireNonNull(spawnPoint, SPAWN_POINT_STRING);
         Objects.requireNonNull(wgRegion, WORLDGUARD_REGION_STRING);

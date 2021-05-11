@@ -5,12 +5,14 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.util.Formatting;
 import me.bristermitten.privatemines.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Menu for viewing all open Private Mines
@@ -34,22 +36,23 @@ public class MinesMenu
         spec.register(plugin);
 
         Player[] players =
-                Bukkit.getOnlinePlayers().stream().filter(storage::has)
+                Bukkit.getOnlinePlayers().stream().filter(storage::hasMine)
                         .filter(pl -> storage.get(pl).isOpen())
                         .toArray(Player[]::new);
 
 
         p.openInventory(spec.genMenu(
                 (pl, i) -> {
-                    ItemMeta itemMeta = i.getItemMeta();
-                    PrivateMine mine = storage.getOrCreate(pl);
-                    List<String> formattedBlocks = mine.getMineBlocksFormatted(mine.getMineBlocks());
+                    final ItemMeta itemMeta = i.getItemMeta();
+                    Objects.requireNonNull(itemMeta);
+                    final PrivateMine mine = storage.getOrCreate(pl);
+                    final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(mine.getMineBlocks());
 
                     Util.replaceMeta(itemMeta,
                             "%player%", pl.getName(),
                             "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
                             "%blocks%", mine.getMineBlocks(),
-                            "%blocksFormatted%", mine.getMineBlocksFormatted(mine.getMineBlocks()),
+                            "%blocksFormatted%", formattedBlocks,
                             "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.");
 
                     i.setItemMeta(itemMeta);

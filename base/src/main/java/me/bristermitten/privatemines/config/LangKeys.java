@@ -24,8 +24,6 @@ public enum LangKeys implements MessageKeyProvider {
     ERR_TAX_DISABLED,
     ERR_YOU_WERE_REMOVED,
 
-    ERR_NO_ACCESS_BLOCK,
-
     ERR_NO_MINES,
 
     ERR_MINE_UPGRADE_ERROR_INVALID_SCHEMATIC,
@@ -42,17 +40,14 @@ public enum LangKeys implements MessageKeyProvider {
     INFO_TAX_SET,
     INFO_TAX_INFO,
     INFO_TAX_TAKEN,
-    INFO_TAX_RECIEVED,
+    INFO_TAX_RECEIVED,
 
     INFO_MINE_GIVEN,
     INFO_MINE_OPENED,
     INFO_MINE_CLOSED,
 
     INFO_MINE_RESET,
-    INFO_MINE_RESET_OTHER,
-    INFO_NO_PLAYER,
-
-    INFO_YOU_MADE_NO_MONEY;
+    INFO_MINE_RESET_OTHER;
 
     private final MessageKey key = MessageKey.of("privatemines." + name().toLowerCase());
 

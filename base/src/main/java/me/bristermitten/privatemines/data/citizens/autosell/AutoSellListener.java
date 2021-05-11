@@ -5,6 +5,7 @@ import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.clip.autosell.events.AutoSellEvent;
@@ -18,21 +19,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 
 public class AutoSellListener implements Listener {
 
-    private final MineStorage storage = PrivateMines.getPlugin().getStorage();
+    private final MineStorage storage;
+    private final PMConfig config;
+
+    public AutoSellListener(MineStorage storage, PMConfig config) {
+        this.storage = storage;
+        this.config = config;
+    }
 
     @EventHandler
     public void onLeftClick(NPCLeftClickEvent e) {
-        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class))
-        {
+        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class)) {
             return;
         }
-        e.getClicker().performCommand("sellall");
-        //TODO Possibly add a price gui?
+        e.getClicker().performCommand(config.getSellCommand());
     }
 
     /*
@@ -40,17 +46,14 @@ public class AutoSellListener implements Listener {
      */
 
     @EventHandler
-    public void onRightClick(NPCRightClickEvent e)
-    {
-        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class))
-        {
+    public void onRightClick(NPCRightClickEvent e) {
+        if (!e.getNPC().hasTrait(AutoSellNPCTrait.class)) {
             return;
         }
-        e.getClicker().performCommand("sellall");
+        e.getClicker().performCommand(config.getSellCommand());
     }
 
-    private void process(PrivateMine privateMine, double tax, Player player)
-    {
+    private void processTax(PrivateMine privateMine, double tax, Player player) {
         UUID owner = privateMine.getOwner();
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
 
@@ -62,78 +65,63 @@ public class AutoSellListener implements Listener {
         if (Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(owner))) {
             BukkitCommandIssuer ownerIssuer = manager.getCommandIssuer(Bukkit.getPlayer(owner));
 
-            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECIEVED,
+            manager.sendMessage(ownerIssuer, MessageType.INFO, LangKeys.INFO_TAX_RECEIVED,
                     "{amount}", String.valueOf(tax),
                     "{tax}", String.valueOf(privateMine.getTax()));
         }
     }
 
-    /*
-        AutoSell Sell System Listeners..
-    */
 
     @EventHandler
-    public void onAutoSell(AutoSellEvent e)
-    {
-        //No need to tax the owner
-
+    public void onAutoSell(AutoSellEvent e) {
         PrivateMine privateMine = storage.get(e.getPlayer());
 
-        if (privateMine == null)
-        {
-            return;
-        }
-
-        if (!privateMine.contains(e.getPlayer()))
-        {
+        if (eventIsInvalid(Collections.singleton(e.getItemStackSold()), e.getPlayer())) {
             return;
         }
 
         e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
         double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
-        process(privateMine, tax, e.getPlayer());
+        processTax(privateMine, tax, e.getPlayer());
     }
 
     @EventHandler
-    public void onSellAll(SellAllEvent e)
-    {
-        if (eventIsNotApplicable(e.getItemsSold(), e.getPlayer()))
-        {
+    public void onSellAll(SellAllEvent e) {
+        if (eventIsInvalid(e.getItemsSold(), e.getPlayer())) {
             return;
         }
-        PrivateMine privateMine = storage.get(e.getPlayer().getUniqueId());
+        final PrivateMine privateMine = storage.get(e.getPlayer().getUniqueId());
 
         double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
-        process(privateMine, tax, e.getPlayer());
-        Bukkit.broadcastMessage("AUTOSELL SELLALL LINE 109?");
+        processTax(privateMine, tax, e.getPlayer());
     }
 
-    private boolean eventIsNotApplicable(List<ItemStack> itemsSold, Player player)
-    {
-        if (itemsSold.isEmpty())
-        {
+    private boolean eventIsInvalid(Collection<ItemStack> itemsSold, Player player) {
+        if (itemsSold.isEmpty()) {
             return true;
         }
 
+
         PrivateMine privateMine = storage.get(player);
-        if (privateMine == null)
-        {
+        if (privateMine == null) {
+            return true;
+        }
+        if (privateMine.getOwner().equals(player.getUniqueId())) {
+            //No need to tax the owner
             return true;
         }
         return !privateMine.contains(player);
     }
 
     @EventHandler
-    public void onSignSell(SignSellEvent e)
-    {
-        if (eventIsNotApplicable(e.getItemsSold(), e.getPlayer()))
-        {
+    public void onSignSell(SignSellEvent e) {
+        if (eventIsInvalid(e.getItemsSold(), e.getPlayer())) {
             return;
         }
         PrivateMine privateMine = storage.get(e.getPlayer());
         double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
         e.setTotalCost(e.getTotalCost() - tax);
-        process(privateMine, tax, e.getPlayer());
+        processTax(privateMine, tax, e.getPlayer());
     }
 }

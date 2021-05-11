@@ -36,8 +36,4 @@ public class MenuFactory {
 		new ChangeThemeMenu(p, plugin, config, storage);
 	}
 
-	public void createAndOpenResetPercentMenu(Player p) {
-		new ChangeMineResetPercentMenu(p, plugin, pmConfig, config, storage);
-	}
-
 }

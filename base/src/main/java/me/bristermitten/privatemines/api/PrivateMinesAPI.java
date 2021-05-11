@@ -1,15 +1,23 @@
 package me.bristermitten.privatemines.api;
 
-import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.service.MineStorage;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+@SuppressWarnings("unused") //Most of these methods are called from external programs
 public class PrivateMinesAPI {
 
     private final MineStorage storage;
+
+    /**
+     * @param storage - The storage for the plugin
+     */
+
+    public PrivateMinesAPI(MineStorage storage) {
+        this.storage = storage;
+    }
 
     public String formatTime(int time) {
         int hours = time / 10000;
@@ -20,27 +28,15 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
-     * @param plugin - This is the main class for the plugin
-     * @param storage - The storage for the plugin
-     */
-
-    public PrivateMinesAPI(PrivateMines plugin, MineStorage storage) {
-        this.storage = storage;
-    }
-
-    /**
-     *
      * @param player - The player of who you want to check has a mine or not
      * @return boolean
      */
 
     public boolean hasMine(Player player) {
-        return storage.has(player);
+        return storage.hasMine(player);
     }
 
     /**
-     *
      * @param player - The player who you want to check the tax of
      * @return double
      */
@@ -50,8 +46,7 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
-     * @param player - The player who's tax you want to set
+     * @param player     - The player who's tax you want to set
      * @param percentage - The percentage you want to set the mine tax to
      */
 
@@ -60,8 +55,7 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
-     * @param player - The player who's mine reset percentage you want to check
+     * @param player     - The player who's mine reset percentage you want to check
      * @param percentage - The percentage of which the mine should reset at
      */
 
@@ -70,8 +64,7 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
-     * @param player - The player who's mine reset percentage you want to increase the reset percentage of
+     * @param player     - The player who's mine reset percentage you want to increase the reset percentage of
      * @param percentage - Increase the percentage of which the mine should reset at
      */
 
@@ -80,8 +73,7 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
-     * @param player - The player who's mine reset percentage you want to increase the reset percentage of
+     * @param player     - The player who's mine reset percentage you want to increase the reset percentage of
      * @param percentage - Decrease the percentage of which the mine should reset at
      */
 
@@ -90,7 +82,6 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
      * @param player - The player who's mine blocks you want to check
      * @return This will return the blocks in the mine
      */
@@ -100,7 +91,6 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
      * @param player - The player who you want to check the mine blocks of.
      * @return String list of blocks.
      */
@@ -110,9 +100,8 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
      * @param player - The player who you want to set the mine blocks of
-     * @param items - The ItemStack list you want to set the mine blocks to.
+     * @param items  - The ItemStack list you want to set the mine blocks to.
      */
 
     public void setMineBlocks(Player player, List<ItemStack> items) {
@@ -128,7 +117,6 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
      * @param player - The player you want to get the reset time of
      * @return The reset time of the mine
      */
@@ -138,7 +126,6 @@ public class PrivateMinesAPI {
     }
 
     /**
-     *
      * @param player - The player you want to get the formatted reset time of
      * @return a beautiful formatted time string!
      */

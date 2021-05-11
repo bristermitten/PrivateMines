@@ -39,7 +39,6 @@ public final class PrivateMines extends JavaPlugin {
     public static final String MINES_FILE_NAME = "mines.yml";
     private static PrivateMinesAPI privateMinesAPI;
 
-    private static int resourceID = 90890;
     private Economy econ;
     private MineStorage storage;
     private MenuConfig menuConfig;
@@ -59,10 +58,6 @@ public final class PrivateMines extends JavaPlugin {
 
     public static Economy getEconomy() {
         return getPlugin().econ;
-    }
-
-    public static PrivateMinesAPI getPrivateMinesAPI() {
-        return privateMinesAPI;
     }
 
     public MineWorldManager getMineManager() {
@@ -171,7 +166,7 @@ public final class PrivateMines extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
-        Bukkit.getPluginManager().registerEvents(new AutoSellListener(), this);
+        Bukkit.getPluginManager().registerEvents(new AutoSellListener(storage, mainConfig), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonListener(), this);
 
         new MineResetTask(this, storage).start();

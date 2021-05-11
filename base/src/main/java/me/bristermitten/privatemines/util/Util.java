@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -140,7 +141,7 @@ public final class Util {
         return map;
     }
 
-    public static void replaceMeta(ItemMeta meta, Object... replacements) {
+    public static void replaceMeta(@NotNull ItemMeta meta, @NotNull Object... replacements) {
         Map<String, String> replace = arrayToMap(replacements);
 
         if (meta.hasDisplayName()) {

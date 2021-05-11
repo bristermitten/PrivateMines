@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-import xyz.xenondevs.particle.ParticleEffect;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,7 +15,7 @@ public class PMConfig {
     private final Map<BlockType, ItemStack> blockTypes = new EnumMap<>(BlockType.class);
     private final Map<MessageType, ChatColor> colors = new HashMap<>();
 
-    private String worldName = "me/bristermitten/privatemines";
+    private String worldName = "privatemines";
     private int minesDistance = 150;
     private List<ItemStack> blockOptions = new ArrayList<>();
     private List<ItemStack> mineBlocks = new ArrayList<>();
@@ -26,15 +26,11 @@ public class PMConfig {
     private List<String> resetStyles;
     private List<String> blockStyles;
 
-    private List<ParticleEffect> effects;
-
     private List<Integer> resetPercentages;
 
     private boolean npcsEnabled = true;
-    private boolean useTaxSignMenu = true;
 
     private String npcName = "Steve";
-    private String npcSkin = "TraderNPC";
     private String mineRegionNameFormat = "mine-{uuid}";
     private String sellCommand = "sellall";
     private double taxPercentage = 5;
@@ -47,36 +43,25 @@ public class PMConfig {
         this.load(configuration);
     }
 
-    /*
-       Load up all the configuration files and details.
-     */
 
+    private void loadBlockTypes(@NotNull final ConfigurationSection configuration) {
+        final ConfigurationSection blocksSection = configuration.getConfigurationSection("Blocks");
+        if (blocksSection != null) {
+            for (String block : blocksSection.getKeys(false)) {
+                final ItemStack blockValue = Optional.ofNullable(blocksSection.getString(block))
+                        .flatMap(Util::parseItem) //Monad pattern in java :)
+                        .orElseThrow(() -> new IllegalArgumentException("Unknown block type for " + block + " " + blocksSection.getString(block)));
+                this.blockTypes.put(BlockType.fromName(block), blockValue);
+            }
+        }
+    }
 
-    public void load(FileConfiguration config) {
+    public void load(@NotNull final ConfigurationSection config) {
         this.worldName = config.getString("World-Name");
         this.minesDistance = config.getInt("Mine-Distance");
         this.mineRegionNameFormat = config.getString("mine-region-name");
-
-        ConfigurationSection blocks = config.getConfigurationSection("Blocks");
-        if (blocks != null) {
-            for (String block : blocks.getKeys(false)) {
-                final String blockType = blocks.getString(block);
-                final Optional<ItemStack> value;
-                if (blockType != null) {
-                    value = Util.parseItem(blockType);
-                    if (!value.isPresent()) {
-                        throw new IllegalArgumentException("Unknown block type for " + block + " " + blockType);
-                    }
-
-                    this.blockTypes.put(BlockType.fromName(block), value.get());
-                }
-            }
-        }
-
-        this.useTaxSignMenu = config.getBoolean("Tax-Use-Sign-Menu");
         this.npcsEnabled = config.getBoolean("NPC-Enabled");
         this.npcName = config.getString("NPC-Name");
-        this.npcSkin = config.getString("NPC-Skin");
         this.sellCommand = config.getString("Sell-Command");
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.resetDelay = config.getInt("Reset-Delay");
@@ -86,6 +71,8 @@ public class PMConfig {
         this.commands = config.getStringList("Commands");
         this.resetStyles = config.getStringList("Reset-Styles");
         this.mineRegionNameFormat = config.getString("mine-region-name");
+
+        loadBlockTypes(config);
 
         this.blockOptions = config.getStringList("Block-Options")
                 .stream()
@@ -110,8 +97,6 @@ public class PMConfig {
                 .map(Optional::get)
                 .collect(Collectors.toList());
 
-
-        this.sellCommand = config.getString("sellCommand");
         this.resetPercentages = config.getIntegerList("Reset-Percentages");
 
         ConfigurationSection colorsSection = config.getConfigurationSection("Colors");
@@ -119,7 +104,8 @@ public class PMConfig {
         if (colorsSection != null) {
             for (String key : colorsSection.getKeys(false)) {
                 try {
-                    this.colors.put((MessageType) MessageType.class.getField(key).get(null),
+                    this.colors.put(
+                            (MessageType) MessageType.class.getField(key).get(null),
                             ChatColor.valueOf(colorsSection.getString(key)));
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
@@ -132,9 +118,6 @@ public class PMConfig {
         return colors;
     }
 
-    public String getNPCSkin() {
-        return npcSkin;
-    }
 
     public String getNPCName() {
         return npcName;
@@ -144,16 +127,16 @@ public class PMConfig {
         return worldName;
     }
 
-    public String getMineRegionNameFormat() { return mineRegionNameFormat;}
+    public String getMineRegionNameFormat() {
+        return mineRegionNameFormat;
+    }
 
-    public String getSellCommand() { return sellCommand; }
+    public String getSellCommand() {
+        return sellCommand;
+    }
 
     public double getTaxPercentage() {
         return taxPercentage;
-    }
-
-    public Map<BlockType, ItemStack> getDefaultBlocks() {
-        return blockTypes;
     }
 
     public Map<BlockType, ItemStack> getBlockTypes() {
@@ -168,23 +151,9 @@ public class PMConfig {
         return npcsEnabled;
     }
 
-    public boolean isTaxSignMenusEnabled() { return useTaxSignMenu; }
-
-    public List<ItemStack> getDefaultBlock() {
-        return mineBlocks;
-    }
-
-    /*
-        Single Blocks
-     */
-
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
-
-    /*
-        Multiple blocks
-     */
 
     public List<ItemStack> getDefaultMineBlocks() {
         return defaultMineBlocks;
@@ -194,19 +163,36 @@ public class PMConfig {
         return mineBlocks;
     }
 
-    public List<String> getFirstTimeCommands() { return firstTimeCommands; }
-    public List<String> getCommands() {return commands;}
-    public List<String> getResetStyles() {return resetStyles; }
-    public List<String> getBlockStyles() { return blockStyles; }
+    public List<String> getFirstTimeCommands() {
+        return firstTimeCommands;
+    }
 
-    public List<Integer> getResetPercentages() {return resetPercentages; }
+    public List<String> getCommands() {
+        return commands;
+    }
 
-    public List<ParticleEffect> getParticleEffects() {return effects; }
+    public List<String> getResetStyles() {
+        return resetStyles;
+    }
 
-    public int getResetDelay() { return resetDelay; }
+    public List<String> getBlockStyles() {
+        return blockStyles;
+    }
 
-    public int getResetPercentage() { return resetPercentage; }
+    public List<Integer> getResetPercentages() {
+        return resetPercentages;
+    }
 
-    public int getMineTier() { return mineTier; }
+    public int getResetDelay() {
+        return resetDelay;
+    }
+
+    public int getResetPercentage() {
+        return resetPercentage;
+    }
+
+    public int getMineTier() {
+        return mineTier;
+    }
 
 }
