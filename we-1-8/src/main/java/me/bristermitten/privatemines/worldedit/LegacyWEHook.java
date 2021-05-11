@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.worldedit;
 
 import com.boydti.fawe.FaweAPI;
+import com.boydti.fawe.object.schematic.Schematic;
 import com.boydti.fawe.util.EditSessionBuilder;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.Vector;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.util.List;
 
-public class LegacyWEHook implements WorldEditHook {
+public class LegacyWEHook implements WorldEditHook<Schematic> {
 
     public static Region transform(WorldEditRegion region) {
         return new CuboidRegion(
@@ -52,12 +53,12 @@ public class LegacyWEHook implements WorldEditHook {
     }
 
     @Override
-    public MineFactoryCompat<?> createMineFactoryCompat() {
+    public MineFactoryCompat<Schematic> createMineFactoryCompat() {
         return new LegacyWEMineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
     }
 
     @Override
-    public MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
+    public MineSchematic<Schematic> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
         return new LegacyWEMineSchematic(name, description, file, item);
     }
 }

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public class AutoSellNPCTrait extends Trait {
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
     private UUID owner;

@@ -75,8 +75,10 @@ public final class Util {
         final XMaterial xMaterial = materialOpt.get();
         s.setType(xMaterial.parseMaterial());
         if (map.containsKey("Data")) {
+            //noinspection deprecation
             s.setDurability((short) (int) map.get("Data"));
         } else {
+            //noinspection deprecation
             s.setDurability(xMaterial.getData());
         }
         ItemMeta itemMeta = s.getItemMeta();

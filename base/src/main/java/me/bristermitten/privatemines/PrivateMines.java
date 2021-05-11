@@ -3,6 +3,7 @@ package me.bristermitten.privatemines;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
+import me.bristermitten.privatemines.api.PrivateMinesAPI;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
@@ -16,7 +17,6 @@ import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.api.PrivateMinesAPI;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;
@@ -46,7 +46,7 @@ public final class PrivateMines extends JavaPlugin {
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
     private MineFactory<MineSchematic<?>, ?> factory;
-    private WorldEditHook weHook;
+    private WorldEditHook<?> weHook;
     private MineWorldManager mineManager;
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
@@ -81,7 +81,7 @@ public final class PrivateMines extends JavaPlugin {
         return npcsEnabled;
     }
 
-    public WorldEditHook getWeHook() {
+    public WorldEditHook<?> getWeHook() {
         return weHook;
     }
 
@@ -171,27 +171,23 @@ public final class PrivateMines extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new UserJoinEvent(), this);
         Bukkit.getPluginManager().registerEvents(new UserLeaveEvent(), this);
-        // Bukkit.getPluginManager().registerEvents(new AutoSellNPCTrait(), this);
-//        Bukkit.getPluginManager().registerEvents(new UltraPrisonNPCTrait(), this);
         Bukkit.getPluginManager().registerEvents(new AutoSellListener(), this);
         Bukkit.getPluginManager().registerEvents(new UltraPrisonListener(), this);
 
         new MineResetTask(this, storage).start();
 
         long loaded = System.currentTimeMillis();
-        Bukkit.getLogger().info(String.format(ChatColor.GREEN +
-                        "Successfully loaded PrivateMines (Took %dms)",
-                loaded - startTime));
+        getLogger().info(() -> String.format("%sSuccessfully loaded PrivateMines (Took %dms)", ChatColor.GREEN, loaded - startTime));
     }
 
     private void loadWEHook() {
         final String version = Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion();
         try {
             if (version.startsWith("6.")) {
-                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
+                this.weHook = (WorldEditHook<?>) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
                         .getConstructor().newInstance();
             } else if (version.startsWith("7.") || version.startsWith("1.1")) { //FAWE 1.13, 1.16, etc
-                this.weHook = (WorldEditHook) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
+                this.weHook = (WorldEditHook<?>) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
                         .getConstructor().newInstance();
             } else {
                 throw new IllegalStateException("Unsupported WorldEdit version: " + version);
@@ -203,7 +199,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @NotNull
     private MineFactory<?, ?> loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
-        return new MineFactory(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
+        return new MineFactory<>(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {

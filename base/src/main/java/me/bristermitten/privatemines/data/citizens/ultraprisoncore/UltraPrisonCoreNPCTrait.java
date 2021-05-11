@@ -11,7 +11,7 @@ public class UltraPrisonCoreNPCTrait extends Trait {
 
     @Persist("owner")
     @DelegatePersistence(UUIDPersister.class)
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private UUID owner;
 
     public UltraPrisonCoreNPCTrait() {

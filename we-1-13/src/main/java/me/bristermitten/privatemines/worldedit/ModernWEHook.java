@@ -4,6 +4,7 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.function.pattern.RandomPattern;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -16,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.File;
 import java.util.List;
 
-public class ModernWEHook implements WorldEditHook {
+public class ModernWEHook implements WorldEditHook<Clipboard> {
 
     public static Region transform(WorldEditRegion region) {
         return new CuboidRegion(
@@ -56,12 +57,12 @@ public class ModernWEHook implements WorldEditHook {
 
 
     @Override
-    public MineFactoryCompat<?> createMineFactoryCompat() {
+    public MineFactoryCompat<Clipboard> createMineFactoryCompat() {
         return new ModernMineFactoryCompat(PrivateMines.getPlugin().getMineManager()); //Have to use static here because our compat module can't depend on the main plugin module :(
     }
 
     @Override
-    public MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
+    public MineSchematic<Clipboard> loadMineSchematic(String name, List<String> description, File file, ItemStack item) {
         return new ModernWEMineSchematic(name, description, file, item);
     }
 }

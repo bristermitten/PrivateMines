@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public interface WorldEditHook {
+public interface WorldEditHook<S> {
     void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode);
 
     default void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode) {
@@ -24,7 +24,7 @@ public interface WorldEditHook {
         Remove usage of generic wildcard type. Any clue on a fix?
      */
 
-    MineFactoryCompat<?> createMineFactoryCompat();
+    MineFactoryCompat<S> createMineFactoryCompat();
 
-    MineSchematic<?> loadMineSchematic(String name, List<String> description, File file, ItemStack item);
+    MineSchematic<S> loadMineSchematic(String name, List<String> description, File file, ItemStack item);
 }
