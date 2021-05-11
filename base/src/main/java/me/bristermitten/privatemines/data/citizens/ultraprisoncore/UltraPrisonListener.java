@@ -18,8 +18,8 @@ import org.bukkit.event.Listener;
 import java.util.UUID;
 
 public class UltraPrisonListener implements Listener {
-    private static final BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
     private final MineStorage storage = PrivateMines.getPlugin().getStorage();
+    private static final BukkitCommandManager manager = PrivateMines.getPlugin().getManager();
     PrivateMine privateMine;
 
     UUID owner;

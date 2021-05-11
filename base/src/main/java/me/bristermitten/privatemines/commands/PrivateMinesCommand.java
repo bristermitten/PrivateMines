@@ -14,6 +14,8 @@ import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -403,6 +405,12 @@ public class PrivateMinesCommand extends BaseCommand {
 
         if (newTier == 0) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_TIER);
+        }
+
+        UUID npcID = mine.getNPCUUID();
+        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
+        if (npc != null) {
+            npc.destroy();
         }
 
         Location spawnLocation = mine.getLocations().getSpawnPoint();
