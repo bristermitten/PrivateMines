@@ -46,14 +46,16 @@ public class UltraPrisonListener implements Listener {
         privateMine = storage.get(player.getUniqueId());
         if (privateMine != null) {
             owner = privateMine.getOwner();
+            return !privateMine.contains(player);
         }
         if (owner == null)
-            Bukkit.broadcastMessage("UPC owner is null 53");
+            return false;
         if (player.getUniqueId().equals(owner))
             return false;
-        if (privateMine == null)
-            Bukkit.getLogger().warning("UltraPrisonListener privatemine was null!");
-        return !privateMine.contains(player);
+        if (privateMine == null) {
+            return false;
+        }
+        return false;
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
