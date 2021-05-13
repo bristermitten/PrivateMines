@@ -56,6 +56,8 @@ public class PrivateMine implements ConfigurationSerializable {
     private int mineTier;
     private String resetStyle;
     private final Location spawnLocation;
+    private WorldEditRegion oldRegion;
+    private WorldEditRegion oldMineRegion;
 
     // Is it even possible to get this down to the 7 max?
     // Yes.
@@ -428,7 +430,9 @@ public class PrivateMine implements ConfigurationSerializable {
         PrivateMine oldMine = PrivateMines.getPlugin().getStorage().get(player);
 
         if (oldMine != null) {
-            PrivateMines.getPlugin().getWeHook().fillAir(oldMine.mainRegion, true);
+            oldRegion = oldMine.mainRegion;
+
+            PrivateMines.getPlugin().getWeHook().fillAir(oldRegion, true);
             oldMine.delete();
         }
 
@@ -464,8 +468,8 @@ public class PrivateMine implements ConfigurationSerializable {
                 return;
             }
             player.sendMessage("Upgrading your mine using new system?");
-            currentMine.fillWESingle(new ItemStack(Material.AIR));
 
+            currentMine.fillWESingle(new ItemStack(Material.EMERALD_BLOCK));
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
@@ -491,5 +495,4 @@ public class PrivateMine implements ConfigurationSerializable {
 
         return bannedPlayers.remove(player.getUniqueId());
     }
-
 }
