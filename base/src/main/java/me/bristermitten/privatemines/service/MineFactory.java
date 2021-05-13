@@ -57,10 +57,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
     }
 
-    public PrivateMine createAtLocation(Player owner, M mineSchematic, Location location) {
-        return create(owner, mineSchematic, location, false);
-    }
-
     private boolean dataMatches(byte data, short expectedData) {
         if (data == 0) {
             return expectedData == 0;
@@ -106,7 +102,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (world == null) {
             throw new IllegalArgumentException("World for provided location was null");
         }
-        for (WorldEditVector pt : compat.loop(region)) {
+        for (Iterator<WorldEditVector> iterator = compat.loop(region).iterator(); iterator.hasNext(); ) {
+            WorldEditVector pt = iterator.next();
             final Block blockAt = world.getBlockAt((int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
             Material type = blockAt.getType();
             byte data = blockAt.getData();

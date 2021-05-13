@@ -25,7 +25,6 @@ public class ChangeBlockMenu {
 
     /*
     Loads the configuration for the change block menu
-    TODO Check
      */
 
     ChangeBlockMenu(Player p, PrivateMines plugin, PMConfig config, MenuConfig menuConfig, MineStorage storage) {
@@ -47,7 +46,6 @@ public class ChangeBlockMenu {
                     if (damageable != null) {
                         damageable.setDamage(damageable.getDamage());
                     }
-
                     String displayName = itemMeta.getDisplayName();
                     String name = displayName.replace("%block%",
                             Util.getItemName(block).orElse("Unknown"));

@@ -30,32 +30,34 @@ public class SchematicStorage {
         schematics.clear();
 
         final ConfigurationSection section = config.getConfigurationSection("Schematics");
-        for (String name : section.getKeys(false)) {
-            final ConfigurationSection schematicSection = section.getConfigurationSection(name);
+        if (section != null) {
+            for (String name : section.getKeys(false)) {
+                final ConfigurationSection schematicSection = section.getConfigurationSection(name);
 
-            List<String> description = null;
-            if (schematicSection != null) {
-                description = schematicSection.getStringList("Description");
-            }
-
-            if (schematicSection.getString("File") == null) {
-                PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
-            } else {
-                final File file = new File(schematicsDir, schematicSection.getString("File"));
-
-
-                if (!file.exists()) {
-                    PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
-                    continue;
+                List<String> description = null;
+                if (schematicSection != null) {
+                    description = schematicSection.getStringList("Description");
                 }
 
-                final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
+                if (schematicSection.getString("File") == null) {
+                    PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
+                } else {
+                    final File file = new File(schematicsDir, schematicSection.getString("File"));
 
-                final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(name, description, file, item);
-                schematics.put(name, schematic);
 
-                if (schematicSection.getBoolean("Default")) {
-                    defaultSchematic = schematic;
+                    if (!file.exists()) {
+                        PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
+                        continue;
+                    }
+
+                    final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
+
+                    final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(name, description, file, item);
+                    schematics.put(name, schematic);
+
+                    if (schematicSection.getBoolean("Default")) {
+                        defaultSchematic = schematic;
+                    }
                 }
             }
         }

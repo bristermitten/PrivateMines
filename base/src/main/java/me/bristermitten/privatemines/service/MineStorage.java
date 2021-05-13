@@ -82,12 +82,19 @@ public class MineStorage {
 
         MineSchematic<?> defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
         if (defaultSchematic == null) {
+            if (player.isOp()) {
+                player.sendMessage("There was no default schematic configured in");
+                player.sendMessage("the schematics.yml file, please configure");
+                player.sendMessage("a new schematic with the");
+                player.sendMessage("default value set to true");
+            }
             player.sendMessage(ChatColor.RED + "No Default Schematic. Contact an Admin.");
             logger.severe("There was no default schematic, to fix this error,");
             logger.severe("go into the schematics.yml file and add a new schematic");
             logger.severe("and make sure that you have at least one schematics default");
             logger.severe("option set to true.");
-            throw new IllegalStateException("No Default Schematic found"); //TODO this needs to be more user friendly
+            logger.severe(" ");
+            throw new IllegalStateException("No Default Schematic found");
         }
 
         mine = factory.create(player, defaultSchematic, true);
