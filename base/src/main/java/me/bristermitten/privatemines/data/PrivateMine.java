@@ -16,10 +16,7 @@ import me.clip.autosell.objects.Shop;
 import me.lucko.helper.Events;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -58,6 +55,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private long nextResetTime;
     private int mineTier;
     private String resetStyle;
+    private final Location spawnLocation;
 
     // Is it even possible to get this down to the 7 max?
     // Yes.
@@ -77,6 +75,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        double resetPercent,
                        int resetTime,
                        int mineTier,
+                       Location spawnLocation,
                        MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
@@ -94,6 +93,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.mineSchematic = mineSchematic;
         this.resetDelay = (int) TimeUnit.MINUTES.toMillis(resetTime);
         this.mineTier = mineTier + 1;
+        this.spawnLocation = spawnLocation;
     }
 
     @SuppressWarnings("unchecked")
@@ -142,8 +142,10 @@ public class PrivateMine implements ConfigurationSerializable {
         Shop shop = new Shop(shopName);
         SellHandler.addShop(shop);
 
+        Location spawnLocation = locations.getSpawnPoint();
+
         return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, fastMode, blocks, mainRegion, locations,
-                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, schematic);
+                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, spawnLocation, schematic);
     }
 
     public double getTaxPercentage() {
@@ -246,6 +248,10 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public MineLocations getLocations() {
         return locations;
+    }
+
+    public Location getSpawnLocation() {
+        return spawnLocation;
     }
 
     public @NotNull Map<String, Object> serialize() {
@@ -414,16 +420,22 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Sets the new mine schematic (Used when changing themes)
      */
-    public void setMineSchematic(MineSchematic<?> mineSchematic, Location location) {
+    public void setMineSchematic(MineSchematic<?> mineSchematic, Location location, Player player) {
         boolean mineIsOpen = isOpen();
         setOpen(false);
+
+        PrivateMine oldMine = PrivateMines.getPlugin().getStorage().get(player);
+
+        if (oldMine != null) {
+            oldMine.fillWESingle(new ItemStack(Material.AIR));
+            oldMine.delete();
+        }
 
         PrivateMine newMine = PrivateMines.getPlugin().getFactory().create(
                 getOwnerPlayer(),
                 mineSchematic,
                 location,
                 false);
-
         fillMine();
 
         this.locations = newMine.locations;
@@ -432,6 +444,31 @@ public class PrivateMine implements ConfigurationSerializable {
         this.npcId = newMine.npcId;
         this.mineSchematic = mineSchematic;
         setOpen(mineIsOpen);
+    }
+
+    public void upgradeMine(Player player) {
+        int tier;
+        PrivateMine currentMine = PrivateMines.getPlugin().getStorage().get(player);
+        if (currentMine != null) {
+            Location currentMineLocation = currentMine.getSpawnLocation();
+            tier = currentMine.getMineTier();
+            int newTier = tier + 1;
+
+            String upgradeSchematicS = "tier-" + newTier;
+
+            MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
+
+            if (upgradeSchematic == null) {
+                Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
+                return;
+            }
+            player.sendMessage("Upgrading your mine using new system?");
+            currentMine.fillWESingle(new ItemStack(Material.AIR));
+
+            currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
+            currentMine.getLocations().setSpawnPoint(currentMineLocation);
+            currentMine.teleport(player);
+        }
     }
 
     public boolean ban(Player player) {

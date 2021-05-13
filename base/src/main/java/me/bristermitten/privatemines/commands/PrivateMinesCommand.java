@@ -8,23 +8,17 @@ import me.bristermitten.privatemines.MineResetTask;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.config.PMConfig;
-import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,6 +34,8 @@ import static java.lang.String.valueOf;
 public class PrivateMinesCommand extends BaseCommand {
 
     private static final String PLAYER_KEY = "{player}";
+    private static final String TAX_KEY = "{tax}";
+
     private final PrivateMines plugin;
     private final MenuFactory factory;
     private final MineStorage storage;
@@ -89,16 +85,16 @@ public class PrivateMinesCommand extends BaseCommand {
             final PrivateMine mine = storage.getOrCreate(p);
 
             mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
             return;
         }
         final PrivateMine mine = storage.getOrCreate(p);
         if (taxPercentage == null) {
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, "{tax}", valueOf(mine.getTaxPercentage()));
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, TAX_KEY, valueOf(mine.getTaxPercentage()));
             return;
         }
         mine.setTaxPercentage(taxPercentage);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, "{tax}", taxPercentage.toString());
+        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
     }
 
 
@@ -127,12 +123,14 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Give a Player a PrivateMine")
     public void give(OfflinePlayer target) {
         Player t = target.getPlayer();
-        if (storage.hasMine(t)) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
-            return;
+        if (t != null && storage.hasMine(t)) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
+                return;
         }
-        storage.getOrCreate(t).teleport();
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
+        if (t != null) {
+            storage.getOrCreate(t).teleport();
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
+        }
     }
 
     @Subcommand("delete")
@@ -284,22 +282,26 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Lists who's trusted in your Private Mine!")
     public void trusted(Player p) {
-        PrivateMine mine = storage.get(p.getPlayer());
-        if (mine == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
-            return;
-        }
+        if (p == null) {
+            Bukkit.getLogger().info("Player was null in trusted!"); // Should never happen.
+        } else {
+            PrivateMine mine = storage.get(p);
+            if (mine == null) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+                return;
+            }
 
-        if (mine.getTrustedPlayers().isEmpty()) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_NO_TRUSTED_PLAYERS);
-            return;
-        }
+            if (mine.getTrustedPlayers().isEmpty()) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_NO_TRUSTED_PLAYERS);
+                return;
+            }
 
-        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
-        for (UUID s : mine.getTrustedPlayers()) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
-            String lastKnownName = offlinePlayer.getName();
-            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+            for (UUID s : mine.getTrustedPlayers()) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+                String lastKnownName = offlinePlayer.getName();
+                p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            }
         }
     }
 
@@ -308,27 +310,29 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Trust players in your mine!")
     public void trust(Player p, OnlinePlayer target) {
-        PrivateMine mine = storage.get(p.getPlayer());
+        if (p != null) {
+            PrivateMine mine = storage.get(p);
 
-        if (mine == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
-            return;
-        }
-
-        for (UUID s : mine.getTrustedPlayers()) {
-            if (s.equals(target.getPlayer().getUniqueId())) {
-                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_ADDED, PLAYER_KEY, target.getPlayer().getName());
+            if (mine == null) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
                 return;
             }
-        }
 
-        mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
-        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
-        for (UUID s : mine.getTrustedPlayers()) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
-            String lastKnownName = offlinePlayer.getName();
-            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            for (UUID s : mine.getTrustedPlayers()) {
+                if (s.equals(target.getPlayer().getUniqueId())) {
+                    getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_ALREADY_ADDED, PLAYER_KEY, target.getPlayer().getName());
+                    return;
+                }
+            }
+
+            mine.getTrustedPlayers().add(target.getPlayer().getUniqueId());
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_ADDED, PLAYER_KEY, target.getPlayer().getName());
+            p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+            for (UUID s : mine.getTrustedPlayers()) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+                String lastKnownName = offlinePlayer.getName();
+                p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            }
         }
     }
 
@@ -337,25 +341,27 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandCompletion("@players")
     @Description("Untrust a player from your Private Mine")
     public void untrust(Player p, OnlinePlayer target) {
-        PrivateMine mine = storage.get(p.getPlayer());
-        if (mine == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
-            return;
-        }
-        if (!mine.getTrustedPlayers().contains(target.getPlayer().getUniqueId())) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_ON_TRUSTED_LIST);
-            return;
-        }
-        mine.getTrustedPlayers().remove(target.player.getUniqueId());
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
-        p.sendMessage(ChatColor.GREEN + "Trusted players: ");
-        for (UUID s : mine.getTrustedPlayers()) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
-            String lastKnownName = offlinePlayer.getName();
-            p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+        PrivateMine mine;
+        if (p != null) {
+            mine = storage.get(p);
+            if (mine == null) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
+                return;
+            }
+            if (!mine.getTrustedPlayers().contains(target.getPlayer().getUniqueId())) {
+                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_NOT_ON_TRUSTED_LIST);
+                return;
+            }
+            mine.getTrustedPlayers().remove(target.player.getUniqueId());
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_PLAYER_REMOVED, PLAYER_KEY, target.getPlayer().getName());
+            p.sendMessage(ChatColor.GREEN + "Trusted players: ");
+            for (UUID s : mine.getTrustedPlayers()) {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(s);
+                String lastKnownName = offlinePlayer.getName();
+                p.sendMessage(ChatColor.GOLD + "- " + ChatColor.GRAY + lastKnownName);
+            }
         }
     }
-
 
     @Subcommand("remove")
     @CommandPermission("privatemines.remove")
@@ -390,35 +396,7 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-
-        int tier = mine.getMineTier();
-        int newTier = tier + 1;
-
-        String upgradeSchematicS = "tier-" + newTier;
-
-        MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
-
-        if (upgradeSchematic == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_SCHEMATIC);
-            return;
-        }
-
-        if (newTier == 0) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_MINE_UPGRADE_ERROR_INVALID_TIER);
-        }
-
-        UUID npcID = mine.getNPCUUID();
-        NPC npc = CitizensAPI.getNPCRegistry().getByUniqueId(npcID);
-        if (npc != null) {
-            npc.destroy();
-        }
-
-        Location spawnLocation = mine.getLocations().getSpawnPoint();
-
-        mine.setMineSchematic(upgradeSchematic, spawnLocation);
-        mine.setMineTier(newTier);
-        mine.fillMine();
-        mine.teleport(p);
+        mine.upgradeMine(p);
     }
 
     @Subcommand("fixreset")
@@ -442,21 +420,25 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.setblockstyle")
     @CommandCompletion("@players")
     @Description("Sets the block style for a mine")
-    public void setBlockStyle(Player p, OnlinePlayer target, String style) {
+    public void setblockstyle(Player p, OnlinePlayer target, String style) {
         PrivateMine mine = storage.get(target.player);
-        if (mine == null) {
-            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
-            return;
-        }
-        for (String blockStyle : config.getBlockStyles()) {
-            if (blockStyle.contains(style)) {
-                List<ItemStack> blocks = plugin.getConfig().getStringList("Block-Styles." + style).stream()
+        PrivateMines privateMines = PrivateMines.getPlugin();
+        List<ItemStack> blocks;
+
+        p.sendMessage("setblockstyle did actually run btw....");
+        p.sendMessage(config.getBlockStyles().toString());
+
+        for (String s : config.getBlockStyles()) {
+            if (s.contains(style)) {
+                blocks = privateMines.getConfig().getStringList("Block-Styles." + style).stream()
                         .map(Util::parseItem)
                         .filter(java.util.Optional::isPresent)
                         .map(java.util.Optional::get)
                         .collect(Collectors.toList());
-                mine.setMineBlocks(blocks);
-            } else {
+                if (mine != null) {
+                    mine.setMineBlocks(blocks);
+                }
+            } else if (!s.contains(style)) {
                 p.sendMessage(ChatColor.RED + "Missing style!");
             }
         }
@@ -465,24 +447,24 @@ public class PrivateMinesCommand extends BaseCommand {
     @Subcommand("version")
     @CommandPermission("privatemines.version")
     @Description("Gets the current version of Private Mines")
-    public void version(CommandSender sender) {
-        sender.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
+    public void version(Player p) {
+        p.sendMessage(ChatColor.GREEN + "Your Private Mines version: v" + ChatColor.GRAY + plugin.getDescription().getVersion());
     }
 
     @Subcommand("reload")
     @CommandPermission("privatemines.reload")
     @Description("Reloads the PrivateMines plugin")
-    public void reload(CommandSender sender) {
-        sender.sendMessage(ChatColor.GREEN + "Reloading the configuration files...");
+    public void reload(Player p) {
+        p.sendMessage(ChatColor.GREEN + "Reloading the configuration files...");
         plugin.reloadConfig();
-        sender.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
+        p.sendMessage(ChatColor.GREEN + "Successfully reloaded the configuration files!");
     }
 
     @Subcommand("home")
     @CommandPermission("privatemines.home")
     @Description("Teleports you to your Private Mine directly")
-    public void home(Player sender) {
-        PrivateMine mine = storage.get(sender);
+    public void home(Player p) {
+        PrivateMine mine = storage.get(p);
         if (mine == null) {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;

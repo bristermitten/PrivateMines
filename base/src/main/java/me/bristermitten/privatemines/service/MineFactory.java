@@ -186,8 +186,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 config.getResetPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
-                mineSchematic
-        );
+                locations.getSpawnPoint(),
+                mineSchematic);
 
         privateMine.fillMine();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
