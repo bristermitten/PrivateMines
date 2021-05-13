@@ -34,7 +34,6 @@ public class Taxation {
         return !privateMine.contains(player);
     }
 
-
     public static void processTax(PrivateMine privateMine, double tax, Player player) {
         UUID owner = privateMine.getOwner();
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);

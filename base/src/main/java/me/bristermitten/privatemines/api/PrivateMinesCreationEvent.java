@@ -8,7 +8,6 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PrivateMinesCreationEvent extends Event implements Cancellable {
@@ -23,7 +22,7 @@ public class PrivateMinesCreationEvent extends Event implements Cancellable {
     private Double tax;
     private Integer resetTime;
 
-    private List<ItemStack> mineBlocks = new ArrayList<>();
+    private List<ItemStack> mineBlocks;
 
     public PrivateMinesCreationEvent(Player player,
                                      PrivateMine privateMine,

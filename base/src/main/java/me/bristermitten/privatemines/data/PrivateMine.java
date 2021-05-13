@@ -420,6 +420,7 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Sets the new mine schematic (Used when changing themes)
      */
+
     public void setMineSchematic(MineSchematic<?> mineSchematic, Location location, Player player) {
         boolean mineIsOpen = isOpen();
         setOpen(false);
@@ -427,7 +428,7 @@ public class PrivateMine implements ConfigurationSerializable {
         PrivateMine oldMine = PrivateMines.getPlugin().getStorage().get(player);
 
         if (oldMine != null) {
-            oldMine.fillWESingle(new ItemStack(Material.AIR));
+            PrivateMines.getPlugin().getWeHook().fillAir(oldMine.mainRegion, true);
             oldMine.delete();
         }
 
