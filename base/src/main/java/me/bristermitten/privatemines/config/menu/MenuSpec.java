@@ -92,22 +92,26 @@ public class MenuSpec {
         title = Util.color(section.getString("Title"));
         size = section.getInt("Size");
         ConfigurationSection items = section.getConfigurationSection("Items");
-        if (items.contains("Every")) {
-            everyItem = Util.deserializeStack(items.getConfigurationSection("Every").getValues(true));
-        } else for (String key : items.getKeys(false)) {
+        if (items != null) {
+            if (items.contains("Every")) {
+                everyItem = Util.deserializeStack(items.getConfigurationSection("Every").getValues(true));
+            } else for (String key : items.getKeys(false)) {
 
-            ConfigurationSection s = items.getConfigurationSection(key);
+                ConfigurationSection s = items.getConfigurationSection(key);
 
-            int slot = s.getInt("Slot", Integer.parseInt(s.getName()));
-            ItemStack item = Util.deserializeStack(s.getValues(true), placeholders);
-            itemsMap.put(slot, item);
+                if (s != null) {
+                    int slot = s.getInt("Slot", Integer.parseInt(s.getName()));
+                    ItemStack item = Util.deserializeStack(s.getValues(true), placeholders);
+                    itemsMap.put(slot, item);
 
-            if (s.contains("Action")) {
-                actionSlotMap.put(slot, actionMap.get(s.getString("Action")));
+                    if (s.contains("Action")) {
+                        actionSlotMap.put(slot, actionMap.get(s.getString("Action")));
+                    }
+                }
             }
-        }
-        if (section.contains("Background")) {
-            backgroundItem = Util.deserializeStack(section.getConfigurationSection("Background").getValues(true));
+            if (section.contains("Background")) {
+                backgroundItem = Util.deserializeStack(section.getConfigurationSection("Background").getValues(true));
+            }
         }
     }
 
