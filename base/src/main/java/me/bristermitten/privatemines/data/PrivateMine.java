@@ -484,7 +484,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
             player.performCommand("spawn");
         }
-
         return bannedPlayers.add(player.getUniqueId());
     }
 
