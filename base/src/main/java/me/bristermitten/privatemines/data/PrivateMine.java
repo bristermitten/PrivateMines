@@ -485,6 +485,12 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to it being null.");
                 return;
             }
+
+            if (currentMine.mineSchematic.getTier() == newTier) {
+                player.sendMessage(ChatColor.RED + "No point upgrading because you're already at this tier.");
+                return;
+            }
+
             CitizensAPI.getNPCRegistry().getByUniqueId(getNPCUUID()).destroy();
 
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
