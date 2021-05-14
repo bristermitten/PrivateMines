@@ -441,7 +441,6 @@ public class PrivateMine implements ConfigurationSerializable {
                 mineSchematic,
                 location,
                 false);
-        fillMine();
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;
@@ -463,14 +462,22 @@ public class PrivateMine implements ConfigurationSerializable {
 
             MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
 
+            final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+
+            final WorldEditRegion miningRegion = new WorldEditRegion(
+                    Util.toWEVector(selection.getMinimumPoint()),
+                    Util.toWEVector(selection.getMaximumPoint()),
+                    mainRegion.getWorld()
+            );
+
             if (upgradeSchematic == null) {
                 Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
                 return;
             }
             player.sendMessage("Upgrading your mine using new system?");
-
-            currentMine.fillWESingle(new ItemStack(Material.EMERALD_BLOCK));
+            PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
+
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
         }
