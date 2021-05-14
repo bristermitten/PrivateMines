@@ -474,10 +474,8 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
                 return;
             }
-            player.sendMessage("Upgrading your mine using new system?");
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
-
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
         }

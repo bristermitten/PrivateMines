@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.api;
 
 import me.bristermitten.privatemines.service.MineStorage;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -132,5 +133,13 @@ public class PrivateMinesAPI {
 
     public String getFormattedResetTime(Player player) {
         return formatTime(storage.get(player).getResetTime());
+    }
+
+    public void upgradePlayerMine(Player player) {
+        if (storage.hasMine(player)) {
+            storage.get(player).upgradeMine(player);
+        } else {
+            Bukkit.getLogger().warning(player.getName() + " Doesn't have a Private Mine, cannot execute this method!");
+        }
     }
 }
