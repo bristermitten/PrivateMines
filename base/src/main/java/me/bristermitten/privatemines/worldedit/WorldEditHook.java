@@ -26,5 +26,5 @@ public interface WorldEditHook<S> {
 
     MineFactoryCompat<S> createMineFactoryCompat();
 
-    MineSchematic<S> loadMineSchematic(String name, List<String> description, File file, ItemStack item);
+    MineSchematic<S> loadMineSchematic(String name, List<String> description, File file, ItemStack item, Integer tier);
 }

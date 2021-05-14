@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
+    private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
     /**
      * How far between a mine reset in milliseconds
      */
@@ -52,15 +53,15 @@ public class PrivateMine implements ConfigurationSerializable {
     private double taxPercentage;
     private double resetPercentage;
     private MineSchematic<?> mineSchematic;
+    private MineSchematic<?> upgradeSchematic;
     private long nextResetTime;
     private int mineTier;
     private String resetStyle;
     private final Location spawnLocation;
-    private WorldEditRegion oldRegion;
-    private WorldEditRegion oldMineRegion;
 
     // Is it even possible to get this down to the 7 max?
     // Yes.
+    // How? We need most of them, don't we?
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -127,7 +128,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         List<String> commands = (List<String>) map.get("Commands");
 
-        MineSchematic<?> schematic = SchematicStorage.getInstance().get(schematicName);
+        MineSchematic<?> schematic = schematicStorage.get(schematicName);
 
         if (schematic == null) {
             throw new IllegalArgumentException("Invalid Schematic " + schematicName);
@@ -382,9 +383,11 @@ public class PrivateMine implements ConfigurationSerializable {
                 = new PrivateMinesDeletionEvent(this);
 
         Events.call(privateMinesDeletionEvent);
+
         /*
             Removes mine blocks + shell also
          */
+
         PrivateMines.getPlugin().getWeHook().fillAir(mainRegion, isFastMode());
         PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
         removeAllPlayers();
@@ -401,16 +404,17 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
     Delete the Private Mine Region.
      */
+
     private void removeRegion() {
         World world = locations.getSpawnPoint().getWorld();
         WorldGuardWrapper.getInstance().removeRegion(world, wgRegion.getId());
         WorldGuardWrapper.getInstance().removeRegion(world, locations.getWgRegion().getId());
     }
 
-
     /*
       Teleport all the players back to spawn.
      */
+
     private void removeAllPlayers() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (this.contains(player)) {
@@ -430,7 +434,7 @@ public class PrivateMine implements ConfigurationSerializable {
         PrivateMine oldMine = PrivateMines.getPlugin().getStorage().get(player);
 
         if (oldMine != null) {
-            oldRegion = oldMine.mainRegion;
+            WorldEditRegion oldRegion = oldMine.mainRegion;
 
             PrivateMines.getPlugin().getWeHook().fillAir(oldRegion, true);
             oldMine.delete();
@@ -458,9 +462,14 @@ public class PrivateMine implements ConfigurationSerializable {
             tier = currentMine.getMineTier();
             int newTier = tier + 1;
 
-            String upgradeSchematicS = "tier-" + newTier;
+            Collection<MineSchematic<?>> mineSchematics = schematicStorage.getAll();
 
-            MineSchematic<?> upgradeSchematic = SchematicStorage.getInstance().get(upgradeSchematicS);
+            for (MineSchematic schema : mineSchematics) {
+                if (schema.getTier() == newTier) {
+                    Bukkit.broadcastMessage("Found new schematic: " + schema.file.getName());
+                    upgradeSchematic = schema;
+                }
+            }
 
             final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
 

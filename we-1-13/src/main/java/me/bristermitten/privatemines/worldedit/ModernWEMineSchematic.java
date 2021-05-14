@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class ModernWEMineSchematic extends MineSchematic<Clipboard> {
-    protected ModernWEMineSchematic(String name, List<String> description, File file, ItemStack icon) {
-        super(name, description, file, icon);
+    protected ModernWEMineSchematic(String name, List<String> description, File file, ItemStack icon, Integer tier) {
+        super(name, description, file, icon, tier);
     }
 
     @Override

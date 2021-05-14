@@ -12,12 +12,14 @@ public abstract class MineSchematic<S> {
     private final List<String> description;
     protected final File file;
     private final ItemStack icon;
+    private final Integer tier;
 
-    protected MineSchematic(String name, List<String> description, File file, ItemStack icon) {
+    protected MineSchematic(String name, List<String> description, File file, ItemStack icon, Integer tier) {
         this.name = name;
         this.description = description;
         this.file = file;
         this.icon = icon;
+        this.tier = tier;
     }
 
     public abstract S getSchematic();
@@ -30,7 +32,8 @@ public abstract class MineSchematic<S> {
         return Objects.equals(getName(), that.getName()) &&
                 Objects.equals(getDescription(), that.getDescription()) &&
                 Objects.equals(getFile(), that.getFile()) &&
-                Objects.equals(getIcon(), that.getIcon());
+                Objects.equals(getIcon(), that.getIcon()) &&
+                Objects.equals(getTier(), that.getTier());
     }
 
     @Override
@@ -53,4 +56,6 @@ public abstract class MineSchematic<S> {
     public ItemStack getIcon() {
         return icon;
     }
+
+    public Integer getTier() { return tier; }
 }

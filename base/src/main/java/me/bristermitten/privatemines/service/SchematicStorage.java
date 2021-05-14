@@ -39,24 +39,28 @@ public class SchematicStorage {
                     description = schematicSection.getStringList("Description");
                 }
 
-                if (schematicSection.getString("File") == null) {
-                    PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
-                } else {
-                    final File file = new File(schematicsDir, schematicSection.getString("File"));
+                if (schematicSection != null) {
+                    if (schematicSection.getString("File") == null) {
+                        PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
+                    } else {
+                        if (schematicSection.getString("File") != null) {
+                            final File file = new File(schematicsDir, schematicSection.getString("File"));
 
+                            if (!file.exists()) {
+                                PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
+                                continue;
+                            }
 
-                    if (!file.exists()) {
-                        PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
-                        continue;
-                    }
+                            final Integer tier = schematicSection.getInt("Tier");
+                            final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
 
-                    final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
+                            final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(name, description, file, item, tier);
+                            schematics.put(name, schematic);
 
-                    final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(name, description, file, item);
-                    schematics.put(name, schematic);
-
-                    if (schematicSection.getBoolean("Default")) {
-                        defaultSchematic = schematic;
+                            if (schematicSection.getBoolean("Default")) {
+                                defaultSchematic = schematic;
+                            }
+                        }
                     }
                 }
             }
@@ -70,7 +74,6 @@ public class SchematicStorage {
     public Collection<MineSchematic<?>> getAll() {
         return schematics.values();
     }
-
 
     public MineSchematic<?> getDefaultSchematic() {
         return defaultSchematic;

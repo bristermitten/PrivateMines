@@ -2,6 +2,7 @@ Schematics:
   tier-1:
     Default: true
     File: tier-1.schematic
+    Tier: 1
     Icon:
       type: COBBLESTONE
     Description:
@@ -10,6 +11,7 @@ Schematics:
   tier-2:
     Default: false
     File: tier-2.schematic
+    Tier: 2
     Icon:
       type: COBBLESTONE
     Description:
@@ -17,6 +19,7 @@ Schematics:
   tier-3:
     Default: false
     File: tier-3.schematic
+    Tier: 3
     Icon:
       type: COBBLESTONE
     Description:

@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class LegacyWEMineSchematic extends MineSchematic<Schematic> {
-    protected LegacyWEMineSchematic(String name, List<String> description, File file, ItemStack icon) {
-        super(name, description, file, icon);
+    protected LegacyWEMineSchematic(String name, List<String> description, File file, ItemStack icon, Integer tier) {
+        super(name, description, file, icon, tier);
     }
 
     @Override
