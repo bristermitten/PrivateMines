@@ -138,6 +138,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             /*
 			Loops through all the blocks finding the NPC block and sets the NPC location.
 			*/
+
             if (type == npcMaterial.getType() && dataMatches(data, npcMaterial.getDurability())) {
                 npcLoc = new Location(origin.getWorld(), pt.getX(), pt.getY(), pt.getZ()).getBlock().getLocation();
                 npcLoc.add(npcLoc.getX() > 0 ? 0.5 : -0.5, 0.0, npcLoc.getZ() > 0 ? 0.5 : -0.5);

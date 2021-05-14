@@ -1,6 +1,7 @@
 package me.bristermitten.privatemines.service;
 
 import com.google.common.collect.ImmutableSet;
+import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import org.bukkit.ChatColor;
@@ -25,6 +26,7 @@ public class MineStorage {
     private final Map<UUID, PrivateMine> mines = new HashMap<>();
     private final MineFactory<MineSchematic<?>, ?> factory;
     private final Logger logger = Logger.getLogger(getClass().getName());
+    private final PrivateMines privateMine = PrivateMines.getPlugin();
 
     public MineStorage(MineFactory<MineSchematic<?>, ?> factory) {
         this.factory = factory;

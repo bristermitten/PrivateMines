@@ -236,7 +236,6 @@ public class PrivateMine implements ConfigurationSerializable {
         return this.mainRegion.contains(Util.toWEVector(p.getLocation().toVector()));
     }
 
-
     public void setResetStyle(String style) {
         this.resetStyle = style;
     }
@@ -466,7 +465,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
             for (MineSchematic schema : mineSchematics) {
                 if (schema.getTier() == newTier) {
-                    Bukkit.broadcastMessage("Found new schematic: " + schema.file.getName());
                     upgradeSchematic = schema;
                 }
             }
@@ -483,10 +481,17 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
                 return;
             }
+            if (getNPCUUID() == null) {
+                Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to it being null.");
+                return;
+            }
+            CitizensAPI.getNPCRegistry().getByUniqueId(getNPCUUID()).destroy();
+
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
+            currentMine.setMineTier(newTier);
         }
     }
 
