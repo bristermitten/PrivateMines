@@ -456,6 +456,7 @@ public class PrivateMine implements ConfigurationSerializable {
     public void upgradeMine(Player player) {
         int tier;
         PrivateMine currentMine = PrivateMines.getPlugin().getStorage().get(player);
+
         if (currentMine != null) {
             Location currentMineLocation = currentMine.getSpawnLocation();
             tier = currentMine.getMineTier();
@@ -481,7 +482,7 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
                 return;
             }
-            if (getNPCUUID() == null) {
+            if (npcId == null) {
                 Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to it being null.");
                 return;
             }
@@ -491,13 +492,12 @@ public class PrivateMine implements ConfigurationSerializable {
                 return;
             }
 
-            CitizensAPI.getNPCRegistry().getByUniqueId(getNPCUUID()).destroy();
-
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion, isFastMode());
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
             currentMine.setMineTier(newTier);
+            CitizensAPI.getNPCRegistry().getByUniqueId(currentMine.getNPCUUID()).destroy();
         }
     }
 
