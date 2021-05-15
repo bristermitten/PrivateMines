@@ -2,12 +2,12 @@ package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Strings;
-import com.google.common.primitives.Ints;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -16,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -25,7 +24,6 @@ import static net.md_5.bungee.api.ChatColor.translateAlternateColorCodes;
 public final class Util {
 
     private static final Set<Player> onlinePlayers = new HashSet<>();
-    private static final Pattern rgbColor = Pattern.compile("(?<!\\\\)(&#[a-fA-F0-9]{6})");
 
     private Util() {
 
@@ -60,22 +58,36 @@ public final class Util {
             throw new IllegalStateException("Unknown material " + type);
         }
         final XMaterial xMaterial = materialOpt.get();
-        s.setType(xMaterial.parseMaterial());
+            if (xMaterial.parseMaterial() != null) {
+                s.setType(xMaterial.parseMaterial());
+            }
+
         if (map.containsKey("Data")) {
             //noinspection deprecation
-            s.setDurability((short) (int) map.get("Data"));
+            final Damageable im = (Damageable) s.getItemMeta();
+            final int damage = (int) map.get("Data");
+            if (im != null) {
+                im.damage(damage);
+            }
         } else {
             //noinspection deprecation
-            s.setDurability(xMaterial.getData());
-        }
+            if (xMaterial.parseItem() != null && xMaterial.parseItem().hasItemMeta()) {
+                    final Damageable im = (Damageable) xMaterial.parseItem().getItemMeta();
+                    final int damage = (int) map.get("Data");
+                    if (im != null) {
+                        im.damage(damage);
+                    }
+                }
+            }
+
         ItemMeta itemMeta = s.getItemMeta();
 
-        itemMeta.setDisplayName(color((String) map.get("Name")));
+        if (itemMeta != null) {
+            itemMeta.setDisplayName(color((String) map.get("Name")));
 
-
-        //noinspection unchecked
-        itemMeta.setLore(color((List<String>) map.get("Lore")));
-
+            //noinspection unchecked
+            itemMeta.setLore(color((List<String>) map.get("Lore")));
+        }
         s.setItemMeta(itemMeta);
         return s;
     }
@@ -172,19 +184,16 @@ public final class Util {
      */
     public static Optional<ItemStack> parseItem(String s) {
         String materialName = s;
-        short durability = 0;
         if (s.contains("/")) {
             final String[] split = s.split("/");
             materialName = split[0];
-            //noinspection UnstableApiUsage
-            int data = Optional.ofNullable(Ints.tryParse(split[1])).orElse(0);
-            durability = (short) data;
+
         }
         //Prioritise native material names
         try {
-            //noinspection deprecation
-            return Optional.of(new ItemStack(Material.valueOf(materialName), 1, durability));
-        } catch (IllegalArgumentException ignored) {
+            return Optional.of(new ItemStack(Material.valueOf(materialName), 1));
+        } catch (IllegalArgumentException e1) {
+            e1.printStackTrace();
         }
         Optional<XMaterial> m = Optional.ofNullable(Enums.getIfPresent(XMaterial.class, s).orNull());
         if (m.isPresent()) {
