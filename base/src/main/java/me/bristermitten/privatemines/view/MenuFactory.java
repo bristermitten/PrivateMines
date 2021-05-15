@@ -35,5 +35,4 @@ public class MenuFactory {
 	public void createAndOpenThemeMenu(Player p) {
 		new ChangeThemeMenu(p, plugin, config, storage);
 	}
-
 }
