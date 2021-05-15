@@ -38,11 +38,13 @@ public class ChangeMineResetPercentMenu {
         p.openInventory(spec.genMenu((percent, i) -> {
                     i.setType(Material.REDSTONE);
                     ItemMeta itemMeta = i.getItemMeta();
-                    String displayName = itemMeta.getDisplayName();
-                    String name = displayName.replace("%percent%",
-                            Util.parsePercent(percent));
 
-                    itemMeta.setDisplayName(name);
+                    if (itemMeta.hasDisplayName()) {
+                        String displayName = itemMeta.getDisplayName();
+                        String name = displayName.replace("%percent%",
+                                Util.parsePercent(percent));
+                        itemMeta.setDisplayName(name);
+                    }
                     List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
                             String.valueOf(percent))).collect(Collectors.toList());
                     itemMeta.setLore(lore);

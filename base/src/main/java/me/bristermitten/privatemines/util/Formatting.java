@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Formatting {
+
     public static List<String> getMineBlocksFormatted(List<ItemStack> stack) {
         return stack.stream()
                 .map(Util::getItemName)
