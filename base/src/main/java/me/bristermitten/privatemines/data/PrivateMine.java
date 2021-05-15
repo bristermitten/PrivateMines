@@ -35,9 +35,11 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
+
     /**
      * How far between a mine reset in milliseconds
      */
+
     private final int resetDelay;
     private final Set<UUID> bannedPlayers;
     private final Set<UUID> trustedPlayers;
@@ -62,6 +64,10 @@ public class PrivateMine implements ConfigurationSerializable {
     // Is it even possible to get this down to the 7 max?
     // Yes.
     // How? We need most of them, don't we?
+
+    /*
+        TODO Split this into smaller methods
+     */
 
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
@@ -464,11 +470,10 @@ public class PrivateMine implements ConfigurationSerializable {
 
             Collection<MineSchematic<?>> mineSchematics = schematicStorage.getAll();
 
-            for (MineSchematic schema : mineSchematics) {
-                if (schema.getTier() == newTier) {
-                    upgradeSchematic = schema;
-                }
-            }
+            mineSchematics
+                    .stream()
+                    .filter(schema -> schema.getTier() == newTier)
+                    .forEach(schema -> upgradeSchematic = schema);
 
             final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
 
