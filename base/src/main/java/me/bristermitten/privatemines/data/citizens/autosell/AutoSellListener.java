@@ -80,9 +80,11 @@ public class AutoSellListener implements Listener {
             return;
         }
 
-        e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
-        double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
-        processTax(privateMine, tax, e.getPlayer());
+        if (privateMine != null && privateMine.hasTax()) {
+            e.setMultiplier(1.0D - privateMine.getTaxPercentage() / 100.0D);
+            double tax = e.getPrice() / 100.0D * privateMine.getTaxPercentage();
+            processTax(privateMine, tax, e.getPlayer());
+        }
     }
 
     @EventHandler
@@ -90,11 +92,14 @@ public class AutoSellListener implements Listener {
         if (eventIsInvalid(e.getItemsSold(), e.getPlayer())) {
             return;
         }
+
         final PrivateMine privateMine = storage.get(e.getPlayer().getUniqueId());
 
-        double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
-        e.setTotalCost(e.getTotalCost() - tax);
-        processTax(privateMine, tax, e.getPlayer());
+        if (privateMine != null && privateMine.hasTax()) {
+            double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
+            e.setTotalCost(e.getTotalCost() - tax);
+            processTax(privateMine, tax, e.getPlayer());
+        }
     }
 
     private boolean eventIsInvalid(Collection<ItemStack> itemsSold, Player player) {
@@ -120,8 +125,11 @@ public class AutoSellListener implements Listener {
             return;
         }
         PrivateMine privateMine = storage.get(e.getPlayer());
-        double tax = (e.getTotalCost() / 100.0) * privateMine.getTaxPercentage();
-        e.setTotalCost(e.getTotalCost() - tax);
-        processTax(privateMine, tax, e.getPlayer());
+
+        if (privateMine != null && privateMine.hasTax()) {
+            double tax = e.getTotalCost() / 100.0 * privateMine.getTaxPercentage();
+            e.setTotalCost(e.getTotalCost() - tax);
+            processTax(privateMine, tax, e.getPlayer());
+        }
     }
 }
