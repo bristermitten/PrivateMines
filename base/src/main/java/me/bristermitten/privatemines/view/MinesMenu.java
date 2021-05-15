@@ -35,29 +35,30 @@ public class MinesMenu
         spec.copyFrom(original);
         spec.register(plugin);
 
-        Player[] players =
-                Bukkit.getOnlinePlayers().stream().filter(storage::hasMine)
-                        .filter(pl -> storage.get(pl).isOpen())
-                        .toArray(Player[]::new);
+        if (storage != null) {
+            Player[] players =
+                    Bukkit.getOnlinePlayers().stream().filter(storage::hasMine)
+                            .filter(pl -> storage.get(pl).isOpen())
+                            .toArray(Player[]::new);
 
+            p.openInventory(spec.genMenu(
+                    (pl, i) -> {
+                        final ItemMeta itemMeta = i.getItemMeta();
+                        Objects.requireNonNull(itemMeta);
+                        final PrivateMine mine = storage.getOrCreate(pl);
+                        final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(mine.getMineBlocks());
 
-        p.openInventory(spec.genMenu(
-                (pl, i) -> {
-                    final ItemMeta itemMeta = i.getItemMeta();
-                    Objects.requireNonNull(itemMeta);
-                    final PrivateMine mine = storage.getOrCreate(pl);
-                    final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(mine.getMineBlocks());
+                        Util.replaceMeta(itemMeta,
+                                "%player%", pl.getName(),
+                                "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
+                                "%blocks%", mine.getMineBlocks(),
+                                "%blocksFormatted%", formattedBlocks,
+                                "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.");
 
-                    Util.replaceMeta(itemMeta,
-                            "%player%", pl.getName(),
-                            "%block%", Util.prettify(mine.getMineBlocks().get(0).getType().toString()),
-                            "%blocks%", mine.getMineBlocks(),
-                            "%blocksFormatted%", formattedBlocks,
-                            "%tax%", plugin.isAutoSellEnabled() ? mine.getTaxPercentage() : "Tax Disabled.");
-
-                    i.setItemMeta(itemMeta);
-                    return i;
-                },
-                pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players));
+                        i.setItemMeta(itemMeta);
+                        return i;
+                    },
+                    pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players));
+        }
     }
 }
