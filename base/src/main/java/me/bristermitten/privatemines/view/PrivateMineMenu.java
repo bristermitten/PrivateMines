@@ -18,6 +18,7 @@ public class PrivateMineMenu {
 	/*
 	  Manages the /pmine Menu
 	 */
+
 	public PrivateMineMenu(Player p, PrivateMines plugin, MenuConfig config, MineStorage storage, PMConfig pmConfig,
 	                       MenuFactory factory) {
 		Validate.notNull(p, "Player");
