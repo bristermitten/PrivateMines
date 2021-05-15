@@ -33,13 +33,16 @@ public class ChangeThemeMenu {
 
         p.openInventory(spec.genMenu((schematic, i) -> {
                     i.setType(schematic.getIcon().getType());
+                    String displayName;
 
                     ItemMeta itemMeta = i.getItemMeta();
-                    String displayName = itemMeta.getDisplayName();
-                    String name = displayName.replace("%name%", Util.prettify(schematic.getName()));
-                    itemMeta.setDisplayName(name);
-                    itemMeta.setLore(Util.color(schematic.getDescription()));
-                    i.setItemMeta(itemMeta);
+                    if (itemMeta != null && itemMeta.hasDisplayName()) {
+                        displayName = itemMeta.getDisplayName();
+                        String name = displayName.replace("%name%", Util.prettify(schematic.getName()));
+                        itemMeta.setDisplayName(name);
+                        itemMeta.setLore(Util.color(schematic.getDescription()));
+                        i.setItemMeta(itemMeta);
+                    }
                     return i;
                 },
                 schematic -> e -> mine.teleport((Player) e.getWhoClicked()),
