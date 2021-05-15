@@ -74,9 +74,9 @@ public class MineWorldManager {
             return values()[(ordinal() + 1) % (values().length)];
         }
 
-
         Location addTo(Location loc, int value) {
-            return loc.clone().add(value * xMulti, 0, value * zMulti);
+
+            return loc.clone().add(value * (double) xMulti, 0, value * (double) zMulti);
         }
     }
 }
