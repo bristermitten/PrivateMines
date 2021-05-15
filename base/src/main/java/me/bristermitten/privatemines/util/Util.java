@@ -1,9 +1,7 @@
 package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
-import com.google.common.base.Strings;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -233,35 +231,29 @@ public final class Util {
         return format.format(integer);
     }
 
+    /*
+    This is a super basic caching system for the online players saves a tiny bit of milliseconds!
+    */
+
+    // Adding a player into the cache system, used mainly in the on player join event
+
     public static void addToOnlinePlayers(Player player) {
         onlinePlayers.add(player);
     }
 
-    /*
-        This is a super basic caching system for the online players saves a tiny bit of milliseconds!
-     */
-
-    // Adding a player into the cache system, used mainly in the on player join event
+    // Remove a player from the cache system, used mainly in the on player leave event
 
     public static void removeFromOnlinePlayers(Player player) {
         onlinePlayers.remove(player);
     }
 
-    // Remove a player from the cache system, used mainly in the on player leave event
 
-    public static Set<Player> getOnlinePlayers() {
-        return onlinePlayers;
-    }
 
     // Gets the online players, this is used in the MineResetTask class so instead of getting
     // all the online players each time possibly causing a tiny spike in the server
     // it will get it from this cache!
 
-    public String getProgressBar(int current, int max, int totalBars, char symbol, ChatColor completeColor, ChatColor nonCompletedColor) {
-        float percent = (float) current / max;
-        int progressBars = (int) (totalBars * percent);
-
-        return Strings.repeat("" + completeColor + symbol, progressBars)
-                + Strings.repeat("" + nonCompletedColor + symbol, totalBars - progressBars);
+    public static Set<Player> getOnlinePlayers() {
+        return onlinePlayers;
     }
 }
