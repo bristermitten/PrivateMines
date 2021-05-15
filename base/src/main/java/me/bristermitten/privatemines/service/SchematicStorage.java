@@ -44,6 +44,8 @@ public class SchematicStorage {
                         PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
                     } else {
                         if (schematicSection.getString("File") != null) {
+                            //TODO It keeps assuming this is null need to somehow fix
+
                             final File file = new File(schematicsDir, schematicSection.getString("File"));
 
                             if (!file.exists()) {
