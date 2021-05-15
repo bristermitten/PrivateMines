@@ -38,14 +38,17 @@ public class ChangeResetStyleMenu {
         p.openInventory(spec.genMenu((style, i) -> {
                     i.setType(Material.REDSTONE);
                     ItemMeta itemMeta = i.getItemMeta();
-                    String displayName = itemMeta.getDisplayName();
-                    String name = displayName.replace("%style%",
-                            Util.parseStyle(style));
-
-                    itemMeta.setDisplayName(name);
-                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%style%",
-                            Util.parseStyle(style))).collect(Collectors.toList());
-                    itemMeta.setLore(lore);
+                    if (itemMeta != null && itemMeta.hasDisplayName()) {
+                        String displayName = itemMeta.getDisplayName();
+                        String name = displayName.replace("%style%",
+                                Util.parseStyle(style));
+                        itemMeta.setDisplayName(name);
+                        if (itemMeta.hasLore()) {
+                            List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%style%",
+                                    Util.parseStyle(style))).collect(Collectors.toList());
+                            itemMeta.setLore(lore);
+                        }
+                    }
                     i.setItemMeta(itemMeta);
                     return i;
                 },
