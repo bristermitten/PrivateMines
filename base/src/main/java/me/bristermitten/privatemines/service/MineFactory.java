@@ -34,8 +34,6 @@ import java.util.stream.Stream;
 
 public class MineFactory<M extends MineSchematic<S>, S> {
 
-    public static final String DEFAULT_MINE_OPEN_KEY = "Default-Open";
-    private static final String DEFAULT_MINE_FAST_MODE_KEY = "Default-Fast-Mode";
     private static final String NAME_PLACEHOLDER = "{name}";
     private static final String DISPLAYNAME_PLACEHOLDER = "{displayname}";
     private static final String UUID_PLACEHOLDER = "{uuid}";
@@ -171,16 +169,11 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         final PrivateMine privateMine = new PrivateMine(
                 owner.getUniqueId(),
                 new HashSet<>(),
-                new HashSet<>(),
-                commands,
-//                plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
                 config.getDefaultMineBlocks(),
                 mainRegion,
                 locations,
                 worldGuardRegion,
-                config.getResetDelay(),
-                config.getMineTier(),
-                mineSchematic);
+                config.getMineTier());
 
         privateMine.fillMine();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
