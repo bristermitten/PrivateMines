@@ -37,9 +37,9 @@ public class ModernWEHook implements WorldEditHook<Clipboard> {
 
 
     @Override
-    public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
+    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
         try (EditSession session = WorldEdit.getInstance().getEditSessionFactory().getEditSession(BukkitAdapter.adapt(region.getWorld()), -1)) {
-            session.setFastMode(fastMode);
+            session.setFastMode(true);
 
             final RandomPattern pattern = new RandomPattern();
             final Region weRegion = transform(region);
