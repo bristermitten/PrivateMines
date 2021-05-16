@@ -36,7 +36,7 @@ public class ChangeBlockMenu {
         MenuSpec spec = new MenuSpec();
         spec.copyFrom(original);
         spec.register(plugin);
-        PrivateMine mine = storage.getOrCreate(p);
+        PrivateMine mine = storage.get(p);
         ItemStack[] blocks = config.getBlockOptions().toArray(new ItemStack[]{});
 
         p.openInventory(spec.genMenu((block, i) -> {
