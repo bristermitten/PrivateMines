@@ -35,9 +35,12 @@ public class LegacyWEHook implements WorldEditHook<Schematic> {
         return new WorldEditVector(vector.getX(), vector.getY(), vector.getZ());
     }
 
-    public void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode) {
+    // please stop making me suffer by working with such a old version.... Just update to 1.13 or higher.
+
+    @Deprecated
+    public void fill(WorldEditRegion region, List<ItemStack> blocks) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
-                .fastmode(fastMode)
+                .fastmode(true)
                 .build();
 
         final RandomPattern pattern = new RandomPattern();
