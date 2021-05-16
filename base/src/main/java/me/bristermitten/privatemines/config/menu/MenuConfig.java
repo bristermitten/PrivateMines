@@ -1,10 +1,12 @@
 package me.bristermitten.privatemines.config.menu;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class MenuConfig {
 
@@ -18,8 +20,12 @@ public class MenuConfig {
      Loads the config files for the menus.
      */
     public void load(FileConfiguration config) {
-        for (String menus : config.getConfigurationSection("Menus").getKeys(false)) {
-            menuConfigs.put(menus, config.getConfigurationSection("Menus." + menus));
+        if (config.getConfigurationSection("Menus") == null) {
+            Bukkit.getLogger().warning("The configuration section for menus was missing!");
+        } else {
+            for (String menus : Objects.requireNonNull(config.getConfigurationSection("Menus")).getKeys(false)) {
+                menuConfigs.put(menus, config.getConfigurationSection("Menus." + menus));
+            }
         }
     }
 
