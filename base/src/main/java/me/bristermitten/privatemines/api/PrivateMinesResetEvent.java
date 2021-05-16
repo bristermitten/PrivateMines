@@ -45,7 +45,6 @@ public class PrivateMinesResetEvent extends Event implements Cancellable {
         return this.mineBlocks;
     }
 
-
     public boolean isCancelled() {
         return this.cancelled;
     }
