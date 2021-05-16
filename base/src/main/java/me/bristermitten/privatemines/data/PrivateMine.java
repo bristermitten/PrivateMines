@@ -56,6 +56,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private long nextResetTime;
     private String resetStyle;
     private final int mineTier;
+    private final int resetDelay;
 
     // Is it even possible to get this down to the 7 max?
     // Yes.
@@ -78,7 +79,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.open = plugin.getConfig().getBoolean("Default-Open");
         this.mineTier = tier;
         this.taxPercentage = plugin.getConfig().getDouble("Tax-Percentage");
-        this.nextResetTime = (int) TimeUnit.MINUTES.toMillis(plugin.getConfig().getInt("Reset-Delay"));
+        this.resetDelay = (int) TimeUnit.MINUTES.toMillis(plugin.getConfig().getInt("Reset-Delay"));
     }
 
     @SuppressWarnings("unchecked")
@@ -97,13 +98,6 @@ public class PrivateMine implements ConfigurationSerializable {
         IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(locations.getSpawnPoint().getWorld(), owner.toString())
                 .orElseThrow(() -> new IllegalStateException("Could not deserialize PrivateMine - mining region did not exist"));
 
-        // May need to re-add
-
-//        double taxPercentage = (Double) map.get("Tax");
-
-        /*
-        double resetPercentage = (Double) map.get("Reset-Percentage");
-         */
 
         int mineTier = (Integer) map.get("Tier");
 
@@ -221,6 +215,7 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("Corner2", Util.toBukkitVector(this.mainRegion.getMaximumPoint()).serialize());
         map.put("NPC", this.npcId.toString());
         map.put("Tax", this.taxPercentage);
+        map.put("Reset-Delay", this.resetDelay);
         map.put("Reset-Percentage", this.resetPercentage);
         map.put("Reset-Style", this.resetStyle);
         map.put("Tier", this.mineTier);
