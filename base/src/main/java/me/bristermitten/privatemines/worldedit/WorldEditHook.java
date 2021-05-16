@@ -9,14 +9,14 @@ import java.util.Collections;
 import java.util.List;
 
 public interface WorldEditHook<S> {
-    void fill(WorldEditRegion region, List<ItemStack> blocks, boolean fastMode);
+    void fill(WorldEditRegion region, List<ItemStack> blocks);
 
-    default void fillSingle(WorldEditRegion region, ItemStack block, boolean fastMode) {
-        fill(region, Collections.singletonList(block), fastMode);
+    default void fillSingle(WorldEditRegion region, ItemStack block) {
+        fill(region, Collections.singletonList(block));
     }
 
-    default void fillAir(WorldEditRegion region, boolean fastMode) {
-        fillSingle(region, new ItemStack(Material.AIR), fastMode);
+    default void fillAir(WorldEditRegion region) {
+        fillSingle(region, new ItemStack(Material.AIR));
     }
 
     /*
