@@ -83,13 +83,13 @@ public class PrivateMinesCommand extends BaseCommand {
         }
         if (plugin.isUltraPrisonCoreEnabled()) {
 
-            final PrivateMine mine = storage.getOrCreate(p);
+            final PrivateMine mine = storage.get(p);
 
             mine.setTaxPercentage(taxPercentage);
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
             return;
         }
-        final PrivateMine mine = storage.getOrCreate(p);
+        final PrivateMine mine = storage.get(p);
         if (taxPercentage == null) {
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, TAX_KEY, valueOf(mine.getTaxPercentage()));
             return;
@@ -103,7 +103,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.owner")
     @Description("Allow other players into your mine")
     public void open(Player p) {
-        final PrivateMine mine = storage.getOrCreate(p);
+        final PrivateMine mine = storage.get(p);
         mine.setOpen(true);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_OPENED);
     }
@@ -113,7 +113,7 @@ public class PrivateMinesCommand extends BaseCommand {
     @CommandPermission("privatemines.owner")
     @Description("Close your mine from other players")
     public void close(Player p) {
-        PrivateMine mine = storage.getOrCreate(p);
+        PrivateMine mine = storage.get(p);
         mine.setOpen(false);
         getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
     }
@@ -129,7 +129,7 @@ public class PrivateMinesCommand extends BaseCommand {
                 return;
         }
         if (t != null) {
-            storage.getOrCreate(t).teleport();
+            storage.getOrCreate(t, 1).teleport();
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
         }
     }
