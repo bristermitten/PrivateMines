@@ -118,22 +118,9 @@ public class PrivateMinesAPI {
     }
 
     /**
-     * @param player - The player you want to get the reset time of
-     * @return The reset time of the mine
-     */
-
-    public int getResetTime(Player player) {
-        return storage.get(player).getResetTime();
-    }
-
-    /**
-     * @param player - The player you want to get the formatted reset time of
+     * @param player - The player you want to upgrade their private mine
      * @return a beautiful formatted time string!
      */
-
-    public String getFormattedResetTime(Player player) {
-        return formatTime(storage.get(player).getResetTime());
-    }
 
     public void upgradePlayerMine(Player player) {
         if (storage.hasMine(player)) {
