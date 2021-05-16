@@ -173,18 +173,13 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 new HashSet<>(),
                 new HashSet<>(),
                 commands,
-                plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
-                plugin.getConfig().getBoolean(DEFAULT_MINE_FAST_MODE_KEY, true),
+//                plugin.getConfig().getBoolean(DEFAULT_MINE_OPEN_KEY, true),
                 config.getDefaultMineBlocks(),
                 mainRegion,
                 locations,
                 worldGuardRegion,
-                npcUUID,
-                config.getTaxPercentage(),
-                config.getResetPercentage(),
                 config.getResetDelay(),
                 config.getMineTier(),
-                locations.getSpawnPoint(),
                 mineSchematic);
 
         privateMine.fillMine();

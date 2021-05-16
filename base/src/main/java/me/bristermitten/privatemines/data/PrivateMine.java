@@ -7,6 +7,7 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
 import me.bristermitten.privatemines.config.LangKeys;
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
@@ -35,6 +36,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
+    protected final PrivateMines plugin = new PrivateMines();
 
     /**
      * How far between a mine reset in milliseconds
@@ -42,13 +44,12 @@ public class PrivateMine implements ConfigurationSerializable {
 
     private final int resetDelay;
     private final Set<UUID> bannedPlayers;
-    private final Set<UUID> trustedPlayers;
-    private final List<String> commands;
     private final UUID owner;
     private WorldEditRegion mainRegion;
     private MineLocations locations;
     private IWrappedRegion wgRegion;
     private UUID npcId;
+    private boolean defaultOpen = plugin.getConfig().getBoolean("Default-Open");
     private boolean open;
     private boolean fastMode;
     private List<ItemStack> blocks;
@@ -69,40 +70,26 @@ public class PrivateMine implements ConfigurationSerializable {
         TODO Split this into smaller methods
      */
 
+
     public PrivateMine(UUID owner,
                        Set<UUID> bannedPlayers,
-                       Set<UUID> trustedPlayers,
-                       List<String> commands,
-                       boolean open,
-                       boolean fastMode,
                        List<ItemStack> blocks,
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
-                       UUID npc,
-                       double taxPercentage,
-                       double resetPercent,
-                       int resetTime,
                        int mineTier,
-                       Location spawnLocation,
                        MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
-        this.trustedPlayers = trustedPlayers;
-        this.commands = commands;
-        this.open = open;
-        this.fastMode = fastMode;
+        this.blocks = blocks;
         this.mainRegion = mainRegion;
         this.locations = locations;
-        this.blocks = blocks;
         this.wgRegion = wgRegion;
-        this.npcId = npc;
-        this.taxPercentage = taxPercentage;
-        this.resetPercentage = resetPercent;
+        this.mineTier = mineTier;
         this.mineSchematic = mineSchematic;
-        this.resetDelay = (int) TimeUnit.MINUTES.toMillis(resetTime);
-        this.mineTier = mineTier + 1;
-        this.spawnLocation = spawnLocation;
+        this.spawnLocation = locations.getSpawnPoint();
+        int defaultResetTime = plugin.getConfig().getInt("Reset-Delay");
+        this.resetDelay = defaultResetTime;
     }
 
     @SuppressWarnings("unchecked")
@@ -111,7 +98,6 @@ public class PrivateMine implements ConfigurationSerializable {
         UUID owner = UUID.fromString((String) map.get("Owner"));
 
         boolean open = (Boolean) map.get("Open");
-        boolean fastMode = (Boolean) map.get("FastMode");
 
         List<ItemStack> blocks = new ArrayList<>();
 
@@ -124,9 +110,14 @@ public class PrivateMine implements ConfigurationSerializable {
         IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(locations.getSpawnPoint().getWorld(), owner.toString())
                 .orElseThrow(() -> new IllegalStateException("Could not deserialize PrivateMine - mining region did not exist"));
 
+        // May need to re-add
+
+        /*
         UUID npcId = UUID.fromString((String) map.get("NPC"));
         double taxPercentage = (Double) map.get("Tax");
         double resetPercentage = (Double) map.get("Reset-Percentage");
+         */
+
         int resetTime = (Integer) map.get("Reset-Delay");
         int mineTier = (Integer) map.get("Tier");
 
@@ -151,10 +142,8 @@ public class PrivateMine implements ConfigurationSerializable {
         Shop shop = new Shop(shopName);
         SellHandler.addShop(shop);
 
-        Location spawnLocation = locations.getSpawnPoint();
-
-        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, fastMode, blocks, mainRegion, locations,
-                wgRegion, npcId, taxPercentage, resetPercentage, resetTime, mineTier, spawnLocation, schematic);
+        return new PrivateMine(owner, bannedPlayers, trustedPlayers, commands, open, blocks, mainRegion, locations,
+                wgRegion, resetTime, mineTier, schematic);
     }
 
     public double getTaxPercentage() {
@@ -250,10 +239,6 @@ public class PrivateMine implements ConfigurationSerializable {
         return bannedPlayers;
     }
 
-    public Set<UUID> getTrustedPlayers() {
-        return trustedPlayers;
-    }
-
     public MineLocations getLocations() {
         return locations;
     }
@@ -276,10 +261,8 @@ public class PrivateMine implements ConfigurationSerializable {
         map.put("Reset-Delay", this.resetDelay);
         map.put("Reset-Style", this.resetStyle);
         map.put("Mine-Tier", this.mineTier);
-        map.put("Commands", this.commands);
         map.put("Schematic", this.mineSchematic.getName());
         map.put("BannedPlayers", this.bannedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
-        map.put("TrustedPlayers", this.trustedPlayers.stream().map(UUID::toString).collect(Collectors.toList()));
         return map;
     }
 
