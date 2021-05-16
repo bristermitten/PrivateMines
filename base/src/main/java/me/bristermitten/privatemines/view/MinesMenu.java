@@ -45,7 +45,7 @@ public class MinesMenu
                     (pl, i) -> {
                         final ItemMeta itemMeta = i.getItemMeta();
                         Objects.requireNonNull(itemMeta);
-                        final PrivateMine mine = storage.getOrCreate(pl);
+                        final PrivateMine mine = storage.get(pl);
                         final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(mine.getMineBlocks());
 
                         Util.replaceMeta(itemMeta,
@@ -58,7 +58,7 @@ public class MinesMenu
                         i.setItemMeta(itemMeta);
                         return i;
                     },
-                    pl -> e -> storage.getOrCreate(pl).teleport((Player) e.getWhoClicked()), players));
+                    pl -> e -> storage.get(pl).teleport((Player) e.getWhoClicked()), players));
         }
     }
 }
