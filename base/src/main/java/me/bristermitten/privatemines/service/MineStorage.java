@@ -1,8 +1,11 @@
 package me.bristermitten.privatemines.service;
 
 import com.google.common.collect.ImmutableSet;
+import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
+import me.bristermitten.privatemines.world.MineWorldManager;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,6 +28,9 @@ public class MineStorage {
     private final Map<UUID, PrivateMine> mines = new HashMap<>();
     private final MineFactory<MineSchematic<?>, ?> factory;
     private final Logger logger = Logger.getLogger(getClass().getName());
+    private final PMConfig pmConfig = new PMConfig(PrivateMines.getPlugin().getConfig());
+
+    private final MineWorldManager mineWorldManager = new MineWorldManager(pmConfig);
 
     public MineStorage(MineFactory<MineSchematic<?>, ?> factory) {
         this.factory = factory;
@@ -73,7 +79,7 @@ public class MineStorage {
      * @throws IllegalStateException if there is no default schematic configured in {@link SchematicStorage}
      */
     @NotNull
-    public PrivateMine getOrCreate(@NotNull Player player) {
+    public PrivateMine getOrCreate(@NotNull Player player, Integer tier) {
         PrivateMine mine = mines.get(player.getUniqueId());
 
         if (mine != null) {
@@ -97,7 +103,7 @@ public class MineStorage {
             throw new IllegalStateException("No Default Schematic found");
         }
 
-        mine = factory.create(player, defaultSchematic, true);
+        mine = factory.create(player, defaultSchematic, mineWorldManager.nextFreeLocation(), tier);
         mines.put(player.getUniqueId(), mine);
 
         return mine;
