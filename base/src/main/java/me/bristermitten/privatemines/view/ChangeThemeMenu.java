@@ -28,7 +28,7 @@ public class ChangeThemeMenu {
         spec.copyFrom(original);
         spec.register(plugin);
 
-        PrivateMine mine = storage.getOrCreate(p);
+        PrivateMine mine = storage.get(p);
         MineSchematic<?>[] schematics = SchematicStorage.getInstance().getAll().toArray(new MineSchematic[0]);
 
         p.openInventory(spec.genMenu((schematic, i) -> {
