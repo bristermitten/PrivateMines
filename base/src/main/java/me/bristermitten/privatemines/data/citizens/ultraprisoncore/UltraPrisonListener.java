@@ -90,17 +90,16 @@ public class UltraPrisonListener implements Listener {
             if (eventIsNotApplicable(player))
                 return;
             try {
-                double defaultTax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
                 if (privateMine.getTaxPercentage() > 0.0D) {
                     tax = privateMine.getTaxPercentage();
                     if (tax == 0.0D)
-                        tax = defaultTax;
+                        tax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
                 } else if (privateMine.getTaxPercentage() == 0.0D) {
                     return;
                 }
                 double d = e.getSellPrice();
                 if (tax == 0.0D)
-                    tax = defaultTax;
+                    tax = PrivateMines.getPlugin().getConfig().getDouble("Tax-Percentage");
                 double takenTax = d / 100.0D * tax;
                 double afterTax = d - takenTax;
 
