@@ -51,8 +51,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         this.compat = compat;
     }
 
-    public PrivateMine create(Player owner, M mineSchematic, boolean isNew) {
-        return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
+    public PrivateMine create(Player owner, M mineSchematic, int tier) {
+        return create(owner, mineSchematic, manager.nextFreeLocation(), tier);
     }
 
     private boolean dataMatches(byte data, short expectedData) {
@@ -70,11 +70,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
      * @param owner         The private mine owner
      * @param mineSchematic The schematic to paste for the mine
      * @param origin        Where to paste the mine. This is the exact location where the schematic should be pasted (where the player would be standing if doing //paste)
-     * @param isNew         If this is a new private mine or upgrading a new one.
-     *                      Much of the functionality in this method does not belong here and should be refactored immediately.
+
      */
     @SuppressWarnings("deprecation")
-    public PrivateMine create(Player owner, M mineSchematic, final Location origin, @Deprecated boolean isNew) {
+    public PrivateMine create(Player owner, M mineSchematic, final Location origin, Integer tier) {
 
         WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), origin);
 
@@ -85,7 +84,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector max = null;
 
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
-        List<String> firstTimeCommands = this.config.getFirstTimeCommands();
         List<String> commands = this.config.getCommands();
 
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
@@ -173,7 +171,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 mainRegion,
                 locations,
                 worldGuardRegion,
-                config.getMineTier());
+                mineSchematic);
 
         privateMine.fillMine();
         ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
@@ -186,11 +184,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         }
 
         final List<String> commandsToRun;
-        if (isNew) {
-            commandsToRun = firstTimeCommands;
-        } else {
             commandsToRun = commands;
-        }
+
         for (String command : commandsToRun) {
             final String formattedCommand =
                     command.replace(NAME_PLACEHOLDER, owner.getName())
