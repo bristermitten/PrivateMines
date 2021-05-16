@@ -7,6 +7,7 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
 import me.bristermitten.privatemines.config.LangKeys;
+import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
@@ -35,6 +36,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
+    private static final MineStorage mineStorage = PrivateMines.getPlugin().getStorage();
     protected final PrivateMines plugin = PrivateMines.getInstance();
 
     /**
@@ -47,6 +49,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private MineLocations locations;
     private IWrappedRegion wgRegion;
     private UUID npcId;
+    private UUID oldID;
     private boolean open;
     private List<ItemStack> blocks;
     private double taxPercentage;
@@ -55,7 +58,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private MineSchematic<?> upgradeSchematic;
     private long nextResetTime;
     private String resetStyle;
-    private final int mineTier;
+    private int mineTier;
     private final int resetDelay;
 
     // Is it even possible to get this down to the 7 max?
@@ -69,7 +72,7 @@ public class PrivateMine implements ConfigurationSerializable {
                        WorldEditRegion mainRegion,
                        MineLocations locations,
                        IWrappedRegion wgRegion,
-                       Integer tier) {
+                       MineSchematic<?> mineSchematic) {
         this.owner = owner;
         this.bannedPlayers = bannedPlayers;
         this.blocks = blocks;
@@ -77,7 +80,8 @@ public class PrivateMine implements ConfigurationSerializable {
         this.wgRegion = wgRegion;
         this.locations = locations;
         this.open = plugin.getConfig().getBoolean("Default-Open");
-        this.mineTier = tier;
+        this.mineSchematic = mineSchematic;
+        this.mineTier = mineSchematic.getTier();
         this.taxPercentage = plugin.getConfig().getDouble("Tax-Percentage");
         this.resetDelay = (int) TimeUnit.MINUTES.toMillis(plugin.getConfig().getInt("Reset-Delay"));
     }
@@ -98,12 +102,10 @@ public class PrivateMine implements ConfigurationSerializable {
         IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(locations.getSpawnPoint().getWorld(), owner.toString())
                 .orElseThrow(() -> new IllegalStateException("Could not deserialize PrivateMine - mining region did not exist"));
 
-
-        int mineTier = (Integer) map.get("Tier");
-
         String schematicName = (String) map.get("Schematic");
 
         MineSchematic<?> schematic = schematicStorage.get(schematicName);
+        MineSchematic<?> currentSchematic = Objects.requireNonNull(mineStorage.get(owner)).mineSchematic;
 
         if (schematic == null) {
             throw new IllegalArgumentException("Invalid Schematic " + schematicName);
@@ -117,7 +119,7 @@ public class PrivateMine implements ConfigurationSerializable {
         Shop shop = new Shop(shopName);
         SellHandler.addShop(shop);
 
-        return new PrivateMine(owner, bannedPlayers, blocks, mainRegion, locations, wgRegion, mineTier);
+        return new PrivateMine(owner, bannedPlayers, blocks, mainRegion, locations, wgRegion, currentSchematic);
     }
 
     public double getTaxPercentage() {
@@ -365,7 +367,7 @@ public class PrivateMine implements ConfigurationSerializable {
       Sets the new mine schematic (Used when changing themes)
      */
 
-    public void setMineSchematic(MineSchematic<?> mineSchematic, Location location, Player player) {
+    public void setMineSchematic(MineSchematic<?> mineSchematic, Location location, Player player, Integer mineTier) {
         boolean mineIsOpen = isOpen();
         setOpen(false);
 
@@ -373,7 +375,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         if (oldMine != null) {
             WorldEditRegion oldRegion = oldMine.mainRegion;
-
+            oldID = oldMine.npcId;
             PrivateMines.getPlugin().getWeHook().fillAir(oldRegion);
             oldMine.delete();
         }
@@ -382,13 +384,14 @@ public class PrivateMine implements ConfigurationSerializable {
                 getOwnerPlayer(),
                 mineSchematic,
                 location,
-                false);
+                mineTier);
 
         this.locations = newMine.locations;
         this.mainRegion = newMine.mainRegion;
         this.wgRegion = newMine.wgRegion;
         this.npcId = newMine.npcId;
         this.mineSchematic = mineSchematic;
+        this.mineTier = mineTier;
         setOpen(mineIsOpen);
     }
 
@@ -398,7 +401,14 @@ public class PrivateMine implements ConfigurationSerializable {
 
         if (currentMine != null) {
             Location currentMineLocation = currentMine.locations.getSpawnPoint();
-            tier = currentMine.mineSchematic.getTier();
+            tier = currentMine.mineTier;
+            this.oldID = currentMine.npcId;
+
+            if (tier == 0) {
+                Bukkit.getLogger().warning("Mine tier is 0");
+                return;
+            }
+
             int newTier = tier + 1;
 
             Collection<MineSchematic<?>> mineSchematics = schematicStorage.getAll();
@@ -420,10 +430,10 @@ public class PrivateMine implements ConfigurationSerializable {
                 Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
                 return;
             }
-            if (npcId == null) {
-                Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to it being null.");
-                return;
-            }
+//            if (npcId == null) {
+//                Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to it being null.");
+//                return;
+//            }
 
             if (currentMine.mineSchematic.getTier() == newTier) {
                 player.sendMessage(ChatColor.RED + "No point upgrading because you're already at this tier.");
@@ -431,10 +441,10 @@ public class PrivateMine implements ConfigurationSerializable {
             }
 
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
-            currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
+            currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player, newTier);
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
-            CitizensAPI.getNPCRegistry().getByUniqueId(currentMine.getNPCUUID()).destroy();
+            CitizensAPI.getNPCRegistry().getByUniqueId(oldID).despawn();
         }
     }
 
