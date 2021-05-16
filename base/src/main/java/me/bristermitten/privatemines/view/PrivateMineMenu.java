@@ -60,8 +60,9 @@ public class PrivateMineMenu {
 	/*
 	  Create the click event for going to the mine.
 	 */
+
 	private void goToMine(MineStorage storage, InventoryClickEvent e) {
-		storage.getOrCreate((Player) e.getWhoClicked()).teleport();
+		storage.get((Player) e.getWhoClicked()).teleport();
 	}
 
 	private void openMinesMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, InventoryClickEvent e) {
