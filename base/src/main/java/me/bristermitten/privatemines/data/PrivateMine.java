@@ -49,7 +49,6 @@ public class PrivateMine implements ConfigurationSerializable {
     private MineLocations locations;
     private IWrappedRegion wgRegion;
     private UUID npcId;
-    private UUID oldID;
     private boolean open;
     private List<ItemStack> blocks;
     private double taxPercentage;
@@ -292,7 +291,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
         PrivateMines.getPlugin().getWeHook().fill(miningRegion, blocksToFill);
 
-        this.nextResetTime = (int) TimeUnit.MINUTES.toMillis(nextResetTime); // System.currentTimeMillis() +  nextResetTime; // need to fix.
+        this.nextResetTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(nextResetTime); // System.currentTimeMillis() +  nextResetTime; // need to fix.
     }
 
     public void fillWESingle(ItemStack itemStack) {
@@ -375,7 +374,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
         if (oldMine != null) {
             WorldEditRegion oldRegion = oldMine.mainRegion;
-            oldID = oldMine.npcId;
             PrivateMines.getPlugin().getWeHook().fillAir(oldRegion);
             oldMine.delete();
         }
@@ -402,7 +400,6 @@ public class PrivateMine implements ConfigurationSerializable {
         if (currentMine != null) {
             Location currentMineLocation = currentMine.locations.getSpawnPoint();
             tier = currentMine.mineTier;
-            this.oldID = currentMine.npcId;
 
             if (tier == 0) {
                 Bukkit.getLogger().warning("Mine tier is 0");
@@ -441,10 +438,11 @@ public class PrivateMine implements ConfigurationSerializable {
             }
 
             PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
+
             currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player, newTier);
             currentMine.getLocations().setSpawnPoint(currentMineLocation);
             currentMine.teleport(player);
-            CitizensAPI.getNPCRegistry().getByUniqueId(oldID).despawn();
+            CitizensAPI.getNPCRegistry().getByUniqueId(getNPCUUID()).despawn();
         }
     }
 

@@ -37,6 +37,12 @@ public class LegacyWEHook implements WorldEditHook<Schematic> {
 
     // please stop making me suffer by working with such a old version.... Just update to 1.13 or higher.
 
+    /**
+     * @deprecated - Please just update to 1.13 for fucks sake.
+     * @param region - The WorldEdit region to set the blocks in
+     * @param blocks - The blocks to fill the mine with.
+     */
+
     @Deprecated
     public void fill(WorldEditRegion region, List<ItemStack> blocks) {
         final EditSession session = new EditSessionBuilder(FaweAPI.getWorld(region.getWorld().getName()))
