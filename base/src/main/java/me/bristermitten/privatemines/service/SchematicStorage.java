@@ -54,7 +54,7 @@ public class SchematicStorage {
                         if (schematicSection.getString("File") != null) {
                             //TODO It keeps assuming this is null need to somehow fix
 
-                            final File file = new File(schematicsDir, schematicSection.getString("File"));
+                            final File file = new File(schematicsDir, Objects.requireNonNull(schematicSection.getString("File")));
 
                             if (!file.exists()) {
                                 PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
@@ -64,7 +64,7 @@ public class SchematicStorage {
                             final Integer tier = schematicSection.getInt("Tier");
                             final Integer resetDelay = schematicSection.getInt("Reset-Delay");
 
-                            final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
+                            final ItemStack item = Util.deserializeStack(Objects.requireNonNull(schematicSection.getConfigurationSection("Icon")).getValues(true));
 
                             final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(
                                     name, description, file, item, tier, resetDelay);
