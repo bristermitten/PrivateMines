@@ -1,8 +1,9 @@
 Schematics:
   tier-1:
     Default: true
-    File: tier-1.schematic
+    File: mine1.schem
     Tier: 1
+    Reset-Delay: 5
     Icon:
       type: COBBLESTONE
     Description:
@@ -10,16 +11,18 @@ Schematics:
       - "Nothing special, but it does the job"
   tier-2:
     Default: false
-    File: tier-2.schematic
+    File: mine2.schem
     Tier: 2
+    Reset-Delay: 5
     Icon:
       type: COBBLESTONE
     Description:
       - "The tier 2 schematic"
   tier-3:
     Default: false
-    File: tier-3.schematic
+    File: mine3.schem
     Tier: 3
+    Reset-Delay: 5
     Icon:
       type: COBBLESTONE
     Description:

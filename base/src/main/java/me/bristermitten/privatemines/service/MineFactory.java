@@ -44,6 +44,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
     private final MineFactoryCompat<S> compat;
     UUID npcUUID;
 
+
     public MineFactory(PrivateMines plugin, MineWorldManager manager, PMConfig config, MineFactoryCompat<S> compat) {
         this.plugin = plugin;
         this.manager = manager;
@@ -51,8 +52,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         this.compat = compat;
     }
 
-    public PrivateMine create(Player owner, M mineSchematic, int tier) {
-        return create(owner, mineSchematic, manager.nextFreeLocation(), tier);
+    public PrivateMine create(Player owner, M mineSchematic, boolean isNew) {
+        return create(owner, mineSchematic, manager.nextFreeLocation(), isNew);
     }
 
     private boolean dataMatches(byte data, short expectedData) {
@@ -70,10 +71,11 @@ public class MineFactory<M extends MineSchematic<S>, S> {
      * @param owner         The private mine owner
      * @param mineSchematic The schematic to paste for the mine
      * @param origin        Where to paste the mine. This is the exact location where the schematic should be pasted (where the player would be standing if doing //paste)
-
+     * @param isNew         If this is a new private mine or upgrading a new one.
+     *                      Much of the functionality in this method does not belong here and should be refactored immediately.
      */
     @SuppressWarnings("deprecation")
-    public PrivateMine create(Player owner, M mineSchematic, final Location origin, Integer tier) {
+    public PrivateMine create(Player owner, M mineSchematic, final Location origin, @Deprecated boolean isNew) {
 
         WorldEditRegion region = compat.pasteSchematic(mineSchematic.getSchematic(), origin);
 
@@ -84,6 +86,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         WorldEditVector max = null;
 
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
+        List<String> firstTimeCommands = this.config.getFirstTimeCommands();
         List<String> commands = this.config.getCommands();
 
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
@@ -164,18 +167,6 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         //TODO Make shop system somehow?
 
-        final PrivateMine privateMine = new PrivateMine(
-                owner.getUniqueId(),
-                new HashSet<>(),
-                config.getDefaultMineBlocks(),
-                mainRegion,
-                locations,
-                worldGuardRegion,
-                mineSchematic);
-
-        privateMine.fillMine();
-        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
-
         if (plugin.isAutoSellEnabled()) {
             npcUUID = createAutoSellMineNPC(owner, npcLoc);
             locations.setNpcLocation(npcLoc);
@@ -183,9 +174,25 @@ public class MineFactory<M extends MineSchematic<S>, S> {
             npcUUID = createUltraPrisonCoreMineNPC(owner, npcLoc);
         }
 
-        final List<String> commandsToRun;
-            commandsToRun = commands;
+        final PrivateMine privateMine = new PrivateMine(
+                owner.getUniqueId(),
+                npcUUID,
+                new HashSet<>(),
+                config.getDefaultMineBlocks(),
+                mainRegion,
+                config.getMineTier(),
+                locations,
+                mineSchematic);
 
+        privateMine.fillMine();
+        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+
+        final List<String> commandsToRun;
+        if (isNew) {
+            commandsToRun = firstTimeCommands;
+        } else {
+            commandsToRun = commands;
+        }
         for (String command : commandsToRun) {
             final String formattedCommand =
                     command.replace(NAME_PLACEHOLDER, owner.getName())
@@ -287,5 +294,9 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
     public MineWorldManager getManager() {
         return manager;
+    }
+
+    public UUID getNpcUUID() {
+        return npcUUID;
     }
 }

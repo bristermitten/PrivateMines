@@ -32,7 +32,7 @@ public class ChangeMineResetPercentMenu {
         MenuSpec spec = new MenuSpec();
         spec.copyFrom(original);
         spec.register(plugin);
-        PrivateMine mine = storage.get(p);
+        PrivateMine mine = storage.getOrCreate(p);
         Integer[] resetPercentage = config.getResetPercentages().toArray(new Integer[]{});
 
         p.openInventory(spec.genMenu((percent, i) -> {

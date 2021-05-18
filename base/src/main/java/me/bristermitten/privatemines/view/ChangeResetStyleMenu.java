@@ -32,7 +32,7 @@ public class ChangeResetStyleMenu {
         MenuSpec spec = new MenuSpec();
         spec.copyFrom(original);
         spec.register(plugin);
-        PrivateMine mine = storage.get(p);
+        PrivateMine mine = storage.getOrCreate(p);
         String[] resetStyles = config.getResetStyles().toArray(new String[]{});
 
         p.openInventory(spec.genMenu((style, i) -> {

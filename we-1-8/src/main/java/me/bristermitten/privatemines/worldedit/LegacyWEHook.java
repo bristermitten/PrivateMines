@@ -67,7 +67,7 @@ public class LegacyWEHook implements WorldEditHook<Schematic> {
     }
 
     @Override
-    public MineSchematic<Schematic> loadMineSchematic(String name, List<String> description, File file, ItemStack item, Integer tier) {
-        return new LegacyWEMineSchematic(name, description, file, item, tier);
+    public MineSchematic<Schematic> loadMineSchematic(String name, List<String> description, File file, ItemStack item, Integer tier, Integer resetDelay) {
+        return new LegacyWEMineSchematic(name, description, file, item, tier, resetDelay);
     }
 }

@@ -38,7 +38,6 @@ public final class PrivateMines extends JavaPlugin {
 
     public static final String MINES_FILE_NAME = "mines.yml";
     private static PrivateMinesAPI privateMinesAPI;
-    private static PrivateMines instance;
 
     private Economy econ;
     private MineStorage storage;
@@ -97,8 +96,6 @@ public final class PrivateMines extends JavaPlugin {
 
         loadWEHook();
         setupEconomy();
-
-        instance = this;
 
         //noinspection unchecked oh no
         factory = (MineFactory<MineSchematic<?>, ?>) loadMineFactory(mainConfig, mineManager);
@@ -284,10 +281,6 @@ public final class PrivateMines extends JavaPlugin {
             getLogger().severe("An error occurred saving data!");
             e.printStackTrace();
         }
-    }
-
-    public static PrivateMines getInstance() {
-        return instance;
     }
 
     public BukkitCommandManager getManager() {

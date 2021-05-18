@@ -62,7 +62,7 @@ public class ModernWEHook implements WorldEditHook<Clipboard> {
     }
 
     @Override
-    public MineSchematic<Clipboard> loadMineSchematic(String name, List<String> description, File file, ItemStack item, Integer tier) {
-        return new ModernWEMineSchematic(name, description, file, item, tier);
+    public MineSchematic<Clipboard> loadMineSchematic(String name, List<String> description, File file, ItemStack item, Integer tier, Integer resetDelay) {
+        return new ModernWEMineSchematic(name, description, file, item, tier, resetDelay);
     }
 }

@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Objects;
 
 @SuppressWarnings("unused") //Most of these methods are called from external programs
 public class PrivateMinesAPI {
@@ -44,7 +43,7 @@ public class PrivateMinesAPI {
      */
 
     public double getMineTaxPercentage(Player player) {
-        return Objects.requireNonNull(storage.get(player)).getTaxPercentage();
+        return storage.get(player).getTaxPercentage();
     }
 
     /**
@@ -53,7 +52,7 @@ public class PrivateMinesAPI {
      */
 
     public void setMineTaxPercentage(Player player, Double percentage) {
-        Objects.requireNonNull(storage.get(player)).setTaxPercentage(percentage);
+        storage.get(player).setTaxPercentage(percentage);
     }
 
     /**
@@ -62,7 +61,7 @@ public class PrivateMinesAPI {
      */
 
     public void setMineResetPercentage(Player player, Double percentage) {
-        Objects.requireNonNull(storage.get(player)).setResetPercentage(percentage);
+        storage.get(player).setResetPercentage(percentage);
     }
 
     /**
@@ -71,7 +70,7 @@ public class PrivateMinesAPI {
      */
 
     public void increaseMineResetPercentage(Player player, Double percentage) {
-        Objects.requireNonNull(storage.get(player)).increaseResetPercentage(percentage);
+        storage.get(player).increaseResetPercentage(percentage);
     }
 
     /**
@@ -80,16 +79,7 @@ public class PrivateMinesAPI {
      */
 
     public void decreaseMineResetPercentage(Player player, Double percentage) {
-        Objects.requireNonNull(storage.get(player)).decreaseResetPercentage(percentage);
-    }
-
-
-    public double getResetPercentage(Player player) {
-        if (storage.hasMine(player) && Objects.requireNonNull(storage.get(player)).getResetPercentage() != 0) {
-            return Objects.requireNonNull(storage.get(player)).getResetPercentage();
-        } else {
-            return 0;
-        }
+        storage.get(player).decreaseResetPercentage(percentage);
     }
 
     /**
@@ -98,7 +88,7 @@ public class PrivateMinesAPI {
      */
 
     public List<ItemStack> getMineBlocks(Player player) {
-        return Objects.requireNonNull(storage.get(player)).getMineBlocks();
+        return storage.get(player).getMineBlocks();
     }
 
     /**
@@ -107,7 +97,7 @@ public class PrivateMinesAPI {
      */
 
     public List<String> getMineBlocksString(Player player) {
-        return Objects.requireNonNull(storage.get(player)).getMineBlocksString();
+        return storage.get(player).getMineBlocksString();
     }
 
     /**
@@ -116,24 +106,38 @@ public class PrivateMinesAPI {
      */
 
     public void setMineBlocks(Player player, List<ItemStack> items) {
-        Objects.requireNonNull(storage.get(player)).setMineBlocks(items);
+        storage.get(player).setMineBlocks(items);
     }
 
     public void addBlocks(Player player, ItemStack itemStack) {
-        Objects.requireNonNull(storage.get(player)).addMineBlock(itemStack);
+        storage.get(player).addMineBlock(itemStack);
     }
 
     public void removeBlocks(Player player, ItemStack itemStack) {
-        Objects.requireNonNull(storage.get(player)).removeMineBlock(itemStack);
+        storage.get(player).removeMineBlock(itemStack);
     }
 
     /**
-     * @param player - The player you want to upgrade their private mine
+     * @param player - The player you want to get the reset time of
+     * @return The reset time of the mine
      */
+
+    public int getResetTime(Player player) {
+        return storage.get(player).getResetTime();
+    }
+
+    /**
+     * @param player - The player you want to get the formatted reset time of
+     * @return a beautiful formatted time string!
+     */
+
+    public String getFormattedResetTime(Player player) {
+        return formatTime(storage.get(player).getResetTime());
+    }
 
     public void upgradePlayerMine(Player player) {
         if (storage.hasMine(player)) {
-            Objects.requireNonNull(storage.get(player)).upgradeMine(player);
+            storage.get(player).upgradeMine(player);
         } else {
             Bukkit.getLogger().warning(player.getName() + " Doesn't have a Private Mine, cannot execute this method!");
         }

@@ -17,14 +17,17 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static java.lang.String.valueOf;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
@@ -62,10 +65,6 @@ public class PrivateMinesCommand extends BaseCommand {
     public void list(Player p) {
         factory.createAndOpenMinesMenu(p);
     }
-
-    /*
-        thanks for telling us it's deprecated but not telling us what to move too for fucks sake.
-     */
 
     @HelpCommand
     public void help(CommandIssuer issuer) {
@@ -179,7 +178,7 @@ public class PrivateMinesCommand extends BaseCommand {
         for (PrivateMine mine : mineSet) {
             mine.delete();
         }
-        player.sendMessage(String.format(ChatColor.GREEN + "Deleted a total of %d mines!", total));
+        player.sendMessage(format(ChatColor.GREEN + "Deleted a total of %d mines!", total));
     }
 
     @Subcommand("status")
