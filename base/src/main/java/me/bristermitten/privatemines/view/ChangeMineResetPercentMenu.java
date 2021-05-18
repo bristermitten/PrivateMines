@@ -32,32 +32,38 @@ public class ChangeMineResetPercentMenu {
         MenuSpec spec = new MenuSpec();
         spec.copyFrom(original);
         spec.register(plugin);
-        PrivateMine mine = storage.getOrCreate(p);
-        Integer[] resetPercentage = config.getResetPercentages().toArray(new Integer[]{});
+        PrivateMine mine = storage.get(p);
 
-        p.openInventory(spec.genMenu((percent, i) -> {
-                    i.setType(Material.REDSTONE);
-                    ItemMeta itemMeta = i.getItemMeta();
+        if (mine == null) {
+            return;
+        } else {
 
-                    if (itemMeta.hasDisplayName()) {
-                        String displayName = itemMeta.getDisplayName();
-                        String name = displayName.replace("%percent%",
-                                Util.parsePercent(percent));
-                        itemMeta.setDisplayName(name);
-                    }
-                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
-                            String.valueOf(percent))).collect(Collectors.toList());
-                    itemMeta.setLore(lore);
-                    i.setItemMeta(itemMeta);
-                    return i;
-                },
-                decreasepercent -> e -> {
-                    if (p.hasPermission("privatemine.percent." + decreasepercent)) {
-                        p.sendMessage(ChatColor.GREEN + "Decreased reset percent by  " + decreasepercent + "%");
-                        mine.decreaseResetPercentage(decreasepercent);
-                    } else {
-                        p.sendMessage(ChatColor.RED + "No access to this percent!");
-                    }
-                }, resetPercentage));
+            Integer[] resetPercentage = config.getResetPercentages().toArray(new Integer[]{});
+
+            p.openInventory(spec.genMenu((percent, i) -> {
+                        i.setType(Material.REDSTONE);
+                        ItemMeta itemMeta = i.getItemMeta();
+
+                        if (itemMeta.hasDisplayName()) {
+                            String displayName = itemMeta.getDisplayName();
+                            String name = displayName.replace("%percent%",
+                                    Util.parsePercent(percent));
+                            itemMeta.setDisplayName(name);
+                        }
+                        List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
+                                String.valueOf(percent))).collect(Collectors.toList());
+                        itemMeta.setLore(lore);
+                        i.setItemMeta(itemMeta);
+                        return i;
+                    },
+                    decreasepercent -> e -> {
+                        if (p.hasPermission("privatemine.percent." + decreasepercent)) {
+                            p.sendMessage(ChatColor.GREEN + "Decreased reset percent by  " + decreasepercent + "%");
+                            mine.decreaseResetPercentage(decreasepercent);
+                        } else {
+                            p.sendMessage(ChatColor.RED + "No access to this percent!");
+                        }
+                    }, resetPercentage));
+        }
     }
 }
