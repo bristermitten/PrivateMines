@@ -6,6 +6,7 @@ import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.world.MineWorldManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
@@ -63,9 +64,7 @@ public class MineStorage {
         for (Map<?, ?> map : config.getMapList("Mines")) {
             this.load(PrivateMine.deserialize((Map<String, Object>) map));
         }
-
     }
-
 
     private void load(PrivateMine mine) {
         mines.put(mine.getOwner(), mine);
@@ -75,15 +74,19 @@ public class MineStorage {
      * Get a Player's private mine, or create a new one if they do not have one
      *
      * @param player The player to get or create a private mine for
-     * @return a private mine object, that may be newly created for the player
      * @throws IllegalStateException if there is no default schematic configured in {@link SchematicStorage}
      */
-    @NotNull
-    public PrivateMine getOrCreate(@NotNull Player player, Integer tier, boolean isNew) {
+
+    public void getOrCreate(@NotNull Player player, Integer tier, boolean isNew) {
         PrivateMine mine = mines.get(player.getUniqueId());
 
         if (mine != null) {
-            return mine;
+            return;
+        }
+
+        if (tier < 1) {
+            Bukkit.getLogger().warning("Failed to create the mine because the mine tier set is < 1");
+            return;
         }
 
         MineSchematic<?> defaultSchematic = SchematicStorage.getInstance().getDefaultSchematic();
@@ -106,7 +109,6 @@ public class MineStorage {
         mine = factory.create(player, defaultSchematic, mineWorldManager.nextFreeLocation(), isNew);
         mines.put(player.getUniqueId(), mine);
 
-        return mine;
     }
 
     /**
