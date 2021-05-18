@@ -10,6 +10,7 @@ import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
@@ -17,14 +18,12 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -40,6 +39,8 @@ public class PrivateMinesCommand extends BaseCommand {
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
+
+    private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
 
     public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
                                PMConfig config) {
@@ -84,17 +85,21 @@ public class PrivateMinesCommand extends BaseCommand {
 
             final PrivateMine mine = storage.get(p);
 
-            mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+            if (mine != null) {
+                mine.setTaxPercentage(taxPercentage);
+                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+            }
             return;
         }
         final PrivateMine mine = storage.get(p);
-        if (taxPercentage == null) {
+        if (taxPercentage == null && mine != null) {
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, TAX_KEY, valueOf(mine.getTaxPercentage()));
             return;
         }
-        mine.setTaxPercentage(taxPercentage);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+        if (mine != null) {
+            mine.setTaxPercentage(taxPercentage);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+        }
     }
 
 
@@ -103,8 +108,10 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Allow other players into your mine")
     public void open(Player p) {
         final PrivateMine mine = storage.get(p);
-        mine.setOpen(true);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_OPENED);
+        if (mine != null) {
+            mine.setOpen(true);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_OPENED);
+        }
     }
 
 
@@ -113,8 +120,10 @@ public class PrivateMinesCommand extends BaseCommand {
     @Description("Close your mine from other players")
     public void close(Player p) {
         PrivateMine mine = storage.get(p);
-        mine.setOpen(false);
-        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
+        if (mine != null) {
+            mine.setOpen(false);
+            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_CLOSED);
+        }
     }
 
     @Subcommand("give")
@@ -128,7 +137,7 @@ public class PrivateMinesCommand extends BaseCommand {
                 return;
         }
         if (t != null) {
-            storage.getOrCreate(t, 1).teleport();
+            storage.getOrCreate(t, 1, true);
             getCurrentCommandIssuer().sendInfo(LangKeys.INFO_MINE_GIVEN);
         }
     }
@@ -290,7 +299,23 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-        mine.upgradeMine(p);
+
+        String currentSchematic = mine.getCurrentMineSchematic().getName();
+        String nextSchematic = schematicStorage.getNextSchematic(mine).getName();
+
+        int currentSchematicTier = mine.getCurrentMineSchematic().getTier();
+        int nextSchematicTier = schematicStorage.getNextSchematic(mine).getTier();
+
+        p.sendMessage("REMOVED UPGRADE FUNCTION DON'T PANIC!");
+        p.sendMessage("===========");
+        p.sendMessage("Current Schematic: " + currentSchematic);
+        p.sendMessage("Current Tier: " + currentSchematicTier);
+        p.sendMessage("===========");
+        p.sendMessage("Next Schematic: " + nextSchematic);
+        p.sendMessage("Next Schematic Tier: " + nextSchematicTier);
+        p.sendMessage("===========");
+
+//        mine.upgradeMine(p);
     }
 
     @Subcommand("fixreset")
