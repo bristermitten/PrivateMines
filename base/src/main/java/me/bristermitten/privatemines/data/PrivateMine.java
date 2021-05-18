@@ -244,6 +244,10 @@ public class PrivateMine implements ConfigurationSerializable {
         return spawnLocation;
     }
 
+    public MineSchematic<?> getCurrentMineSchematic() {
+        return mineSchematic;
+    }
+
     public @NotNull Map<String, Object> serialize() {
         Map<String, Object> map = new TreeMap<>();
         map.put("Owner", this.owner.toString());
