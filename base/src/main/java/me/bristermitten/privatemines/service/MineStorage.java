@@ -108,7 +108,7 @@ public class MineStorage {
 
         mine = factory.create(player, defaultSchematic, mineWorldManager.nextFreeLocation(), isNew);
         mines.put(player.getUniqueId(), mine);
-
+        mine.upgradeMine(player);
     }
 
     /**

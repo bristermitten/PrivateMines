@@ -454,39 +454,37 @@ public class PrivateMine implements ConfigurationSerializable {
 
             Collection<MineSchematic<?>> mineSchematics = schematicStorage.getAll();
 
-            mineSchematics
-                    .stream()
-                    .filter(schema -> schema.getTier() == newTier)
-                    .forEach(schema -> upgradeSchematic = schema);
+            if (mineSchematics.stream().filter(schema ->
+                    schema.getTier() > newTier).iterator().hasNext()) {
+                mineSchematics
+                        .stream()
+                        .filter(schema -> schema.getTier() == newTier)
+                        .forEach(schema -> upgradeSchematic = schema);
+                final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
 
-            final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
+                final WorldEditRegion miningRegion = new WorldEditRegion(
+                        Util.toWEVector(selection.getMinimumPoint()),
+                        Util.toWEVector(selection.getMaximumPoint()),
+                        mainRegion.getWorld()
+                );
 
-            final WorldEditRegion miningRegion = new WorldEditRegion(
-                    Util.toWEVector(selection.getMinimumPoint()),
-                    Util.toWEVector(selection.getMaximumPoint()),
-                    mainRegion.getWorld()
-            );
+                if (upgradeSchematic == null) {
+                    Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
+                    return;
+                }
+                if (currentID == null) {
+                    Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to currentID being null.");
+                    return;
+                }
 
-            if (upgradeSchematic == null) {
-                Bukkit.getLogger().warning("Error upgrading " + player.getName() + "'s Mine due the schematic being null!");
-                return;
+                PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
+                currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
+                currentMine.getLocations().setSpawnPoint(currentMineLocation);
+                currentMine.teleport(player);
+                currentMine.setMineTier(newTier);
+            } else {
+                Bukkit.getLogger().info("Can't upgrade " + player.getName() + "'s mine because it's maxed out!");
             }
-            if (currentID == null) {
-                Bukkit.getLogger().warning("Error deleting " + player.getName() + "'s Mine NPC due to currentID being null.");
-                return;
-            }
-
-//            if (currentMine.mineSchematic.getTier() == newTier) {
-//                player.sendMessage(ChatColor.RED + "No point upgrading because you're already at this tier.");
-//                return;
-//            }
-
-            PrivateMines.getPlugin().getWeHook().fillAir(miningRegion);
-            currentMine.setMineSchematic(upgradeSchematic, currentMineLocation, player);
-            currentMine.getLocations().setSpawnPoint(currentMineLocation);
-            currentMine.teleport(player);
-            currentMine.setMineTier(newTier);
-//            CitizensAPI.getNPCRegistry().getByUniqueId(currentID).destroy();
         }
     }
 

@@ -306,7 +306,10 @@ public class PrivateMinesCommand extends BaseCommand {
         int currentSchematicTier = mine.getCurrentMineSchematic().getTier();
         int nextSchematicTier = schematicStorage.getNextSchematic(mine).getTier();
 
-        p.sendMessage("REMOVED UPGRADE FUNCTION DON'T PANIC!");
+        if (nextSchematicTier == currentSchematicTier) {
+            nextSchematicTier = currentSchematicTier + 1;
+        }
+
         p.sendMessage("===========");
         p.sendMessage("Current Schematic: " + currentSchematic);
         p.sendMessage("Current Tier: " + currentSchematicTier);
@@ -315,7 +318,7 @@ public class PrivateMinesCommand extends BaseCommand {
         p.sendMessage("Next Schematic Tier: " + nextSchematicTier);
         p.sendMessage("===========");
 
-//        mine.upgradeMine(p);
+        mine.upgradeMine(p);
     }
 
     @Subcommand("fixreset")
