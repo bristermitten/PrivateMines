@@ -51,7 +51,6 @@ public class PrivateMine implements ConfigurationSerializable {
     private IWrappedRegion wgRegion;
     private UUID npcId;
     private boolean open;
-    private boolean fastMode;
     private List<ItemStack> blocks;
     private double taxPercentage;
     private double resetPercentage;
@@ -298,14 +297,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void setOpen(boolean open) {
         this.open = open;
-    }
-
-    public boolean isFastMode() {
-        return fastMode;
-    }
-
-    public void setFastMode(boolean fastMode) {
-        this.fastMode = fastMode;
     }
 
     public void fillMine() {
