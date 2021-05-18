@@ -107,17 +107,8 @@ public class PrivateMine implements ConfigurationSerializable {
         MineLocations locations = MineLocations.deserialize((Map<String, Object>) map.get("Locations"));
         WorldEditRegion mainRegion = new WorldEditRegion(corner1, corner2, locations.getSpawnPoint().getWorld());
 
-        IWrappedRegion wgRegion = WorldGuardWrapper.getInstance().getRegion(locations.getSpawnPoint().getWorld(), owner.toString())
-                .orElseThrow(() -> new IllegalStateException("Could not deserialize PrivateMine - mining region did not exist"));
-
-        // May need to re-add
         UUID npcId = UUID.fromString((String) map.get("NPC"));
 
-        double taxPercentage = (Double) map.get("Tax");
-
-        /*
-        double resetPercentage = (Double) map.get("Reset-Percentage");
-         */
 
         int mineTier = (Integer) map.get("Tier");
 
