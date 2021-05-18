@@ -101,8 +101,8 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         if (world == null) {
             throw new IllegalArgumentException("World for provided location was null");
         }
-        for (Iterator<WorldEditVector> iterator = compat.loop(region).iterator(); iterator.hasNext(); ) {
-            WorldEditVector pt = iterator.next();
+
+        for (WorldEditVector pt : compat.loop(region)) {
             final Block blockAt = world.getBlockAt((int) pt.getX(), (int) pt.getY(), (int) pt.getZ());
             Material type = blockAt.getType();
             byte data = blockAt.getData();
