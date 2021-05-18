@@ -7,7 +7,6 @@ import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
 import me.bristermitten.privatemines.config.LangKeys;
-import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;

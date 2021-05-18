@@ -306,20 +306,17 @@ public class PrivateMinesCommand extends BaseCommand {
         int currentSchematicTier = mine.getCurrentMineSchematic().getTier();
         int nextSchematicTier = schematicStorage.getNextSchematic(mine).getTier();
 
-        if (nextSchematicTier == currentSchematicTier) {
-            nextSchematicTier = currentSchematicTier + 1;
+            p.sendMessage("===========");
+            p.sendMessage("Current Schematic: " + currentSchematic);
+            p.sendMessage("Current Tier: " + currentSchematicTier);
+            p.sendMessage("===========");
+            p.sendMessage("Next Schematic: " + nextSchematic);
+            p.sendMessage("Next Schematic Tier: " + nextSchematicTier);
+            p.sendMessage("===========");
+
+            mine.upgradeMine(p);
         }
 
-        p.sendMessage("===========");
-        p.sendMessage("Current Schematic: " + currentSchematic);
-        p.sendMessage("Current Tier: " + currentSchematicTier);
-        p.sendMessage("===========");
-        p.sendMessage("Next Schematic: " + nextSchematic);
-        p.sendMessage("Next Schematic Tier: " + nextSchematicTier);
-        p.sendMessage("===========");
-
-        mine.upgradeMine(p);
-    }
 
     @Subcommand("fixreset")
     @CommandPermission("privatemines.fixreset")
