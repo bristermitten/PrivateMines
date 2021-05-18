@@ -52,9 +52,6 @@ public class UltraPrisonListener implements Listener {
             return false;
         if (player.getUniqueId().equals(owner))
             return false;
-        if (privateMine == null) {
-            return false;
-        }
         return false;
     }
 
