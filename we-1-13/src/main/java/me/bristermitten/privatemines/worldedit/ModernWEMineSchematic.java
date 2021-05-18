@@ -20,11 +20,14 @@ public class ModernWEMineSchematic extends MineSchematic<Clipboard> {
     @Override
     public Clipboard getSchematic() {
         final ClipboardFormat format = ClipboardFormats.findByFile(file);
-        try (final ClipboardReader reader = format.getReader(new FileInputStream(file))) {
-            return reader.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        if (format != null) {
+            try (final ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+                return reader.read();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
+        return null;
     }
 }
