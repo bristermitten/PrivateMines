@@ -79,7 +79,7 @@ public class MineStorage {
      * @throws IllegalStateException if there is no default schematic configured in {@link SchematicStorage}
      */
     @NotNull
-    public PrivateMine getOrCreate(@NotNull Player player, Integer tier) {
+    public PrivateMine getOrCreate(@NotNull Player player, Integer tier, boolean isNew) {
         PrivateMine mine = mines.get(player.getUniqueId());
 
         if (mine != null) {
@@ -103,7 +103,7 @@ public class MineStorage {
             throw new IllegalStateException("No Default Schematic found");
         }
 
-        mine = factory.create(player, defaultSchematic, mineWorldManager.nextFreeLocation(), tier);
+        mine = factory.create(player, defaultSchematic, mineWorldManager.nextFreeLocation(), isNew);
         mines.put(player.getUniqueId(), mine);
 
         return mine;
