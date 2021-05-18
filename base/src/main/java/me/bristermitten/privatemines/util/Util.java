@@ -69,8 +69,8 @@ public final class Util {
             }
         } else {
             //noinspection deprecation
-            if (xMaterial.parseItem() != null && xMaterial.parseItem().hasItemMeta()) {
-                    final Damageable im = (Damageable) xMaterial.parseItem().getItemMeta();
+            if (xMaterial.parseItem() != null && Objects.requireNonNull(xMaterial.parseItem()).hasItemMeta()) {
+                    final Damageable im = (Damageable) Objects.requireNonNull(xMaterial.parseItem()).getItemMeta();
                     final int damage = (int) map.get("Data");
                     if (im != null) {
                         im.damage(damage);
@@ -129,7 +129,7 @@ public final class Util {
             replace.forEach((k, v) -> meta.setDisplayName(meta.getDisplayName().replace(k, v)));
         }
         if (meta.hasLore()) {
-            meta.setLore(meta.getLore().stream().map(line -> {
+            meta.setLore(Objects.requireNonNull(meta.getLore()).stream().map(line -> {
                 String[] mutableLine = {line};
 
                 replace.forEach((k, v) -> mutableLine[0] = mutableLine[0].replace(k, v));
