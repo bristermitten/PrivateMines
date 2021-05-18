@@ -8,7 +8,6 @@ public class Bootstrap {
         PrivateMines.MINES_FILE_NAME.hashCode();
         new LegacyWEHook();
         new ModernWEHook();
-
         System.out.println("This class exists to stop shadowJar from minimizing everything :)");
     }
 }
