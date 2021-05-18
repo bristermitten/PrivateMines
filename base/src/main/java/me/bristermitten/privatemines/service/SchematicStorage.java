@@ -54,9 +54,13 @@ public class SchematicStorage {
                             }
 
                             final Integer tier = schematicSection.getInt("Tier");
+                            final Integer resetDelay = schematicSection.getInt("Reset-Delay");
+
                             final ItemStack item = Util.deserializeStack(schematicSection.getConfigurationSection("Icon").getValues(true));
 
-                            final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(name, description, file, item, tier);
+                            final MineSchematic<?> schematic = PrivateMines.getPlugin().getWeHook().loadMineSchematic(
+                                    name, description, file, item, tier, resetDelay);
+                            
                             schematics.put(name, schematic);
 
                             if (schematicSection.getBoolean("Default")) {
