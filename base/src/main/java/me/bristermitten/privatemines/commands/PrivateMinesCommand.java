@@ -34,13 +34,10 @@ public class PrivateMinesCommand extends BaseCommand {
 
     private static final String PLAYER_KEY = "{player}";
     private static final String TAX_KEY = "{tax}";
-
     private final PrivateMines plugin;
     private final MenuFactory factory;
     private final MineStorage storage;
     private final PMConfig config;
-
-    private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
 
     public PrivateMinesCommand(PrivateMines plugin, MenuFactory factory, MineStorage storage,
                                PMConfig config) {
@@ -133,8 +130,8 @@ public class PrivateMinesCommand extends BaseCommand {
     public void give(OfflinePlayer target) {
         Player t = target.getPlayer();
         if (t != null && storage.hasMine(t)) {
-                getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
-                return;
+            getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_MINE);
+            return;
         }
         if (t != null) {
             storage.getOrCreate(t, 1, true);
@@ -299,24 +296,8 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_PLAYER_HAS_NO_MINE);
             return;
         }
-
-        String currentSchematic = mine.getCurrentMineSchematic().getName();
-        String nextSchematic = schematicStorage.getNextSchematic(mine).getName();
-
-        int currentSchematicTier = mine.getCurrentMineSchematic().getTier();
-        int nextSchematicTier = schematicStorage.getNextSchematic(mine).getTier();
-
-            p.sendMessage("===========");
-            p.sendMessage("Current Schematic: " + currentSchematic);
-            p.sendMessage("Current Tier: " + currentSchematicTier);
-            p.sendMessage("===========");
-            p.sendMessage("Next Schematic: " + nextSchematic);
-            p.sendMessage("Next Schematic Tier: " + nextSchematicTier);
-            p.sendMessage("===========");
-
-            mine.upgradeMine(p);
-        }
-
+        mine.upgradeMine(p);
+    }
 
     @Subcommand("fixreset")
     @CommandPermission("privatemines.fixreset")
