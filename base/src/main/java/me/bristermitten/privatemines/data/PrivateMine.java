@@ -31,6 +31,7 @@ import org.codemc.worldguardwrapper.selection.ICuboidSelection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class PrivateMine implements ConfigurationSerializable {
@@ -88,7 +89,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.wgRegion = locations.getWgRegion();
         this.taxPercentage = 5;
         this.mineSchematic = mineSchematic;
-        this.resetDelay = 5;
+        this.resetDelay = (int) TimeUnit.MINUTES.toMillis(5);
     }
 
     @SuppressWarnings("unchecked")
