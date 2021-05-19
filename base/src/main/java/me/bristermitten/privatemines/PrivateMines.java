@@ -95,7 +95,7 @@ public final class PrivateMines extends JavaPlugin {
 
         PMConfig mainConfig = new PMConfig(getConfig());
         mineManager = new MineWorldManager(mainConfig);
-        int pluginId = 1234; // <-- Replace with the id of your plugin!
+        int pluginId = 11413; // <-- Replace with the id of your plugin!
 
         loadWEHook();
         setupEconomy();
@@ -174,9 +174,9 @@ public final class PrivateMines extends JavaPlugin {
         new MineResetTask(this, storage).start();
 
         if (getConfig().getBoolean("bStats")) {
-            Bukkit.getLogger().info("Loading bStats metrics!");
-            Metrics metrics = new Metrics(this, 11413);
-            Bukkit.getLogger().info("Loaded the bStats metrics, thanks for enabling it! :)");
+            getLogger().info("Loading bStats metrics!");
+            Metrics metrics = new Metrics(this, pluginId);
+            getLogger().info("Loaded the bStats metrics, thanks for enabling it! :)");
         }
 
         long loaded = System.currentTimeMillis();

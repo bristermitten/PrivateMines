@@ -72,7 +72,6 @@ public class SchematicStorage {
                             schematics.put(name, schematic);
                             schematicTreeMap.putIfAbsent(schematic.getTier(), schematic);
 
-//                            setTotalSchematics(schematics.entrySet().size());
                             Bukkit.getLogger().info(() -> "Total schematics: " + schematicTreeMap.size());
                             setTotalSchematics(schematicTreeMap.size());
                             if (schematicSection.getBoolean("Default")) {
