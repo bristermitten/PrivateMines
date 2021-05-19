@@ -6,6 +6,7 @@ import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
+import me.bristermitten.privatemines.util.XMaterial;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -45,7 +46,12 @@ public class PrivateMineMenu {
 		}
 
 		PrivateMine mine = storage.get(p);
-		Material type = mine != null ? Material.valueOf(String.valueOf(mine.getMineBlocks().get(0).getType())) : Material.STONE;
+		Material type = mine != null ? XMaterial.valueOf(String.valueOf(mine.getMineBlocks()
+				.get(0)
+				.getType())).parseMaterial() :
+				XMaterial.STONE.parseMaterial();
+
+//				Material.valueOf(String.valueOf(mine.getMineBlocks().get(0).getType()));
 
 		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", type);
 
