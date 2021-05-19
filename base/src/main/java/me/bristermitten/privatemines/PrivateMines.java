@@ -17,6 +17,7 @@ import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
+import me.bristermitten.privatemines.util.Metrics;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;
@@ -85,6 +86,7 @@ public final class PrivateMines extends JavaPlugin {
         Used when the plugin is enabled at the start, loads all the services.
     */
 
+
     @Override
     public void onEnable() {
         long startTime = System.currentTimeMillis();
@@ -93,6 +95,7 @@ public final class PrivateMines extends JavaPlugin {
 
         PMConfig mainConfig = new PMConfig(getConfig());
         mineManager = new MineWorldManager(mainConfig);
+        int pluginId = 1234; // <-- Replace with the id of your plugin!
 
         loadWEHook();
         setupEconomy();
@@ -169,6 +172,12 @@ public final class PrivateMines extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new UltraPrisonListener(), this);
 
         new MineResetTask(this, storage).start();
+
+        if (getConfig().getBoolean("bStats")) {
+            Bukkit.getLogger().info("Loading bStats metrics!");
+            Metrics metrics = new Metrics(this, 11413);
+            Bukkit.getLogger().info("Loaded the bStats metrics, thanks for enabling it! :)");
+        }
 
         long loaded = System.currentTimeMillis();
         getLogger().info(() -> String.format("%sSuccessfully loaded PrivateMines (Took %dms)", ChatColor.GREEN, loaded - startTime));

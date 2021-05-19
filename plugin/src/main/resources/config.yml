@@ -131,3 +131,6 @@ Sell-Command: "sellall"
 autosell-enabled: false
 ultraprisoncore-enabled: true
 
+# Enable or disable the bStats. Enabling it helps us out! :)
+
+bStats: true
