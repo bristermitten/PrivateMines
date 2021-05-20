@@ -45,7 +45,11 @@ public class ChangeThemeMenu {
                     }
                     return i;
                 },
-                schematic -> e -> mine.teleport((Player) e.getWhoClicked()),
+                schematic -> e -> {
+                    if (mine != null) {
+                        mine.teleport((Player) e.getWhoClicked());
+                    }
+                },
                 schematics));
     }
 }
