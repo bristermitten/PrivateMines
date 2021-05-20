@@ -54,7 +54,7 @@ public class SchematicStorage {
                         if (schematicSection.getString("File") != null) {
                             //TODO It keeps assuming this is null need to somehow fix
 
-                            final File file = new File(schematicsDir, schematicSection.getString("File"));
+                            final File file = new File(schematicsDir, Objects.requireNonNull(schematicSection.getString("File")));
 
                             if (!file.exists()) {
                                 PrivateMines.getPlugin().getLogger().warning(() -> "Schematic " + file + " does not exist, not registered");
