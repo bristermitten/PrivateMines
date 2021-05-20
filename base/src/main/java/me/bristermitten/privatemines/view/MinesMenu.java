@@ -38,7 +38,7 @@ public class MinesMenu
         if (storage != null) {
             Player[] players =
                     Bukkit.getOnlinePlayers().stream().filter(storage::hasMine)
-                            .filter(pl -> storage.get(pl).isOpen())
+                            .filter(pl -> Objects.requireNonNull(storage.get(pl)).isOpen())
                             .toArray(Player[]::new);
 
             p.openInventory(spec.genMenu(
@@ -46,7 +46,7 @@ public class MinesMenu
                         final ItemMeta itemMeta = i.getItemMeta();
                         Objects.requireNonNull(itemMeta);
                         final PrivateMine mine = storage.get(pl);
-                        final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(mine.getMineBlocks());
+                        final List<String> formattedBlocks = Formatting.getMineBlocksFormatted(Objects.requireNonNull(mine).getMineBlocks());
 
                         Util.replaceMeta(itemMeta,
                                 "%player%", pl.getName(),
@@ -58,7 +58,7 @@ public class MinesMenu
                         i.setItemMeta(itemMeta);
                         return i;
                     },
-                    pl -> e -> storage.get(pl).teleport((Player) e.getWhoClicked()), players));
+                    pl -> e -> Objects.requireNonNull(storage.get(pl)).teleport((Player) e.getWhoClicked()), players));
         }
     }
 }
