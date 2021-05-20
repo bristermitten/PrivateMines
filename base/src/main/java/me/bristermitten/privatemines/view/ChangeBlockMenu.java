@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -46,19 +47,35 @@ public class ChangeBlockMenu {
                     if (damageable != null) {
                         damageable.setDamage(damageable.getDamage());
                     }
-                    String displayName = itemMeta.getDisplayName();
-                    String name = displayName.replace("%block%",
-                            Util.getItemName(block).orElse("Unknown"));
-                    itemMeta.setDisplayName(name);
-                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%block%",
-                            Util.getItemName(block).orElse("Unknown"))).collect(Collectors.toList());
-                    itemMeta.setLore(lore);
+
+                    String displayName = null;
+                    if (itemMeta != null) {
+                        displayName = itemMeta.getDisplayName();
+                    }
+                    String name = null;
+                    if (displayName != null) {
+                        name = displayName.replace("%block%",
+                                Util.getItemName(block).orElse("Unknown"));
+                    }
+                    if (itemMeta != null) {
+                        itemMeta.setDisplayName(name);
+                    }
+                    List<String> lore = null;
+                    if (itemMeta != null) {
+                        lore = Objects.requireNonNull(itemMeta.getLore()).stream().map(s -> s.replace("%block%",
+                                Util.getItemName(block).orElse("Unknown"))).collect(Collectors.toList());
+                    }
+                    if (itemMeta != null) {
+                        itemMeta.setLore(lore);
+                    }
                     i.setItemMeta(itemMeta);
                     return i;
                 },
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
-                        mine.fillWESingle(block);
+                        if (mine != null) {
+                            mine.fillWESingle(block);
+                        }
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
                     }
