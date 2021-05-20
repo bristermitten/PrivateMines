@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ChangeResetStyleMenu {
@@ -44,7 +45,7 @@ public class ChangeResetStyleMenu {
                                 Util.parseStyle(style));
                         itemMeta.setDisplayName(name);
                         if (itemMeta.hasLore()) {
-                            List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%style%",
+                            List<String> lore = Objects.requireNonNull(itemMeta.getLore()).stream().map(s -> s.replace("%style%",
                                     Util.parseStyle(style))).collect(Collectors.toList());
                             itemMeta.setLore(lore);
                         }
