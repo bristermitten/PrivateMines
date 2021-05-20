@@ -53,6 +53,7 @@ public class MineStorage {
      *
      * @param config The configuration to load from
      */
+
     @SuppressWarnings("unchecked")
     public void load(YamlConfiguration config) {
         final ConfigurationSection dataSection = config.getConfigurationSection(DATA_DO_NOT_CHANGE);
