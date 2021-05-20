@@ -109,8 +109,11 @@ public class PrivateMine implements ConfigurationSerializable {
 
         UUID npcId = UUID.fromString((String) map.get("NPC"));
 
-
         int mineTier = (Integer) map.get("Tier");
+
+        if (mineTier == 0) {
+            Bukkit.getLogger().info("The problem is in the deserialize(); method because the mineTier is 0.");
+        }
 
         String schematicName = (String) map.get("Schematic");
 
