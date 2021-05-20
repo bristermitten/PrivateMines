@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ChangeMineResetPercentMenu {
@@ -40,15 +41,20 @@ public class ChangeMineResetPercentMenu {
                     i.setType(Material.REDSTONE);
                     ItemMeta itemMeta = i.getItemMeta();
 
-                    if (itemMeta.hasDisplayName()) {
+                    if (itemMeta != null && itemMeta.hasDisplayName()) {
                         String displayName = itemMeta.getDisplayName();
                         String name = displayName.replace("%percent%",
                                 Util.parsePercent(percent));
                         itemMeta.setDisplayName(name);
                     }
-                    List<String> lore = itemMeta.getLore().stream().map(s -> s.replace("%percent%",
-                            String.valueOf(percent))).collect(Collectors.toList());
-                    itemMeta.setLore(lore);
+                    List<String> lore = null;
+                    if (itemMeta != null) {
+                        lore = Objects.requireNonNull(itemMeta.getLore()).stream().map(s -> s.replace("%percent%",
+                                String.valueOf(percent))).collect(Collectors.toList());
+                    }
+                    if (itemMeta != null) {
+                        itemMeta.setLore(lore);
+                    }
                     i.setItemMeta(itemMeta);
                     return i;
                 },
