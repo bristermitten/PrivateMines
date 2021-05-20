@@ -29,6 +29,7 @@ public class PMConfig {
     private List<Integer> resetPercentages;
 
     private boolean npcsEnabled = true;
+    private boolean taxSignsEnabled = true;
 
     private String npcName = "Steve";
     private String mineRegionNameFormat = "mine-{uuid}";
@@ -64,6 +65,7 @@ public class PMConfig {
         this.npcName = config.getString("NPC-Name");
         this.sellCommand = config.getString("Sell-Command");
         this.taxPercentage = config.getDouble("Tax-Percentage");
+        this.taxSignsEnabled = config.getBoolean("Tax-Use-Sign-Menu");
         this.resetDelay = config.getInt("Reset-Delay");
         this.resetPercentage = config.getInt("Reset-Percentage");
         this.mineTier = config.getInt("Tier");
@@ -150,6 +152,8 @@ public class PMConfig {
     public boolean isNpcsEnabled() {
         return npcsEnabled;
     }
+
+    public boolean isTaxSignsEnabled() { return taxSignsEnabled; }
 
     public List<ItemStack> getBlockOptions() {
         return blockOptions;

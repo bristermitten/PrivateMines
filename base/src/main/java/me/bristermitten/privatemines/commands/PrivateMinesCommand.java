@@ -10,7 +10,6 @@ import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
 import me.bristermitten.privatemines.view.MenuFactory;
 import net.md_5.bungee.api.ChatColor;
@@ -27,7 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
-import static java.lang.String.valueOf;
 
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
@@ -78,24 +76,25 @@ public class PrivateMinesCommand extends BaseCommand {
             getCurrentCommandIssuer().sendError(LangKeys.ERR_TAX_DISABLED);
             return;
         }
+
+        boolean useTaxSigns = config.isTaxSignsEnabled();
+
         if (plugin.isUltraPrisonCoreEnabled()) {
 
             final PrivateMine mine = storage.get(p);
 
             if (mine != null) {
-                mine.setTaxPercentage(taxPercentage);
-                getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+                if (useTaxSigns) {
+                    Util.openTaxSign(p);
+                } else {
+                    if (taxPercentage == 0) {
+                        getCurrentCommandIssuer().sendError(LangKeys.INFO_TAX_INFO);
+                    } else {
+                        mine.setTaxPercentage(taxPercentage);
+                        getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
+                    }
+                }
             }
-            return;
-        }
-        final PrivateMine mine = storage.get(p);
-        if (taxPercentage == null && mine != null) {
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_INFO, TAX_KEY, valueOf(mine.getTaxPercentage()));
-            return;
-        }
-        if (mine != null) {
-            mine.setTaxPercentage(taxPercentage);
-            getCurrentCommandIssuer().sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, taxPercentage.toString());
         }
     }
 

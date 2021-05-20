@@ -1,14 +1,18 @@
 package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
+import me.bristermitten.privatemines.PrivateMines;
+import me.bristermitten.privatemines.config.LangKeys;
+import me.bristermitten.privatemines.util.signs.SignMenuFactory;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,10 +26,9 @@ import static net.md_5.bungee.api.ChatColor.translateAlternateColorCodes;
 public final class Util {
 
     private static final Set<Player> onlinePlayers = new HashSet<>();
-
-    private Util() {
-
-    }
+    private static final PrivateMines privateMines = PrivateMines.getPlugin();
+    private static final SignMenuFactory signMenuFactory = new SignMenuFactory(privateMines);
+    private static final String TAX_KEY = "{tax}";
 
     public static Vector toBukkitVector(WorldEditVector weVector) {
         return new Vector(weVector.getX(), weVector.getY(), weVector.getZ());
@@ -254,5 +257,28 @@ public final class Util {
 
     public static Set<Player> getOnlinePlayers() {
         return onlinePlayers;
+    }
+
+    public static void openTaxSign(Player player) {
+
+        ArrayList<String> signLines = new ArrayList<>();
+
+        signLines.add("Please enter");
+        signLines.add("Tax Amount:");
+
+        SignMenuFactory.Menu menu = signMenuFactory
+                .newMenu(signLines)
+                .reopenIfFail(false)
+                .response((pl, strings) -> {
+                    if (!strings[2].matches("^[0-9][0-9]?$|^100$")) {
+                        pl.sendMessage(ChatColor.RED + "You didn't specify a tax amount between 1 -> 100!");
+                        return false;
+                    }
+                    double newTax = Double.parseDouble(strings[2]);
+                    privateMines.getManager().getCommandIssuer(pl).sendInfo(LangKeys.INFO_TAX_SET, TAX_KEY, String.valueOf(newTax));
+                    pl.sendMessage("New tax amount: " + newTax);
+                    return true;
+                });
+        menu.open(player);
     }
 }
