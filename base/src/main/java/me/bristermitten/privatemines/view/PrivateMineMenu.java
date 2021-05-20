@@ -51,8 +51,6 @@ public class PrivateMineMenu {
 				.getType())).parseMaterial() :
 				XMaterial.STONE.parseMaterial();
 
-//				Material.valueOf(String.valueOf(mine.getMineBlocks().get(0).getType()));
-
 		original.loadFrom(config.configurationForName("Main"), "%BLOCK%", type);
 
 		MenuSpec menuSpec = new MenuSpec();
@@ -68,7 +66,10 @@ public class PrivateMineMenu {
 	 */
 
 	private void goToMine(MineStorage storage, InventoryClickEvent e) {
-		storage.get((Player) e.getWhoClicked()).teleport();
+		Player player = (Player) e.getWhoClicked();
+		if (storage.hasMine(player)) {
+			storage.get((Player) e.getWhoClicked()).teleport();
+		}
 	}
 
 	private void openMinesMenu(PrivateMines plugin, MenuConfig config, MineStorage storage, InventoryClickEvent e) {
