@@ -55,8 +55,4 @@ public class WorldEditRegion {
     public World getWorld() {
         return world;
     }
-
-    public WorldEditVector getCenter() {
-        return center;
-    }
 }
