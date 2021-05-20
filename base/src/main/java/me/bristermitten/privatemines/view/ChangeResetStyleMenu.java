@@ -55,7 +55,9 @@ public class ChangeResetStyleMenu {
                 style -> e -> {
                     if (p.hasPermission("privatemine.style." + style)) {
                         p.sendMessage(ChatColor.GREEN + "Changed reset style to to " + Util.parseStyle(style));
-                        mine.setResetStyle(style);
+                        if (mine != null) {
+                            mine.setResetStyle(style);
+                        }
                         p.closeInventory();
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this style!");
