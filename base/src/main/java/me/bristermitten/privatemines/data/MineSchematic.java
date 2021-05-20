@@ -14,7 +14,7 @@ public abstract class MineSchematic<S> {
     private final ItemStack icon;
     private final Integer tier;
 
-    protected MineSchematic(String name, List<String> description, File file, ItemStack icon, Integer tier, Integer resetDelay) {
+    protected MineSchematic(String name, List<String> description, File file, ItemStack icon, Integer tier) {
         this.name = name;
         this.description = description;
         this.file = file;
