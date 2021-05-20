@@ -5,10 +5,10 @@ import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,19 +61,18 @@ public final class Util {
             }
 
         if (map.containsKey("Data")) {
-            //noinspection deprecation
-            final Damageable im = (Damageable) s.getItemMeta();
+            final ItemMeta itemMeta = s.getItemMeta();
             final int damage = (int) map.get("Data");
-            if (im != null) {
-                im.damage(damage);
+            Damageable im = (Damageable) s.getItemMeta();
+            if (itemMeta != null && damage > 0 && im != null) {
+                im.setDamage(damage);
             }
         } else {
-            //noinspection deprecation
             if (xMaterial.parseItem() != null && Objects.requireNonNull(xMaterial.parseItem()).hasItemMeta()) {
                     final Damageable im = (Damageable) Objects.requireNonNull(xMaterial.parseItem()).getItemMeta();
                     final int damage = (int) map.get("Data");
                     if (im != null) {
-                        im.damage(damage);
+                        im.setDamage(damage);
                     }
                 }
             }

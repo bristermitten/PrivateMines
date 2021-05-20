@@ -12,6 +12,7 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import com.sk89q.worldedit.world.World;
 import me.bristermitten.privatemines.world.MineWorldManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import java.util.Iterator;
@@ -27,32 +28,48 @@ public class ModernMineFactoryCompat implements MineFactoryCompat<Clipboard> {
 
     @Override
     public WorldEditRegion pasteSchematic(Clipboard clipboard, Location location) {
-        location.setY(clipboard.getOrigin().getBlockY());
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1)) {
-            editSession.setFastMode(true);
 
-            final BlockVector3 centerVector = BlockVector3.at(location.getX(), location.getY(), location.getZ());
-            final Operation operation = new ClipboardHolder(clipboard)
-                    .createPaste(editSession)
-                    .to(centerVector)
-                    .ignoreAirBlocks(true) // lets see if this makes it quicker at all.
-                    .build();
-
-            try {
-                Operations.complete(operation);
-                Region region = clipboard.getRegion();
-                region.setWorld(world);
-                region.shift(centerVector.subtract(clipboard.getOrigin()));
-
-                final WorldEditVector min = ModernWEHook.transform(region.getMinimumPoint());
-                final WorldEditVector max = ModernWEHook.transform(region.getMaximumPoint());
-
-                return new WorldEditRegion(min, max, location.getWorld());
-            } catch (WorldEditException e) {
-                e.printStackTrace();
-                return null;
-            }
+        if (clipboard == null) {
+            Bukkit.getLogger().info("ModernMineFactoryCompact clipboard = null!");
+        } else if (location == null) {
+            Bukkit.getLogger().info("ModernMineFactoryCompact location = null!");
         }
+
+        try {
+            if (location != null) {
+                if (clipboard != null) {
+                    location.setY(clipboard.getOrigin().getBlockY());
+                    try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(world, -1)) {
+                        editSession.setFastMode(true);
+
+                        final BlockVector3 centerVector = BlockVector3.at(location.getX(), location.getY(), location.getZ());
+                        final Operation operation = new ClipboardHolder(clipboard)
+                                .createPaste(editSession)
+                                .to(centerVector)
+                                .ignoreAirBlocks(true) // lets see if this makes it quicker at all.
+                                .build();
+                        try {
+                            Operations.complete(operation);
+                            Region region = clipboard.getRegion();
+                            region.setWorld(world);
+                            region.shift(centerVector.subtract(clipboard.getOrigin()));
+
+                            final WorldEditVector min = ModernWEHook.transform(region.getMinimumPoint());
+                            final WorldEditVector max = ModernWEHook.transform(region.getMaximumPoint());
+
+                            return new WorldEditRegion(min, max, location.getWorld());
+                        } catch (WorldEditException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
     @Override
@@ -73,6 +90,4 @@ public class ModernMineFactoryCompat implements MineFactoryCompat<Clipboard> {
 
         return () -> weVecIterator;
     }
-
-
 }
