@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -74,7 +75,10 @@ public class ChangeBlockMenu {
                 block -> e -> {
                     if (p.hasPermission("privatemine.block." + block.getType().name())) {
                         if (mine != null) {
-                            mine.fillWESingle(block);
+                            List<ItemStack> tofill = new ArrayList<>();
+                            tofill.add(block);
+                            mine.setMineBlocks(tofill);
+                            mine.fillMine();
                         }
                     } else {
                         p.sendMessage(ChatColor.RED + "No access to this block!");
