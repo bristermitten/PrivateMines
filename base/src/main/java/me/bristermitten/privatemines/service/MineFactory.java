@@ -64,6 +64,10 @@ public class MineFactory<M extends MineSchematic<S>, S> {
         return expectedData % data == 0;
     }
 
+    final boolean shouldExecuteUpgradeCommands() {
+        return config.isUpgradeMineCommandsEnabled();
+    }
+
     //TODO this method is way too complex. Refactor ASAP
 
     /**
@@ -88,7 +92,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
 
         Map<BlockType, ItemStack> blockTypes = config.getBlockTypes();
         List<String> firstTimeCommands = this.config.getFirstTimeCommands();
-        List<String> commands = this.config.getCommands();
+        List<String> upgradeCommands = this.config.getUpgradeCommands();
 
         ItemStack spawnMaterial = blockTypes.get(BlockType.SPAWNPOINT);
         ItemStack cornerMaterial = blockTypes.get(BlockType.CORNER);
@@ -132,7 +136,7 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                     continue;
                 }
                 plugin.getLogger().warning("Mine schematic contains >2 corner blocks!");
-                continue;
+                break;
             }
 
             /*
@@ -186,21 +190,26 @@ public class MineFactory<M extends MineSchematic<S>, S> {
                 mineSchematic);
 
         privateMine.fillMine();
-        ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
 
-        final List<String> commandsToRun;
-        if (isNew) {
-            commandsToRun = firstTimeCommands;
-        } else {
-            commandsToRun = commands;
-        }
-        for (String command : commandsToRun) {
-            final String formattedCommand =
-                    command.replace(NAME_PLACEHOLDER, owner.getName())
-                            .replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName())
-                            .replace(UUID_PLACEHOLDER, owner.getUniqueId().toString());
+        if (shouldExecuteUpgradeCommands()) {
 
-            Bukkit.dispatchCommand(console, formattedCommand);
+            ConsoleCommandSender console = Bukkit.getServer().getConsoleSender();
+
+            final List<String> commandsToRun;
+
+            if (isNew) {
+                commandsToRun = firstTimeCommands;
+            } else {
+                commandsToRun = upgradeCommands;
+            }
+            for (String command : commandsToRun) {
+                final String formattedCommand =
+                        command.replace(NAME_PLACEHOLDER, owner.getName())
+                                .replace(DISPLAYNAME_PLACEHOLDER, owner.getDisplayName())
+                                .replace(UUID_PLACEHOLDER, owner.getUniqueId().toString());
+
+                Bukkit.dispatchCommand(console, formattedCommand);
+            }
         }
 
         PrivateMinesCreationEvent privateMinesCreationEvent
