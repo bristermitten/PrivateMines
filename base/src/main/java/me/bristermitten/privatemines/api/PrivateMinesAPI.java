@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @SuppressWarnings("unused") //Most of these methods are called from external programs
+
 public class PrivateMinesAPI {
 
     private final MineStorage storage;
