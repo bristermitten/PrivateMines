@@ -67,6 +67,8 @@ Reset-Delay: 5
 #Default reset percentage for the mines to reset at
 Reset-Percentage: 50
 
+Use-Upgrade-Commands: true
+
 # Placeholders
 # {name} - Targets Username
 # {displayname} - Targets Display Name
@@ -77,7 +79,7 @@ FirstTimeCommands:
   - "broadcast Created {name}'s otherwise known as {displayname}'s Mine!"
   - "broadcast Created {name}'s otherwise known as {displayname}'s but their UUID is {uuid}'s Mine!"
 
-Commands:
+UpgradeCommands:
   - "broadcast {name}'s Mine has been upgraded!"
 
 # Placeholders

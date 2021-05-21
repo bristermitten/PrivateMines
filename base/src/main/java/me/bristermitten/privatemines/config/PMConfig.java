@@ -22,7 +22,7 @@ public class PMConfig {
     private List<ItemStack> defaultMineBlocks = new ArrayList<>();
 
     private List<String> firstTimeCommands;
-    private List<String> commands;
+    private List<String> upgradeCommands;
     private List<String> resetStyles;
     private List<String> blockStyles;
 
@@ -30,6 +30,7 @@ public class PMConfig {
 
     private boolean npcsEnabled = true;
     private boolean taxSignsEnabled = true;
+    private boolean executeUpgradeCommands = true;
 
     private String npcName = "Steve";
     private String mineRegionNameFormat = "mine-{uuid}";
@@ -69,8 +70,9 @@ public class PMConfig {
         this.resetDelay = config.getInt("Reset-Delay");
         this.resetPercentage = config.getInt("Reset-Percentage");
         this.mineTier = config.getInt("Tier");
+        this.executeUpgradeCommands = config.getBoolean("Use-Upgrade-Commands");
         this.firstTimeCommands = config.getStringList("FirstTimeCommands");
-        this.commands = config.getStringList("Commands");
+        this.upgradeCommands = config.getStringList("UpgradeCommands");
         this.resetStyles = config.getStringList("Reset-Styles");
         this.mineRegionNameFormat = config.getString("mine-region-name");
 
@@ -155,6 +157,8 @@ public class PMConfig {
 
     public boolean isTaxSignsEnabled() { return taxSignsEnabled; }
 
+    public boolean isUpgradeMineCommandsEnabled() { return executeUpgradeCommands; }
+
     public List<ItemStack> getBlockOptions() {
         return blockOptions;
     }
@@ -171,8 +175,8 @@ public class PMConfig {
         return firstTimeCommands;
     }
 
-    public List<String> getCommands() {
-        return commands;
+    public List<String> getUpgradeCommands() {
+        return upgradeCommands;
     }
 
     public List<String> getResetStyles() {
