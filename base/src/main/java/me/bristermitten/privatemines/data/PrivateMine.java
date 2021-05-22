@@ -6,9 +6,11 @@ import co.aikar.commands.MessageType;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
+import me.bristermitten.privatemines.api.PrivateMinesUpgradeEvent;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
+import me.bristermitten.privatemines.util.XMaterial;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import me.clip.autosell.SellHandler;
@@ -68,7 +70,6 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
         TODO Split this into smaller methods
      */
-
 
     public PrivateMine(UUID owner,
                        UUID npcId,
@@ -180,7 +181,17 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public void setMineBlocks(List<ItemStack> itemStack) {
-        this.blocks = itemStack;
+        List<ItemStack> newBlocks = new ArrayList<>();
+
+        for (ItemStack i : itemStack) {
+            ItemStack converted = XMaterial.matchXMaterial(i).parseItem();
+            newBlocks.add(converted);
+        }
+        if (newBlocks.isEmpty() && XMaterial.STONE.parseMaterial() != null) {
+                newBlocks.add(new ItemStack(XMaterial.STONE.parseMaterial()));
+        }
+
+        this.blocks = newBlocks;
     }
 
     public List<String> getMineBlocksString() {
@@ -430,6 +441,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public void upgradeMine(Player player) {
         int tier;
+
         PrivateMine currentMine = PrivateMines.getPlugin().getStorage().get(player);
         if (currentMine != null) {
             Location currentMineLocation = currentMine.getSpawnLocation();
@@ -467,6 +479,13 @@ public class PrivateMine implements ConfigurationSerializable {
                 currentMine.getLocations().setSpawnPoint(currentMineLocation);
                 currentMine.teleport(player);
                 currentMine.setMineTier(newTier);
+
+                PrivateMinesUpgradeEvent privateMinesUpgradeEvent = new PrivateMinesUpgradeEvent(
+                        player,
+                        this, currentMine.getMineBlocks(),
+                        currentMine.getResetTime(),
+                        currentMine.getCurrentMineSchematic());
+                Bukkit.getPluginManager().callEvent(privateMinesUpgradeEvent);
             } else {
                 Bukkit.getLogger().info("Can't upgrade " + player.getName() + "'s mine because it's maxed out!");
             }
@@ -481,7 +500,6 @@ public class PrivateMine implements ConfigurationSerializable {
 
             player.performCommand("spawn");
         }
-
         return bannedPlayers.add(player.getUniqueId());
     }
 
