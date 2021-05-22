@@ -3,12 +3,13 @@ package me.bristermitten.privatemines.api;
 import me.bristermitten.privatemines.data.MineSchematic;
 import me.bristermitten.privatemines.data.PrivateMine;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class PrivateMinesUpgradeEvent {
+public class PrivateMinesUpgradeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
