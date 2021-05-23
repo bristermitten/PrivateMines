@@ -61,7 +61,7 @@ public class PrivateMine implements ConfigurationSerializable {
     private long nextResetTime;
     private int mineTier;
     private String resetStyle;
-    private final Location spawnLocation;
+    private Location spawnLocation;
 
     // Is it even possible to get this down to the 7 max?
     // Yes.
@@ -97,8 +97,6 @@ public class PrivateMine implements ConfigurationSerializable {
     public static PrivateMine deserialize(Map<String, Object> map) {
 
         UUID owner = UUID.fromString((String) map.get("Owner"));
-
-        boolean open = (Boolean) map.get("Open");
 
         List<ItemStack> blocks = new ArrayList<>();
 
@@ -277,7 +275,15 @@ public class PrivateMine implements ConfigurationSerializable {
             return;
         }
 
-        player.teleport(locations.getSpawnPoint());
+        spawnLocation = new Location(
+                getSpawnLocation().getWorld(),
+                getSpawnLocation().getX(),
+                getSpawnLocation().getY(),
+                getSpawnLocation().getZ(),
+                getSpawnLocation().getYaw(),
+                getSpawnLocation().getPitch());
+
+        player.teleport(spawnLocation);
         player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 1));
     }
 
