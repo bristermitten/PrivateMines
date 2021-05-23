@@ -20,6 +20,7 @@
  * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package me.bristermitten.privatemines.util;
 
 import com.google.common.base.Enums;
@@ -64,6 +65,7 @@ import java.util.regex.PatternSyntaxException;
  * @see Material
  * @see ItemStack
  */
+
 @SuppressWarnings("SameReturnValue")
 public enum XMaterial {
     ACACIA_BOAT("BOAT_ACACIA"),
@@ -85,11 +87,12 @@ public enum XMaterial {
     ACTIVATOR_RAIL,
     /**
      * https://minecraft.gamepedia.com/Air
-     * {@link Material#isTransparent()} ()}
+     * {@link Material#isAir()}
      *
      * @see #VOID_AIR
      * @see #CAVE_AIR
      */
+
     AIR,
     ALLIUM(2, "RED_ROSE"),
     ANCIENT_DEBRIS(16),
