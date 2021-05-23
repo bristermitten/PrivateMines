@@ -183,7 +183,8 @@ public class PrivateMinesCommand extends BaseCommand {
         for (PrivateMine mine : mineSet) {
             mine.delete();
         }
-        player.sendMessage(format(ChatColor.GREEN + "Deleted a total of %d mines!", total));
+        String message = String.format("Deleted a total of %d mines!", total);
+        player.sendMessage(ChatColor.GREEN + message);
     }
 
     @Subcommand("status")
