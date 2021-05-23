@@ -3,7 +3,6 @@ package me.bristermitten.privatemines;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.ConditionFailedException;
 import co.aikar.commands.PaperCommandManager;
-import me.bristermitten.privatemines.api.PrivateMinesAPI;
 import me.bristermitten.privatemines.commands.PrivateMinesCommand;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
@@ -38,7 +37,6 @@ import java.io.IOException;
 public final class PrivateMines extends JavaPlugin {
 
     public static final String MINES_FILE_NAME = "mines.yml";
-    private static PrivateMinesAPI privateMinesAPI;
 
     private Economy econ;
     private MineStorage storage;
