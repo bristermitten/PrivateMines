@@ -344,10 +344,6 @@ public class PrivateMine implements ConfigurationSerializable {
         this.nextResetTime = System.currentTimeMillis() + resetDelay;
     }
 
-    public void fillWESingle(ItemStack itemStack) {
-        fillMine(Collections.singletonList(itemStack));
-    }
-
     public boolean shouldReset() {
         return this.locations.getSpawnPoint().getChunk().isLoaded() && System.currentTimeMillis() >= nextResetTime;
     }
@@ -359,6 +355,7 @@ public class PrivateMine implements ConfigurationSerializable {
     /*
       Delete the mine.
      */
+
     public void delete() {
 
         final ICuboidSelection selection = (ICuboidSelection) locations.getWgRegion().getSelection();
