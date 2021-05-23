@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@SuppressWarnings("unused") //Most of these methods are called from external programs
 public class PrivateMinesCreationEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();

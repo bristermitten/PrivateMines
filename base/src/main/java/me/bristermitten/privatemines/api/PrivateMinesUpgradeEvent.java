@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+@SuppressWarnings("unused") //Most of these methods are called from external programs
 public class PrivateMinesUpgradeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();

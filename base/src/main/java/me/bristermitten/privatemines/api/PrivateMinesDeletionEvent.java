@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused") //Most of these methods are called from external programs
 public class PrivateMinesDeletionEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
