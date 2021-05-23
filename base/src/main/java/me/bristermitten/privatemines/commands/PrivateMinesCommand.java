@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.lang.String.format;
-
 @CommandAlias("privatemines|privatemine|pm|pmine")
 public class PrivateMinesCommand extends BaseCommand {
 
@@ -45,6 +43,7 @@ public class PrivateMinesCommand extends BaseCommand {
         this.config = config;
     }
 
+    @SuppressWarnings({"unused"})
     @Default
     @Description("Manage your Private Mine or go to others")
     public void main(Player p) {
