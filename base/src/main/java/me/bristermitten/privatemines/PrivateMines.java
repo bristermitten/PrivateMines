@@ -27,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -182,7 +183,11 @@ public final class PrivateMines extends JavaPlugin {
     }
 
     private void loadWEHook() {
-        final String version = Bukkit.getPluginManager().getPlugin("WorldEdit").getDescription().getVersion();
+        final Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
+        String version = "";
+        if (worldEdit != null) {
+            version = worldEdit.getDescription().getVersion();
+        }
         try {
             if (version.startsWith("6.")) {
                 this.weHook = (WorldEditHook<?>) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
