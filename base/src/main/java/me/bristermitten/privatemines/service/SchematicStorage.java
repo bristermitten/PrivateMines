@@ -15,7 +15,7 @@ import java.util.*;
 public class SchematicStorage {
     private static final SchematicStorage instance = new SchematicStorage();
     private final Map<String, MineSchematic<?>> schematics = new HashMap<>();
-    private Map<Integer, MineSchematic> schematicTreeMap = new TreeMap<>();
+    private final Map<Integer, MineSchematic> schematicTreeMap = new TreeMap<>();
 
     int totalSchematics = 0;
 
@@ -52,7 +52,6 @@ public class SchematicStorage {
                         PrivateMines.getPlugin().getLogger().warning((() -> "Path file was null!"));
                     } else {
                         if (schematicSection.getString("File") != null) {
-                            //TODO It keeps assuming this is null need to somehow fix
 
                             final File file = new File(schematicsDir, Objects.requireNonNull(schematicSection.getString("File")));
 
