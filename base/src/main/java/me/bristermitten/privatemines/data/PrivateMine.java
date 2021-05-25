@@ -3,6 +3,7 @@ package me.bristermitten.privatemines.data;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.BukkitCommandManager;
 import co.aikar.commands.MessageType;
+import com.cryptomorin.xseries.XMaterial;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.api.PrivateMinesDeletionEvent;
 import me.bristermitten.privatemines.api.PrivateMinesResetEvent;
@@ -10,7 +11,6 @@ import me.bristermitten.privatemines.api.PrivateMinesUpgradeEvent;
 import me.bristermitten.privatemines.config.LangKeys;
 import me.bristermitten.privatemines.service.SchematicStorage;
 import me.bristermitten.privatemines.util.Util;
-import me.bristermitten.privatemines.util.XMaterial;
 import me.bristermitten.privatemines.worldedit.WorldEditRegion;
 import me.bristermitten.privatemines.worldedit.WorldEditVector;
 import me.clip.autosell.SellHandler;
@@ -187,7 +187,8 @@ public class PrivateMine implements ConfigurationSerializable {
                 newBlocks.add(new ItemStack(XMaterial.STONE.parseMaterial()));
         }
 
-        this.blocks = newBlocks;
+        Bukkit.getLogger().info("setMineBlocks: " + this.blocks);
+        Bukkit.getLogger().info("newBlocks: " + newBlocks);
     }
 
     public List<String> getMineBlocksString() {
