@@ -1,12 +1,12 @@
 package me.bristermitten.privatemines.view;
 
+import com.cryptomorin.xseries.XMaterial;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.PMConfig;
 import me.bristermitten.privatemines.config.menu.MenuConfig;
 import me.bristermitten.privatemines.config.menu.MenuSpec;
 import me.bristermitten.privatemines.data.PrivateMine;
 import me.bristermitten.privatemines.service.MineStorage;
-import me.bristermitten.privatemines.util.XMaterial;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
