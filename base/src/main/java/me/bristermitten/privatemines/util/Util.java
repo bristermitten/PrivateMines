@@ -27,6 +27,16 @@ import static net.md_5.bungee.api.ChatColor.translateAlternateColorCodes;
 
 public final class Util {
 
+    private final Util utils;
+
+    private Util() {
+        utils = this;
+    }
+
+    public Util getUtil() {
+        return utils;
+    }
+
     private static final Set<Player> onlinePlayers = new HashSet<>();
     private static final PrivateMines privateMines = PrivateMines.getPlugin();
     private static final SignMenuFactory signMenuFactory = new SignMenuFactory(privateMines);
