@@ -1,5 +1,7 @@
 package me.bristermitten.privatemines.util;
 
+import com.cryptomorin.xseries.XMaterial;
+
 import com.google.common.base.Enums;
 import me.bristermitten.privatemines.PrivateMines;
 import me.bristermitten.privatemines.config.LangKeys;
