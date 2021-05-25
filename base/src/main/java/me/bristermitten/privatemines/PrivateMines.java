@@ -47,6 +47,7 @@ public final class PrivateMines extends JavaPlugin {
     private MineFactory<MineSchematic<?>, ?> factory;
     private WorldEditHook<?> weHook;
     private MineWorldManager mineManager;
+    private static PrivateMines instance;
 
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
@@ -54,7 +55,7 @@ public final class PrivateMines extends JavaPlugin {
     private boolean npcsEnabled = false;
 
     public static PrivateMines getPlugin() {
-        return JavaPlugin.getPlugin(PrivateMines.class);
+        return instance;
     }
 
     public static Economy getEconomy() {
@@ -88,6 +89,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         long startTime = System.currentTimeMillis();
 
         saveDefaultConfig();
