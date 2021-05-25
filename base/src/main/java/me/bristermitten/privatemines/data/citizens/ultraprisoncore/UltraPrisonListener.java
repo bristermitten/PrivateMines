@@ -56,10 +56,6 @@ public class UltraPrisonListener implements Listener {
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
-        if (owner == null) {
-            Bukkit.getLogger().warning("UltraPrisonListener owner was null!");
-        }
-
         PrivateMines.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), tax);
 
         BukkitCommandIssuer issuer = manager.getCommandIssuer(player);
