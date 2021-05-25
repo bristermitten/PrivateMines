@@ -48,11 +48,8 @@ public class UltraPrisonListener implements Listener {
             owner = privateMine.getOwner();
             return !privateMine.contains(player);
         }
-        if (owner == null)
-            return false;
-        if (player.getUniqueId().equals(owner))
-            return false;
-        return false;
+
+        return owner != null && !player.getUniqueId().equals(owner);
     }
 
     private void process(PrivateMine privateMine, double tax, Player player) {
