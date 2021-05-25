@@ -37,7 +37,6 @@ public class PMConfig {
     private String sellCommand = "sellall";
     private double taxPercentage = 5;
     private int resetDelay = 30;
-    private int resetPercentage = 50;
 
     private int mineTier = 1;
 
@@ -68,7 +67,6 @@ public class PMConfig {
         this.taxPercentage = config.getDouble("Tax-Percentage");
         this.taxSignsEnabled = config.getBoolean("Tax-Use-Sign-Menu");
         this.resetDelay = config.getInt("Reset-Delay");
-        this.resetPercentage = config.getInt("Reset-Percentage");
         this.mineTier = config.getInt("Tier");
         this.executeUpgradeCommands = config.getBoolean("Use-Upgrade-Commands");
         this.firstTimeCommands = config.getStringList("FirstTimeCommands");
@@ -193,10 +191,6 @@ public class PMConfig {
 
     public int getResetDelay() {
         return resetDelay;
-    }
-
-    public int getResetPercentage() {
-        return resetPercentage;
     }
 
     public int getMineTier() {
