@@ -1,6 +1,6 @@
 repositories {
-    maven { url = 'http://maven.sk89q.com/repo/' }
-    maven { url = 'http://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/' }
+    maven { url = 'https://maven.sk89q.com/repo/' }
+    maven { url = 'https://ci.athion.net/job/FastAsyncWorldEdit/ws/mvn/' }
     maven { url = 'https://papermc.io/repo/repository/maven-public/' }
     maven { url = 'https://repo.citizensnpcs.co/' }
 }
