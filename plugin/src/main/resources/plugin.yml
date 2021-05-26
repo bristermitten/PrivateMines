@@ -3,7 +3,7 @@ version: 1.6.4 # Change this to update version
 main: me.bristermitten.privatemines.PrivateMines
 authors: [BristerMitten, UntouchedOdin0]
 website: github.com/knightzmc
-api-version: 1.13
+api-version: 1.16
 
 softdepend:
   - AutoSell
