@@ -177,18 +177,10 @@ public class PrivateMine implements ConfigurationSerializable {
     }
 
     public void setMineBlocks(List<ItemStack> itemStack) {
-        List<ItemStack> newBlocks = new ArrayList<>();
-
-        for (ItemStack i : itemStack) {
-            ItemStack converted = XMaterial.matchXMaterial(i).parseItem();
-            newBlocks.add(converted);
-        }
-        if (newBlocks.isEmpty() && XMaterial.STONE.parseMaterial() != null) {
-                newBlocks.add(new ItemStack(XMaterial.STONE.parseMaterial()));
-        }
-
-        Bukkit.getLogger().info("setMineBlocks: " + this.blocks);
-        Bukkit.getLogger().info("newBlocks: " + newBlocks);
+        List<ItemStack> currentBlocks = blocks;
+        currentBlocks.clear();
+        currentBlocks.addAll(itemStack);
+        this.blocks = currentBlocks;
     }
 
     public List<String> getMineBlocksString() {
