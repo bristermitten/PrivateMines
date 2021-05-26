@@ -16,7 +16,6 @@ import me.bristermitten.privatemines.listeners.UserLeaveEvent;
 import me.bristermitten.privatemines.service.MineFactory;
 import me.bristermitten.privatemines.service.MineStorage;
 import me.bristermitten.privatemines.service.SchematicStorage;
-import me.bristermitten.privatemines.util.Formatting;
 import me.bristermitten.privatemines.util.Metrics;
 import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
@@ -48,19 +47,15 @@ public final class PrivateMines extends JavaPlugin {
     private MineFactory<MineSchematic<?>, ?> factory;
     private WorldEditHook<?> weHook;
     private MineWorldManager mineManager;
-    private Formatting formatting;
+    private static PrivateMines instance;
 
     private boolean autoSellEnabled = false;
     private boolean ultraPrisonCoreEnabled = false;
 
     private boolean npcsEnabled = false;
 
-    public PrivateMines(Formatting formatting) {
-        this.formatting = formatting;
-    }
-
     public static PrivateMines getPlugin() {
-        return JavaPlugin.getPlugin(PrivateMines.class);
+        return instance;
     }
 
     public static Economy getEconomy() {
@@ -87,8 +82,6 @@ public final class PrivateMines extends JavaPlugin {
         return weHook;
     }
 
-    public Formatting getFormatting() { return formatting; }
-
     /*
         Used when the plugin is enabled at the start, loads all the services.
     */
@@ -96,6 +89,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
         long startTime = System.currentTimeMillis();
 
         saveDefaultConfig();
@@ -311,7 +305,4 @@ public final class PrivateMines extends JavaPlugin {
         return factory;
     }
 
-    public Formatting getFormat() {
-        return formatting;
-    }
 }

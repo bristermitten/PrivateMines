@@ -6,17 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class Formatting {
+public final class Formatting {
 
-    private final Formatting format;
-
-    private Formatting() {
-        format = this;
-    }
-
-    public Formatting getFormatting() {
-        return format;
-    }
+    private Formatting() {}
 
     public static List<String> getMineBlocksFormatted(List<ItemStack> stack) {
         return stack.stream()
