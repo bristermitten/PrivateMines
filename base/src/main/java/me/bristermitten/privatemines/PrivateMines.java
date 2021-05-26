@@ -35,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 
-public final class PrivateMines extends JavaPlugin {
+public final class PrivateMines<T> extends JavaPlugin {
 
     public static final String MINES_FILE_NAME = "mines.yml";
 
@@ -45,7 +45,7 @@ public final class PrivateMines extends JavaPlugin {
     private YamlConfiguration minesConfig;
     private BukkitCommandManager manager;
     private MineFactory<MineSchematic<?>, ?> factory;
-    private WorldEditHook<?> weHook;
+    private WorldEditHook<T> worldEditHook;
     private MineWorldManager mineManager;
     private static PrivateMines instance;
 
@@ -78,14 +78,13 @@ public final class PrivateMines extends JavaPlugin {
         return npcsEnabled;
     }
 
-    public WorldEditHook<?> getWeHook() {
-        return weHook;
+    public WorldEditHook<T> getWeHook() {
+        return worldEditHook;
     }
 
     /*
         Used when the plugin is enabled at the start, loads all the services.
     */
-
 
     @Override
     public void onEnable() {
@@ -184,6 +183,8 @@ public final class PrivateMines extends JavaPlugin {
         getLogger().info(() -> String.format("%sSuccessfully loaded PrivateMines (Took %dms)", ChatColor.GREEN, loaded - startTime));
     }
 
+    //TODO Refactor this to make it work better.
+
     private void loadWEHook() {
         final Plugin worldEdit = Bukkit.getPluginManager().getPlugin("WorldEdit");
         String version = "";
@@ -192,10 +193,10 @@ public final class PrivateMines extends JavaPlugin {
         }
         try {
             if (version.startsWith("6.")) {
-                this.weHook = (WorldEditHook<?>) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
+                this.worldEditHook = (WorldEditHook<T>) Class.forName("me.bristermitten.privatemines.worldedit.LegacyWEHook")
                         .getConstructor().newInstance();
             } else if (version.startsWith("7.") || version.startsWith("1.1")) { //FAWE 1.13, 1.16, etc
-                this.weHook = (WorldEditHook<?>) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
+                this.worldEditHook = (WorldEditHook<T>) Class.forName("me.bristermitten.privatemines.worldedit.ModernWEHook")
                         .getConstructor().newInstance();
             } else {
                 throw new IllegalStateException("Unsupported WorldEdit version: " + version);
@@ -207,7 +208,7 @@ public final class PrivateMines extends JavaPlugin {
 
     @NotNull
     private MineFactory<?, ?> loadMineFactory(PMConfig mainConfig, MineWorldManager mineManager) {
-        return new MineFactory<>(this, mineManager, mainConfig, weHook.createMineFactoryCompat());
+        return new MineFactory<>(this, mineManager, mainConfig, worldEditHook.createMineFactoryCompat());
     }
 
     private void loadCommands(PMConfig mainConfig, MenuFactory menuFactory) {
@@ -304,5 +305,4 @@ public final class PrivateMines extends JavaPlugin {
     public MineFactory<MineSchematic<?>, ?> getFactory() {
         return factory;
     }
-
 }
