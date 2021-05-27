@@ -21,6 +21,7 @@ import me.bristermitten.privatemines.view.MenuFactory;
 import me.bristermitten.privatemines.world.MineWorldManager;
 import me.bristermitten.privatemines.worldedit.WorldEditHook;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.trait.Trait;
 import net.citizensnpcs.api.trait.TraitInfo;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -138,17 +139,26 @@ public final class PrivateMines<T> extends JavaPlugin {
             setEnabled(false);
         }
 
+        Trait autoSellTrait = CitizensAPI.getTraitFactory().getTrait(AutoSellNPCTrait.class);
+        Trait ultraprisonTrait = CitizensAPI.getTraitFactory().getTrait(UltraPrisonCoreNPCTrait.class);
+
         if (Bukkit.getPluginManager().isPluginEnabled("Citizens")) {
             npcsEnabled = mainConfig.isNpcsEnabled();
 
-            if (this.autoSellEnabled) {
+            if (this.autoSellEnabled && npcsEnabled) {
                 getLogger().info("Enabling AutoSell NPC Trait!");
-                CitizensAPI.getTraitFactory().registerTrait
-                        (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
-            } else if (ultraPrisonCoreEnabled) {
+
+
+                if (!CitizensAPI.getTraitFactory().getRegisteredTraits().contains(autoSellTrait)) {
+                    CitizensAPI.getTraitFactory().registerTrait
+                            (TraitInfo.create(AutoSellNPCTrait.class).withName("SellNPC"));
+                }
+            } else if (ultraPrisonCoreEnabled && npcsEnabled) {
                 getLogger().info("Enabling UltraPrisonCore NPC Trait!");
-                CitizensAPI.getTraitFactory().registerTrait
-                        (TraitInfo.create(UltraPrisonCoreNPCTrait.class).withName("UltraPrisonCoreNPC"));
+                if (!CitizensAPI.getTraitFactory().getRegisteredTraits().contains(ultraprisonTrait)) {
+                    CitizensAPI.getTraitFactory().registerTrait
+                            (TraitInfo.create(UltraPrisonCoreNPCTrait.class).withName("UltraPrisonCoreNPC"));
+                }
             }
         }
 
