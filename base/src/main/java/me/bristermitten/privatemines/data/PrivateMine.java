@@ -40,6 +40,7 @@ public class PrivateMine implements ConfigurationSerializable {
 
     public static final String PLAYER_PLACEHOLDER = "{player}";
     private static final SchematicStorage schematicStorage = SchematicStorage.getInstance();
+    private static final PrivateMines privateMines = PrivateMines.getPlugin();
 
     /**
      * How far between a mine reset in milliseconds
@@ -93,6 +94,7 @@ public class PrivateMine implements ConfigurationSerializable {
         this.resetDelay = (int) TimeUnit.MINUTES.toMillis(5);
     }
 
+
     @SuppressWarnings("unchecked")
     public static PrivateMine deserialize(Map<String, Object> map) {
 
@@ -124,12 +126,16 @@ public class PrivateMine implements ConfigurationSerializable {
                 .map(bans -> bans.stream().map(UUID::fromString).collect(Collectors.toSet()))
                 .orElse(new HashSet<>());
 
-        String shopName = "shop-" + owner;
-        Shop shop = new Shop(shopName);
-        SellHandler.addShop(shop);
-
-        return new PrivateMine(owner, npcId, bannedPlayers, blocks, mainRegion, mineTier, locations,
-                schematic);
+        if (!Bukkit.getPluginManager().isPluginEnabled("AutoSell") || !privateMines.isAutoSellEnabled()) {
+            return new PrivateMine(owner, npcId, bannedPlayers, blocks, mainRegion, mineTier, locations,
+                    schematic);
+        } else {
+            String shopName = "shop-" + owner;
+            Shop shop = new Shop(shopName);
+            SellHandler.addShop(shop);
+            return new PrivateMine(owner, npcId, bannedPlayers, blocks, mainRegion, mineTier, locations,
+                    schematic);
+        }
     }
 
     public double getTaxPercentage() {
